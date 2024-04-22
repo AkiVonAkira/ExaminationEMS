@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
-
-namespace BaseLibrary.Models
+﻿namespace BaseLibrary.Models
 {
     public class BaseEntity
     {
@@ -10,4 +7,3 @@ namespace BaseLibrary.Models
         public string? Name { get; set; }
     }
 }
-

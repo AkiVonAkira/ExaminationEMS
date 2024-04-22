@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace BaseLibrary.Models
 {
@@ -10,4 +9,3 @@ namespace BaseLibrary.Models
         public List<Employee>? Employees { get; set; }
     }
 }
-

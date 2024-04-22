@@ -1,9 +1,6 @@
-﻿using System;
-namespace BaseLibrary.Models
+﻿namespace BaseLibrary.Models
 {
     public class Department : BaseEntity
     {
-
     }
 }
-

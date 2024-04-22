@@ -1,22 +1,18 @@
-﻿using System;
-namespace BaseLibrary.Models
+﻿namespace BaseLibrary.Models
 {
     public class Employee : BaseEntity
     {
         public string? SocialSecurityNumberID { get; set; }
-
+        public string? FullName { get; set; }
         public string? JobTitle { get; set; }
-
-        public string? Adress { get; set; }
-
-        public int PhoneNumber { get; set; }
-
+        public string? Address { get; set; }
+        public string? PhoneNumber { get; set; } // We need string for ex. "+(46) 7...."
         public Guid Photo { get; set; }
-
         public string? Description { get; set; }
 
         //Relation: En till många relation
         public GeneralDepartment? GeneralDepartment { get; set; }
+
         public int GeneralDepartmentId { get; set; }
 
         public Department? Department { get; set; }
@@ -29,5 +25,3 @@ namespace BaseLibrary.Models
         public int CityId { get; set; }
     }
 }
-
-
