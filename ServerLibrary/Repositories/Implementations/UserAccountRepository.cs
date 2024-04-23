@@ -8,14 +8,14 @@ using ServerLibrary.Data;
 using ServerLibrary.Helpers;
 using ServerLibrary.Repositories.Contracts;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.NetworkInformation;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace ServerLibrary.Repositories.Implementations
 {
-    public class UserAccountRepository(IOptions<JwtSection> config, ApplicationDbContext applicationDbContext) : IUserAccount
+    public class UserAccountRepository(IOptions<JwtSection> config,
+        ApplicationDbContext applicationDbContext) : IUserAccount
     {
         public async Task<GeneralResponse> CreateAsync(Register user)
         {
@@ -76,13 +76,13 @@ namespace ServerLibrary.Repositories.Implementations
 
             string jwtToken = GenerateToken(applicationUser, getRoleName!.Name!);
             string refreshToken = GenerateRefreshToken();
-            return new LoginResponse(true,"Login successfully", jwtToken, refreshToken);
+            return new LoginResponse(true, "Login successfully", jwtToken, refreshToken);
         }
 
         private string GenerateToken(ApplicationUser user, string role)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Value.Key!));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); 
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var userClaims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -103,8 +103,7 @@ namespace ServerLibrary.Repositories.Implementations
         }
 
         public static string GenerateRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-        
-            
+
         private async Task<ApplicationUser> FindUserByEmail(string email) =>
             await applicationDbContext.ApplicationUsers.FirstOrDefaultAsync(_ => _.Email!.ToLower()!.Equals(email!.ToLower()));
 
