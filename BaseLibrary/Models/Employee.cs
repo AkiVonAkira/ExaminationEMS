@@ -11,8 +11,8 @@
         public string? Description { get; set; }
 
         //Relation: En till många relation
-        public GeneralDepartment? GeneralDepartment { get; set; }
 
+        public GeneralDepartment? GeneralDepartment { get; set; }
         public int GeneralDepartmentId { get; set; }
 
         public Department? Department { get; set; }

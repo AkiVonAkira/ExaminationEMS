@@ -18,6 +18,8 @@ namespace ServerLibrary.Data
         public DbSet<Section> Sections { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<SystemRole> SystemRoles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
         // Factory for design-time DbContext creation
         public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
