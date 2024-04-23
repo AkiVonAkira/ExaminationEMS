@@ -14,8 +14,17 @@ using System.Text;
 
 namespace ServerLibrary.Repositories.Implementations
 {
-    public class UserAccountRepository(IOptions<JwtSection> config, ApplicationDbContext applicationDbContext) : IUserAccount
+    public class UserAccountRepository : IUserAccount
     {
+        private readonly IOptions<JwtSection> config;
+        private readonly ApplicationDbContext applicationDbContext;
+
+        public UserAccountRepository(IOptions<JwtSection> _config, ApplicationDbContext _context)
+        {
+            config = _config;
+            applicationDbContext = _context;
+        }
+
         public async Task<GeneralResponse> CreateAsync(Register user)
         {
             if (user is null) return new GeneralResponse(false, "Response is empty");
