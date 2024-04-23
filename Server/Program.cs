@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ServerLibrary.Data;
 using ServerLibrary.Helpers;
 using ServerLibrary.Repositories.Contracts;
@@ -13,7 +14,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Start Database Connection.
-builder.Services.AddDbContext<ApplicationDbContext>();
+//builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ??
+        throw new InvalidOperationException("Sorry no Database Connection was found!"));
+});
 
 builder.Services.Configure<JwtSection>(builder.Configuration.GetSection("JwtSection"));
 builder.Services.AddScoped<IUserAccount, UserAccountRepository>();
