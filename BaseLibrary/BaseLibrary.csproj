@@ -10,9 +10,4 @@
     <PackageReference Include="AutoMapper" Version="13.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Responses\" />
-  </ItemGroup>
-
 </Project>

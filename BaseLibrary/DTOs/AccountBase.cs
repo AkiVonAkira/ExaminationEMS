@@ -2,7 +2,7 @@
 
 namespace BaseLibrary.DTOs
 {
-    internal class AccountBase
+    public class AccountBase
     {
         [DataType(DataType.EmailAddress)]
         [EmailAddress]
