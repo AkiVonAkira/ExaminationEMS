@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ClientLibrary.Helpers
 {
-    internal class GetHttpClient
+    public class GetHttpClient
     {
+        // kommer jobba med detta senare 
     }
 }
