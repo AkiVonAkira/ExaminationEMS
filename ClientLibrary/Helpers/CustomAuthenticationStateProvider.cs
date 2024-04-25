@@ -6,21 +6,14 @@ using System.Security.Claims;
 namespace ClientLibrary.Helpers
 {
     // Custom Authentication State Provider
-    public class CustomAuthenticationStateProvider : AuthenticationStateProvider
+    public class CustomAuthenticationStateProvider(LocalDataStrorage localDataStrorage) : AuthenticationStateProvider
     {
-        // Constructor
-        public CustomAuthenticationStateProvider(LocalDataStrorage localDataStrorage)
-        {
-            LocalDataStrorage = localDataStrorage;
-        }
-
         private readonly ClaimsPrincipal anonymous = new(new ClaimsIdentity());
-        private LocalDataStrorage LocalDataStrorage { get; }
 
         // Get the authentication state asynchronously
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var stringToken = await LocalDataStrorage.GetToken();
+            var stringToken = await localDataStrorage.GetToken();
 
             if (string.IsNullOrEmpty(stringToken))
                 return await Task.FromResult(new AuthenticationState(anonymous));
@@ -38,6 +31,26 @@ namespace ClientLibrary.Helpers
             // Set claims principal
             var claimsPrincipal = SetClaimPrincipal(getUserClaims);
             return await Task.FromResult(new AuthenticationState(claimsPrincipal));
+        }
+
+        // Task to update the authentication state
+        public async Task UpdateAuthenticationState(UserSession userSession)
+        {
+            var claimsPrincipal = new ClaimsPrincipal();
+            if (userSession.Token != null || userSession.RefreshToken != null)
+            {
+                var serializeSession = Serializations.SerializeObject(userSession);
+                await localDataStrorage.SetToken(serializeSession);
+                var getUserClaims = DecryptToken(userSession.Token!);
+                claimsPrincipal = SetClaimPrincipal(getUserClaims);
+            }
+            else
+            {
+                await localDataStrorage.RemoveToken();
+            }
+
+            // Notify about authentication state change
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
         }
 
         // Set claims principal based on user claims
