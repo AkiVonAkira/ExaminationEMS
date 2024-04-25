@@ -8,7 +8,7 @@ namespace ClientLibrary.Helpers
 
         public async Task<HttpClient> GetPrivateHttpClient()
         {
-            var client = httpClientFactory.CreateClient("SystemApiClient");
+            var client = httpClientFactory.CreateClient("ServerApiClient");
             var stringToken = await localStrorage.GetToken();
 
             if (string.IsNullOrEmpty(stringToken)) return client;
