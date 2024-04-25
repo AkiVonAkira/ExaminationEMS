@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inherits LayoutComponentBase
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Client</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -24,6 +26,11 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
             </NavLink>
         </div>
+        <div class="nav-item px-3">
+             <NavLink class="nav-link"href="identity/account/login">Log in</NavLink>
+                <NavLink class="nav-link" href="identity/acount/login">Register</NavLink>
+                    <NavLink class="nav-link text-danger" @onclick="logoutClicked">Logout</NavLink>
+        </div>
     </nav>
 </div>
 
@@ -36,4 +43,12 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+    async Task logoutClicked()
+    {
+        var logoutModel = new UserSession();
+        var customAuthStateProvider = new(CustomAuthenticationStateProvider)AuthStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(logoutModel);
+        NavManager.NavigateTo("/", forceLoad: true);
+    }
 }
+
