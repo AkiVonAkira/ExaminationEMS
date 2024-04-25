@@ -1,10 +1,5 @@
 ﻿using BaseLibrary.DTOs;
 using BaseLibrary.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClientLibrary.Services.Contracts
 {
@@ -18,9 +13,5 @@ namespace ClientLibrary.Services.Contracts
 
         // Metod för att uppdatera användarens åtkomsttoken
         Task<LoginResponse> RefreshTokenAsync(RefreshToken token);
-
-        // Metod för att hämta väderprognos (testing purposes)
-        Task<WeatherForecast[]> GetWeatherForecast();
     }
-
 }

@@ -1,4 +1,5 @@
 ﻿@page "/identity/account/login"
+
 <div class="container">
     <div class="row">
         <div class="col-lg-6">
@@ -18,7 +19,6 @@
                         </div>
                         <div class="form-group mt-3">
                             <button class="btn btn-outline-primary float-end" type="submit">Login</button>
-
                         </div>
                     </div>
                 </div>
@@ -26,17 +26,18 @@
         </div>
     </div>
 </div>
-@code {
-        Login User = new();
-        async Task HandleLogin()
-        {
-            var result = await accountService.SignInAsync(User);
-            if (result.Flag)
-            {
 
-                var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
-                await customAuthStateProvider.UpdateAuthenticationState(new UserSession() { Token = result.Token, RefreshToken });
-                NavManager.NavigateTo("/", forceLoad: true);
-            }
+@code {
+    Login User = new();
+    async Task HandleLogin()
+    {
+        var result = await accountService.SignInAsync(User);
+        if (result.Flag)
+        {
+            var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+            await customAuthStateProvider.UpdateAuthenticationState(new UserSession() 
+            { Token = result.Token, RefreshToken = result.RefreshToken });
+            NavManager.NavigateTo("/", forceLoad: true);
         }
+    }
 }

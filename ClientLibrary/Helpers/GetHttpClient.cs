@@ -26,7 +26,7 @@ namespace ClientLibrary.Helpers
 
         public HttpClient GetPublicHttpClient()
         {
-            var client = httpClientFactory.CreateClient("SystemApiClient");
+            var client = httpClientFactory.CreateClient("ServerApiClient");
             client.DefaultRequestHeaders.Remove(HeadKey);
             return client;
         }

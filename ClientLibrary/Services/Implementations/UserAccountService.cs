@@ -19,7 +19,7 @@ namespace ClientLibrary.Services.Implementations
             return await result.Content.ReadFromJsonAsync<GeneralResponse>()!;
         }
 
-        public Task<LoginResponse> SignInAsync(Login user)
+        public async Task<LoginResponse> SignInAsync(Login user)
         {
             //för att logga in en användare
             var httpClient = getHttpClient.GetPublicHttpClient();
