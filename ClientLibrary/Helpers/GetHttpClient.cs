@@ -26,5 +26,12 @@ namespace ClientLibrary.Helpers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", deserializeToken.Token);    
         }
+
+        public HttpClient GetPublicHttpClient()
+        {
+            var client = httpClientFactory.CreateClient("SystemApiClient");
+            client.DefaultRequestHeaders.Remove(HeadKey);
+            return client; 
+        }
     }
 }
