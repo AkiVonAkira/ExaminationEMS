@@ -14,17 +14,8 @@ using System.Text;
 
 namespace ServerLibrary.Repositories.Implementations
 {
-    public class UserAccountRepository : IUserAccount
+    public class UserAccountRepository(IOptions<JwtSection> config, ApplicationDbContext applicationDbContext) : IUserAccount
     {
-        private readonly IOptions<JwtSection> config;
-        private readonly ApplicationDbContext applicationDbContext;
-
-        public UserAccountRepository(IOptions<JwtSection> _config, ApplicationDbContext _context)
-        {
-            config = _config;
-            applicationDbContext = _context;
-        }
-
         public async Task<GeneralResponse> CreateAsync(Register user)
         {
             if (user is null) return new GeneralResponse(false, "Response is empty");
@@ -84,6 +75,19 @@ namespace ServerLibrary.Repositories.Implementations
 
             string jwtToken = GenerateToken(applicationUser, getRoleName!.Name!);
             string refreshToken = GenerateRefreshToken();
+
+            // save the refresh token to the database
+            var findUser = await applicationDbContext.RefreshTokenInfos.FirstOrDefaultAsync(_ => _.UserId == applicationUser.Id);
+            if (findUser is not null)
+            {
+                findUser!.Token = refreshToken;
+                await applicationDbContext.SaveChangesAsync();
+            }
+            else
+            {
+                await AddToDatabase(new RefreshTokenInfo() { Token = refreshToken, UserId = applicationUser.Id });
+            }
+
             return new LoginResponse(true, "Login successfully", jwtToken, refreshToken);
         }
 
