@@ -24,17 +24,21 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <AuthorizeView>
-                <Authorized>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
                     <NavLink class="nav-link text-danger" @onclick="logoutClicked">Logout</NavLink>
-                </Authorized>
-                <NotAuthorized>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
                     <NavLink class="nav-link" href="identity/account/login">Log in</NavLink>
+                </div>
+                <div class="nav-item px-3">
                     <NavLink class="nav-link" href="identity/account/register">Register</NavLink>
-                </NotAuthorized>
-            </AuthorizeView>
-        </div>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
     </nav>
 </div>
 
@@ -47,6 +51,7 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
     async Task logoutClicked()
     {
         var logoutModel = new UserSession();
