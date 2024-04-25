@@ -11,7 +11,9 @@ namespace ClientLibrary.Helpers
             var client = httpClientFactory.CreateClient("SystemApiClient");
             var stringToken = await localStrorage.GetToken();
 
-            var deserializeToken = Serializations.DeserializesJsonString<UserSession>(stringToken);
+            if (string.IsNullOrEmpty(stringToken)) return client;
+
+            var deserializeToken = Serializations.DeserializeJson<UserSession>(stringToken);
 
             if (deserializeToken == null)
             {
@@ -19,6 +21,7 @@ namespace ClientLibrary.Helpers
             }
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", deserializeToken.Token);
+            return client;
         }
 
         public HttpClient GetPublicHttpClient()
