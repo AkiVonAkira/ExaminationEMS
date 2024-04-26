@@ -2,7 +2,7 @@
 
 namespace ClientLibrary.Helpers
 {
-    public class CustomHttpHandler : DelegatingHandler 
+    public class CustomHttpHandler(GetHttpClient getHttpClient, LocalStorageService localStorageService) : DelegatingHandler 
     {
         protected async override Task<HttpResponseMessage>SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -16,6 +16,22 @@ namespace ClientLibrary.Helpers
             var result = await base.SendAsync(request, cancellationToken);
             if (result.StatusCode == HttpStatusCode.Unauthorized)
             {
+                //Get token from localStorage
+                var stringToken = await localStorageService.GetToken();
+                if (stringToken != null) return result;
+                 
+                //Check if the header contains token
+                string token = string .Empty;
+                try { token = request.Headers.Authorization!.Parameter!; }
+                catch { }
+
+                var deserializedToken = Serializations.DeserializeJsonString<UserSession>(stringToken);
+                if (deserializedToken is null) return result;
+                if(string.IsNullOrEmpty(token))
+                {
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthorizationHeaderValue("Bearer", deserializedToken.Token);
+                    return await base.SendAsync(request, cancellationToken);
+                }
 
 
             }
