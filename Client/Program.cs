@@ -11,10 +11,11 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+builder.Services.AddTransient<CustomHttpHandler>();
 builder.Services.AddHttpClient("ServerApiClient", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7075/");
-});
+}).AddHttpMessageHandler<CustomHttpHandler>(); ;
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7075") });
 

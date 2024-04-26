@@ -2,7 +2,7 @@
 
 namespace ClientLibrary.Helpers
 {
-    public class CustomHttpHandler(GetHttpClient getHttpClient, LocalStorageService localStorageService) : DelegatingHandler 
+    public class CustomHttpHandler(GetHttpClient getHttpClient, LocalStorageService localStorageService,IUserAccountService accountService) : DelegatingHandler 
     {
         protected async override Task<HttpResponseMessage>SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -32,10 +32,22 @@ namespace ClientLibrary.Helpers
                     request.Headers.Authorization = new System.Net.Http.Headers.AuthorizationHeaderValue("Bearer", deserializedToken.Token);
                     return await base.SendAsync(request, cancellationToken);
                 }
+                // call for refresh token
+                var newJwtToken = await GetReshToken(deserializedToken.RefreshToken!);
+                if(string.IsNullOrEmpty(newJwtToken)) return result;
 
-
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthorizationHeaderValue("Bearer", newJwtToken.Token);
+                return await base.SendAsync(request, cancellationToken);
             }
             return result;
+
+        }
+        private async Task<string> GetRefreshToken(string refreshToken)
+        {
+            var result = await accountService.GetRefreshTokenAsync(new RefreshToken() { Token = refreshToken});
+            string serializedToken = Serializations.SerializeObj(new UserSession() { Token = result.Token, refreshToken = result.RefreshToken });
+            await localStorageService.SetToken(serializedToken);
+            return result.Token;
 
         }
     }
