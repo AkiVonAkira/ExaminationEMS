@@ -10,7 +10,7 @@
             <button title="Navigation menu" class="navbar-toggler" @onclick="AlwaysToggleNavMenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="">
+            <a class="@NavMenuCssClass navbar-brand" href="">
                 <AuthorizeView>
                     <Authorized>Hi, @context.User.Identity!.Name</Authorized>
                     <NotAuthorized>Welcome Guest</NotAuthorized>
@@ -49,7 +49,7 @@
                 </NotAuthorized>
                 <Authorized>
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link text-danger btn" @onclick="logoutClicked">
+                        <NavLink class="nav-link text-danger" style="cursor: pointer" @onclick="logoutClicked">
                             <i class="bi bi-door-closed-fill" style="width: 2rem;" aria-hidden="true"></i>
                             <p class="@NavMenuCssClass list-item-text p-0 m-0"> Logout</p>
                         </NavLink>

@@ -11,6 +11,8 @@
     margin: 0;
     margin-right: auto;
     font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .nav-item {
@@ -99,7 +101,7 @@
     }
 
     .collapse nav {
-        width: 5rem;
+        width: 5rem !important;
     }
 
     .nav-link {
@@ -136,8 +138,8 @@
 
     .sidebar {
         height: 100vh;
-        max-width: 250px;
-        min-width: fit-content !important;
+        max-width: 250px !important;
+        width: fit-content;
         position: sticky;
         top: 0;
     }
