@@ -1,35 +1,36 @@
-﻿@page "/identity/account/login"
+﻿@page "/identity/account/register"
 @using Client.Pages.OtherPages
 @layout AuthenticationLayout
-
-<style>
-    .mt-100 {
-        margin-top: 100%; /* Set margin-top to 100% */
-    }
-</style>
-
 <div class="container vh-100 w-100 d-flex justify-content-center align-items-center">
     <div class="col-lg-6">
-        <EditForm Enhance Model="User" OnValidSubmit="HandleLogin">
+        <EditForm Enhance Model="User" OnValidSubmit="HandleRegistration">
             <DataAnnotationsValidator />
             <div class="card bg-dark rounded-3 text-white fw-bold bg-opacity-50">
-                <div class="card-header text-center fs-5 mb-2">Login</div>
+                <div class="card-header text-center fs-5 mb-2">Register</div>
                 <div class="container">
                     <div class="row justify-content-center align-items-center">
                         <div class="col-lg-4 col-md-4 col-sm-4 text-center">
-                            <img class="rounded ratio-1x1" 
-                            src="../images/logos/koalaW.png" height="50" width="50" />
+                            <img class="rounded ratio-1x1"
+                                 src="../images/logos/koalaW.png" height="50" width="50" />
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <InputText @bind-Value="User.Fullname" class="form-control" autocomplete="nickname"></InputText>
+                    </div>
                     <div class="form-group mt-3">
                         <label class="form-label">Email</label>
                         <InputText @bind-Value="User.Email" class="form-control" autocomplete="username"></InputText>
                     </div>
                     <div class="form-group mt-3">
                         <label class="form-label">Password</label>
-                        <input type="password" @bind="User.Password" class="form-control" autocomplete="password"></input>
+                        <input type="password" @bind="User.Password" class="form-control" autocomplete="new-password"></input>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" @bind="User.ConfirmPassword" class="form-control" autocomplete="new-password"></input>
                     </div>
                     <div class="form-group mt-3">
                         @if (ShowLoadingButton)
@@ -38,22 +39,16 @@
                         }
                         else
                         {
-                            <button class="btn btn-outline-primary float-end" type="submit">Login</button>
+                            <button class="btn btn-outline-primary float-end" type="submit">Register</button>
                         }
                     </div>
                 </div>
                 <div class="card-footer">
                     <span>
-                        Don't have an account? |
-                        <a class="btn-link" href="identity/account/register">Sign Up Here</a>
+                        Have an account? |
+                        <a class="btn-link" href="identity/account/login">Sign In Here</a>
                     </span>
-                    <ValidationSummary class="list-unstyled" />
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        <ul class="validation-errors">
-                            <li class="validation-message">@errorMessage</li>
-                        </ul>
-                    }
+                    <ValidationSummary />
                 </div>
             </div>
         </EditForm>
@@ -62,8 +57,8 @@
 
 @code {
     public bool ShowLoadingButton { get; set; } = false;
-    public string errorMessage { get; set; } = "";
-    Login User = new();
+
+    Register User = new();
 
     [CascadingParameter] public Task<AuthenticationState> authenticationStateTask { get; set; }
     protected override async Task OnInitializedAsync()
@@ -71,20 +66,17 @@
         await CheckUserAuthentication();
     }
 
-    async Task HandleLogin()
+    async Task HandleRegistration()
     {
         ShowLoadingButton = true;
-        var result = await accountService.SignInAsync(User);
+        var result = await accountService.CreateAsync(User);
         if (result.Flag)
         {
-            var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
-            await customAuthStateProvider.UpdateAuthenticationState(new UserSession() 
-            { Token = result.Token, RefreshToken = result.RefreshToken });
-            NavManager.NavigateTo("/", forceLoad: true);
+            User = new();
         }
         else
         {
-            errorMessage = result.Message;
+
         }
         ShowLoadingButton = false;
     }
