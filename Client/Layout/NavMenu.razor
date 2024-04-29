@@ -3,57 +3,91 @@
 @using BaseLibrary.DTOs
 @using ClientLibrary.Helpers
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">
+@inject IJSRuntime JSRuntime
+<div class="sidebar">
+    <div class="top-row navbar navbar-dark">
+        <div class="container-fluid navbar-header">
+            <button title="Navigation menu" class="navbar-toggler" @onclick="AlwaysToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="">
+                <AuthorizeView>
+                    <Authorized>Hi, @context.User.Identity!.Name</Authorized>
+                    <NotAuthorized>Welcome Guest</NotAuthorized>
+                </AuthorizeView>
+            </a>
+        </div>
+    </div>
+
+    <div class="@NavMenuCssClass never-collapse nav-scrollable flex-column justify-content-between flex-grow">
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link align-items-center" href="" Match="NavLinkMatch.All" @onclick="ToggleNavMenu">
+                    <i class="bi bi-house-door-fill" style="width: 2rem;" aria-hidden="true"></i>
+                    <p class="@NavMenuCssClass list-item-text p-0 m-0"> Home</p>
+                </NavLink>
+            </div>
+
             <AuthorizeView>
-                <Authorized>Hi, @context.User.Identity!.Name</Authorized>
-                <NotAuthorized>Welcome Guest</NotAuthorized>
             </AuthorizeView>
-        </a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        </nav>
+        <nav class="flex-column">
+            <AuthorizeView>
+                <NotAuthorized>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="identity/account/login">
+                            <i class="bi bi-door-open-fill" style="width: 2rem;" aria-hidden="true"></i>
+                            <p class="@NavMenuCssClass list-item-text p-0 m-0"> Login</p>
+                        </NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="identity/account/register">
+                            <i class="bi bi-person-fill-add" style="width: 2rem;" aria-hidden="true"></i>
+                            <p class="@NavMenuCssClass list-item-text p-0 m-0"> Register</p>
+                        </NavLink>
+                    </div>
+                </NotAuthorized>
+                <Authorized>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link text-danger btn" @onclick="logoutClicked">
+                            <i class="bi bi-door-closed-fill" style="width: 2rem;" aria-hidden="true"></i>
+                            <p class="@NavMenuCssClass list-item-text p-0 m-0"> Logout</p>
+                        </NavLink>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </nav>
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link text-danger" @onclick="logoutClicked">Logout</NavLink>
-                </div>
-            </Authorized>
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="identity/account/login">Log in</NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="identity/account/register">Register</NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
-    </nav>
-</div>
-
 @code {
+    private bool IsWideScreen;
     private bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private bool MediaQueryMatch(string mediaQueryString)
+    {
+        return ((MarkupString)$"<style>@media {mediaQueryString} {{#__media-query-match{{}}</style>")
+            .ToString()
+            .Contains("#__media-query-match");
+    }
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : "@NavMenuCssClass";
 
     private void ToggleNavMenu()
+    {
+        IsWideScreen = MediaQueryMatch("(min-width: 641px)");
+        if (IsWideScreen) { return; }
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private void AlwaysToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
 
     async Task logoutClicked()
     {
+        ToggleNavMenu();
         var logoutModel = new UserSession();
         var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
         await customAuthStateProvider.UpdateAuthenticationState(logoutModel);

@@ -38,7 +38,7 @@
                         }
                         else
                         {
-                            <button class="btn btn-outline-primary float-end" type="submit">Register</button>
+                            <button class="btn btn-outline-primary float-end" type="submit">Login</button>
                         }
                     </div>
                 </div>
@@ -47,7 +47,13 @@
                         Don't have an account? |
                         <a class="btn-link" href="identity/account/register">Sign Up Here</a>
                     </span>
-                    <ValidationSummary />
+                    <ValidationSummary class="list-unstyled" />
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <ul class="validation-errors">
+                            <li class="validation-message">@errorMessage</li>
+                        </ul>
+                    }
                 </div>
             </div>
         </EditForm>
@@ -56,6 +62,7 @@
 
 @code {
     public bool ShowLoadingButton { get; set; } = false;
+    public string errorMessage { get; set; } = "";
     Login User = new();
     async Task HandleLogin()
     {
@@ -67,6 +74,10 @@
             await customAuthStateProvider.UpdateAuthenticationState(new UserSession() 
             { Token = result.Token, RefreshToken = result.RefreshToken });
             NavManager.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            errorMessage = result.Message;
         }
         ShowLoadingButton = false;
     }
