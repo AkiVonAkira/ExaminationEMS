@@ -2,19 +2,19 @@
 
 @inject NavigationManager NavManager
 @code {
-    [CascadingParameter] public Task<AuthenticationState> authenticationStateTask { get; set; }
-        protected override async Task OnInitializedAsync()
+    [CascadingParameter] public Task<AuthenticationState>? authenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask!).User;
+        if (user.Identity!.IsAuthenticated)
         {
-            var user = (await authenticationStateTask).User;
-            if (user.Identity!.IsAuthenticated)
-            {
-                NavManager.NavigateTo("/home/dashboard");
+            NavManager.NavigateTo("/home/dashboard");
 
-            } else 
-            {
-                NavManager.NavigateTo("/identity/account/login");
-            }
-
+        } else 
+        {
+            NavManager.NavigateTo("/identity/account/login");
         }
 
+    }
 }

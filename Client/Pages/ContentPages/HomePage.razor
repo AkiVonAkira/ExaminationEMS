@@ -2,7 +2,7 @@
 @using Client.Pages.AdministrationPages
 <TableBanner></TableBanner>
 @code {
-    [CascadingParameter] public Task<AuthenticationState> authenticationStateTask { get; set; }
+    [CascadingParameter] public Task<AuthenticationState>? authenticationStateTask { get; set; }
     protected override async Task OnInitializedAsync()
     {
         await CheckUserAuthentication();
@@ -10,7 +10,7 @@
 
     private async Task CheckUserAuthentication()
     {
-        var user = (await authenticationStateTask).User;
+        var user = (await authenticationStateTask!).User;
         bool isAuthenticated = user.Identity!.IsAuthenticated;
         if (!isAuthenticated)
         {

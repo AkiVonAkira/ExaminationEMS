@@ -1,0 +1,62 @@
+﻿@inject AuthenticationStateProvider AuthStateProvider
+
+<Bar Breakpoint="Breakpoint.Desktop"
+     Background="Background.Dark"
+     ThemeContrast="ThemeContrast.Dark">
+    <BarBrand>
+        <BarIcon IconName="customIcon" />
+        <BarLink To="/">Koala EMS</BarLink>
+    </BarBrand>
+    <BarToggler />
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <BarLink To="/home/dashboard">Home</BarLink>
+            </BarItem>
+            <BarItem>
+                <BarLink To="https://Github.com/AkiVonAkira/ExaminationEMS">
+                    <BarIcon Class="fa-brands fa-github"></BarIcon>
+                    GitHub
+                </BarLink>
+            </BarItem>
+        </BarStart>
+        <BarEnd>
+            <AuthorizeView>
+                <NotAuthorized>
+                    <BarItem>
+                        <Button Outline Color="Color.Primary" Class="me-4">
+                            <BarIcon Class="fa fa-right-to-bracket" style="width: 2rem;" aria-hidden="true"></BarIcon>
+                            <BarLabel To="/identity/account/login">Login</BarLabel>
+                        </Button>
+                    </BarItem>
+                    <BarItem>
+                        <Button Outline Color="Color.Secondary">
+                            <BarIcon Class="fa fa-user-plus" style="width: 2rem;" aria-hidden="true"></BarIcon>
+                            <BarLabel To="/identity/account/register">Register</BarLabel>
+                        </Button>
+                    </BarItem>
+                </NotAuthorized>
+                <Authorized>
+                    <BarItem>
+                        <Button Outline Color="Color.Danger" @onclick="logoutClicked">
+                            <BarIcon Class="fa fa-right-from-bracket" style="width: 2rem;" aria-hidden="true"></BarIcon>
+                            <BarLabel>Logout</BarLabel>
+                        </Button>
+                    </BarItem>
+                </Authorized>
+            </AuthorizeView>
+        </BarEnd>
+    </BarMenu>
+</Bar>
+
+@code {
+    RenderFragment customIcon =@<img src="../images/logos/koalaBG.jpg" style="width:32px; height: 32px; border-radius: 0.25rem;" />;
+
+    public async Task logoutClicked()
+    {
+        var logoutModel = new UserSession();
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(logoutModel);
+        NavManager.NavigateTo("/", forceLoad: true);
+    }
+}

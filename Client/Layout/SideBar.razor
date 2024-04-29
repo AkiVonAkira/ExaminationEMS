@@ -1,0 +1,71 @@
+﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
+@using BaseLibrary.DTOs
+@using ClientLibrary.Helpers
+
+<Bar Breakpoint="Breakpoint.Desktop" NavigationBreakpoint="Breakpoint.Tablet" ThemeContrast="ThemeContrast.Dark"
+     Mode="BarMode.VerticalInline" CollapseMode="BarCollapseMode.Small" MenuToggleBehavior=BarMenuToggleBehavior.AllowSingleMenu>
+    <BarToggler />
+    <BarBrand>
+        <BarItem>
+            <BarLink To="/home/dashboard">
+                <BarIcon IconName="customIcon" />
+                <AuthorizeView>
+                    <Authorized>Hi, @context.User.Identity!.Name</Authorized>
+                    <NotAuthorized>Welcome Guest</NotAuthorized>
+                </AuthorizeView>
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <BarDropdown @bind-Visible="administrationElementsVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.UserTie" />
+                        Administration
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem>User</BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <BarDropdown @bind-Visible="departmentElementsVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Book" />
+                        Department
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem>General</BarDropdownItem>
+                        <BarDropdownItem>Department</BarDropdownItem>
+                        <BarDropdownItem>Branch</BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+        </BarStart>
+        <BarEnd>
+            <BarItem>
+                <BarLink To="https://Github.com/AkiVonAkira/ExaminationEMS">
+                    <BarIcon Class="fa-brands fa-github"></BarIcon>
+                    GitHub
+                </BarLink>
+            </BarItem>
+        </BarEnd>
+    </BarMenu>
+</Bar>
+
+@code {
+    private bool administrationElementsVisible = true;
+    private bool departmentElementsVisible = false;
+
+    RenderFragment customIcon =@<img src="../images/logos/koalaW.png" style="width:32px; height: 32px" />;
+
+    public async Task logoutClicked()
+    {
+        var logoutModel = new UserSession();
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(logoutModel);
+        NavManager.NavigateTo("/", forceLoad: true);
+    }
+}

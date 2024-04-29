@@ -3,19 +3,18 @@
 @inherits LayoutComponentBase
 @attribute [Authorize]
 
-<div class="page">
-    <NavMenu/>
-    
-    <main>
-        <div class="top-row px-4">
-           <ProfileDropDown></ProfileDropDown>
-        </div>
-        <article class="content px-4">
+<Layout Sider>
+    <LayoutSider>
+        <LayoutSiderContent>
+            <SideBar />
+        </LayoutSiderContent>
+    </LayoutSider>
+    <Layout>
+        <LayoutHeader Fixed>
+            <TopBar />
+        </LayoutHeader>
+        <LayoutContent>
             @Body
-        </article>
-    </main>
-</div>
-
-@code {
-    
-}
+        </LayoutContent>
+    </Layout>
+</Layout>

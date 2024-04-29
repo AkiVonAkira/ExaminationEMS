@@ -1,66 +1,75 @@
 ﻿@page "/identity/account/login"
 @using Client.Pages.OtherPages
+@using System.ComponentModel.DataAnnotations
 @layout AuthenticationLayout
 
-<style>
-    .mt-100 {
-        margin-top: 100%; /* Set margin-top to 100% */
-    }
-</style>
-
-<div class="container vh-100 w-100 d-flex justify-content-center align-items-center">
-    <div class="col-lg-6">
-        <EditForm Enhance Model="User" OnValidSubmit="HandleLogin">
-            <DataAnnotationsValidator />
-            <div class="card bg-dark rounded-3 text-white fw-bold bg-opacity-50">
-                <div class="card-header text-center fs-5 mb-2">Login</div>
-                <div class="container">
-                    <div class="row justify-content-center align-items-center">
-                        <div class="col-lg-4 col-md-4 col-sm-4 text-center">
-                            <img class="rounded ratio-1x1" 
-                            src="../images/logos/koalaW.png" height="50" width="50" />
+<div class="container mx-auto h-screen w-64 sm:w-96 flex flex-col justify-center align-center">
+    <div class="mb-4">
+        <Validations @ref="validations" Mode="ValidationMode.Auto" Model="@User">
+            <Card Class="text-white bg-dark !bg-opacity-50">
+                <CardBody>
+                    <CardTitle>Login</CardTitle>
+                    <div class="container">
+                        <div class="flex flex-row justify-center align-center">
+                            <img class="rounded ratio-1x1"
+                                 src="../images/logos/koalaW.png" height="100" width="100" />
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <div class="form-group mt-3">
-                        <label class="form-label">Email</label>
-                        <InputText @bind-Value="User.Email" class="form-control" autocomplete="username"></InputText>
-                    </div>
-                    <div class="form-group mt-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" @bind="User.Password" class="form-control" autocomplete="password"></input>
-                    </div>
-                    <div class="form-group mt-3">
+                    <Validation>
+                        <Field Vertical>
+                            <FieldLabel ColumnSize="ColumnSize.Is2">Email *</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                <TextEdit Role="TextRole.Email" Placeholder="Enter email" 
+                                    @bind-Text="@User.Email">
+                                </TextEdit>
+                                <FieldHelp>We'll never share your email with anyone else.</FieldHelp>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field Vertical>
+                            <FieldLabel ColumnSize="ColumnSize.Is2">Password *</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                <TextEdit Role="TextRole.Password" Placeholder="Password" 
+                                    @bind-Text="@User.Password">
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <div class="flex flex-row justify-center align-center mt-3 px-2">
                         @if (ShowLoadingButton)
                         {
                             <ButtonLoadingSpinner></ButtonLoadingSpinner>
                         }
                         else
                         {
-                            <button class="btn btn-outline-primary float-end" type="submit">Login</button>
+                            <Button Color="Color.Primary" Clicked="@HandleLogin" Type="ButtonType.Submit">
+                                <i class="fa fa-right-to-bracket mr-2"></i> Login
+                            </Button>
                         }
                     </div>
-                </div>
-                <div class="card-footer">
-                    <span>
-                        Don't have an account? |
-                        <a class="btn-link" href="identity/account/register">Sign Up Here</a>
-                    </span>
-                    <ValidationSummary class="list-unstyled" />
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        <ul class="validation-errors">
-                            <li class="validation-message">@errorMessage</li>
-                        </ul>
-                    }
-                </div>
-            </div>
-        </EditForm>
+                    <CardFooter>
+                        <span>
+                            Don't have an account? |
+                            <a class="btn-link" href="identity/account/register">Sign Up Here</a>
+                        </span>
+                    </CardFooter>
+                </CardBody>
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <ListGroup Flush Class="p-2 !border-y-0 !bg-transparent">
+                        <ListGroupItem Color="Color.Danger" Class="rounded">@errorMessage</ListGroupItem>
+                    </ListGroup>
+                }
+            </Card>
+        </Validations>
     </div>
+    <ButtonReturnHome></ButtonReturnHome>
 </div>
 
 @code {
+    Validations? validations;
+
     public bool ShowLoadingButton { get; set; } = false;
     public string errorMessage { get; set; } = "";
     Login User = new();
@@ -73,20 +82,24 @@
 
     async Task HandleLogin()
     {
-        ShowLoadingButton = true;
-        var result = await accountService.SignInAsync(User);
-        if (result.Flag)
+        if (await validations!.ValidateAll())
         {
-            var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
-            await customAuthStateProvider.UpdateAuthenticationState(new UserSession() 
-            { Token = result.Token, RefreshToken = result.RefreshToken });
-            NavManager.NavigateTo("/", forceLoad: true);
-        }
-        else
-        {
+            ShowLoadingButton = true;
+            var result = await accountService.SignInAsync(User);
+            if (result.Flag)
+            {
+                var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+                await customAuthStateProvider.UpdateAuthenticationState(new UserSession()
+                    { Token = result.Token, RefreshToken = result.RefreshToken });
+                NavManager.NavigateTo("/", forceLoad: true);
+            }
+            else
+            {
+                errorMessage = result.Message;
+            }
+            ShowLoadingButton = false;
             errorMessage = result.Message;
         }
-        ShowLoadingButton = false;
     }
 
     private async Task CheckUserAuthentication()

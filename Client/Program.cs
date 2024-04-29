@@ -1,4 +1,8 @@
 using Blazored.LocalStorage;
+using Blazorise;
+using Blazorise.FluentValidation;
+using Blazorise.Icons.FontAwesome;
+using Blazorise.Tailwind;
 using Client;
 using ClientLibrary.Helpers;
 using ClientLibrary.Services.Contracts;
@@ -25,5 +29,11 @@ builder.Services.AddScoped<GetHttpClient>();
 builder.Services.AddScoped<LocalDataStrorage>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+
+builder.Services
+  .AddBlazorise()
+  .AddTailwindProviders()
+  .AddFontAwesomeIcons()
+  .AddBlazoriseFluentValidation();
 
 await builder.Build().RunAsync();
