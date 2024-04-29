@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -29,4 +29,8 @@
     <ProjectReference Include="..\ClientLibrary\ClientLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\background\" />
+    <Folder Include="wwwroot\images\logos\" />
+  </ItemGroup>
 </Project>
