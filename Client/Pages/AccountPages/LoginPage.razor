@@ -1,36 +1,65 @@
 ﻿@page "/identity/account/login"
+@using Client.Pages.OtherPages
+@layout AuthenticationLayout
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-6">
-            <EditForm Enhance Model="User" OnValidSubmit="HandleLogin">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div class="card">
-                    <div class="card-header">Fill this form to Login</div>
-                        <div class="card-body">
-                            <div class="form-group mt-3">
-                            <label class="form-label">Email</label>
-                            <InputText @bind-Value="User.Email" class="form-control"></InputText>
-                        </div>
-                        <div class="form-group mt-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" @bind="User.Password" class="form-control"></input>
-                        </div>
-                        <div class="form-group mt-3">
-                            <button class="btn btn-outline-primary float-end" type="submit">Login</button>
+<style>
+    .mt-100 {
+        margin-top: 100%; /* Set margin-top to 100% */
+    }
+</style>
+
+<div class="container vh-100 w-100 d-flex justify-content-center align-items-center">
+    <div class="col-lg-6">
+        <EditForm Enhance Model="User" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <div class="card bg-dark rounded-3 text-white fw-bold bg-opacity-50">
+                <div class="card-header text-center fs-5 mb-2">Login</div>
+                <div class="container">
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+                            <img class="rounded ratio-1x1" 
+                            src="../images/logos/koalaW.png" height="50" width="50" />
                         </div>
                     </div>
                 </div>
-            </EditForm>
-        </div>
+                <div class="card-body">
+                    <div class="form-group mt-3">
+                        <label class="form-label">Email</label>
+                        <InputText @bind-Value="User.Email" class="form-control" autocomplete="username"></InputText>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" @bind="User.Password" class="form-control" autocomplete="password"></input>
+                    </div>
+                    <div class="form-group mt-3">
+                        @if (ShowLoadingButton)
+                        {
+                            <ButtonLoadingSpinner></ButtonLoadingSpinner>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-primary float-end" type="submit">Register</button>
+                        }
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>
+                        Don't have an account? |
+                        <a class="btn-link" href="identity/account/register">Sign Up Here</a>
+                    </span>
+                    <ValidationSummary />
+                </div>
+            </div>
+        </EditForm>
     </div>
 </div>
 
 @code {
+    public bool ShowLoadingButton { get; set; } = false;
     Login User = new();
     async Task HandleLogin()
     {
+        ShowLoadingButton = true;
         var result = await accountService.SignInAsync(User);
         if (result.Flag)
         {
@@ -39,5 +68,6 @@
             { Token = result.Token, RefreshToken = result.RefreshToken });
             NavManager.NavigateTo("/", forceLoad: true);
         }
+        ShowLoadingButton = false;
     }
 }
