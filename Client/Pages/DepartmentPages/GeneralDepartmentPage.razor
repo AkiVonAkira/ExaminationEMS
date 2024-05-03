@@ -1,0 +1,70 @@
+﻿@using Client.ApplicationStates
+@implements IDisposable
+@inject DepartmentState departmentState
+
+<div class="container w-64 sm:w-96 mx-auto mt-4">
+    <CardDeck Class="flex-wrap gap-4 !flex-col">
+        <Card Border="Border.Primary" Background="Background.Transparent">
+            <CardHeader TextColor="TextColor.Black50"><i class="fa fa-user text-primary"></i>General Department</CardHeader>
+            <CardBody>
+                <Table>
+                    <TableHeader ThemeContrast="ThemeContrast.Dark">
+                        <TableRow>
+                            <TableHeaderCell>#</TableHeaderCell>
+                            <TableHeaderCell>First Name</TableHeaderCell>
+                            <TableHeaderCell>Last Name</TableHeaderCell>
+                            <TableHeaderCell>Username</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow>
+                            <TableRowHeader>1</TableRowHeader>
+                            <TableRowCell>Ilyas</TableRowCell>
+                            <TableRowCell>Kaya</TableRowCell>
+                            <TableRowCell>@@Turkish Delight</TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowHeader>2</TableRowHeader>
+                            <TableRowCell>Muse</TableRowCell>
+                            <TableRowCell>Yusuf</TableRowCell>
+                            <TableRowCell>@@Somalian FinalBoss</TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowHeader>3</TableRowHeader>
+                            <TableRowCell>Caius</TableRowCell>
+                            <TableRowCell>Matei</TableRowCell>
+                            <TableRowCell>@@Romanian Final Boss</TableRowCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </CardBody>
+            <CardFooter>
+                <Form>
+                    <Button Color="Color.Primary" @onclick="@OpenDialog">Add department</Button> 
+                </Form>
+            </CardFooter>
+        </Card>
+    </CardDeck>
+</div>
+
+<GeneralDepartmentDialog @ref="generalDepartmentDialog" /> 
+@code {
+    GeneralDepartmentDialog? generalDepartmentDialog; 
+    GeneralDepartmentDTO Department = new();
+
+    protected override void OnInitialized()
+    {
+        departmentState.GeneralDepartmentAction += StateHasChanged;
+    }
+
+    void OpenDialog()
+    {
+        generalDepartmentDialog?.OpenDialog();
+    }
+
+    public void Dispose()
+    {
+        departmentState.GeneralDepartmentAction -= StateHasChanged;
+    }
+}
+

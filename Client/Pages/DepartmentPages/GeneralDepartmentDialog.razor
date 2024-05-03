@@ -1,0 +1,57 @@
+﻿@using Blazored.Toast.Services
+@inject ToastService ToastService
+
+<Button Color="Color.Primary" Clicked="@OpenDialog">Add Department</Button>
+
+<Modal @ref="modalRef">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Add Department</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                <FieldLabel>Department</FieldLabel>
+                <TextEdit Placeholder="Enter name..." />
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Clicked="@HideModal">Save Changes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter] public GeneralDepartmentDTO Department { get; set; } = new();
+    private bool IsVisible { get; set; } = false;
+    public void OpenDialog()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+    async void SaveChanges()
+    {
+        if(string.IsNullOrEmpty(Department.Name))
+        await ToastService.ShowToastAsync("Department name is required");
+        else
+        {
+            await ToastService.ShowToastAsync("Department added successfully");
+            IsVisible = false;
+        }
+           
+    }
+    // reference to the modal component
+    private Modal modalRef;
+
+    private Task ShowModal()
+    {
+        return modalRef.Show();
+    }
+
+    private Task HideModal()
+    {
+        return modalRef.Hide();
+    }
+
+}

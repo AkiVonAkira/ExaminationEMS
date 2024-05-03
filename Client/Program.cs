@@ -4,6 +4,7 @@ using Blazorise.FluentValidation;
 using Blazorise.Icons.FontAwesome;
 using Blazorise.Tailwind;
 using Client;
+using Client.ApplicationStates;
 using ClientLibrary.Helpers;
 using ClientLibrary.Services.Contracts;
 using ClientLibrary.Services.Implementations;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<GetHttpClient>();
 builder.Services.AddScoped<LocalDataStrorage>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<DepartmentState>();
 
 builder.Services
   .AddBlazorise()

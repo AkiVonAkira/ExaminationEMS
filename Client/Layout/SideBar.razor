@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthStateProvider
+@inject DepartmentState departmentState
 @using BaseLibrary.DTOs
+@using Client.ApplicationStates
 @using ClientLibrary.Helpers
 
 <Bar Breakpoint="Breakpoint.Desktop" NavigationBreakpoint="Breakpoint.Tablet" ThemeContrast="ThemeContrast.Dark"
@@ -23,7 +25,7 @@
                 <BarDropdown @bind-Visible="administrationElementsVisible">
                     <BarDropdownToggle>
                         <BarIcon IconName="IconName.UserTie" />
-                        Administration
+                        <Button @onclick="ShowHideDepartment">Administration</Button>
                     </BarDropdownToggle>
                     <BarDropdownMenu>
                         <BarDropdownItem>User</BarDropdownItem>
@@ -34,7 +36,7 @@
                 <BarDropdown @bind-Visible="departmentElementsVisible">
                     <BarDropdownToggle>
                         <BarIcon IconName="IconName.Book" />
-                        Department
+                        <Button @onclick="GeneralDepartmentClicked">Department</Button>
                     </BarDropdownToggle>
                     <BarDropdownMenu>
                         <BarDropdownItem>General</BarDropdownItem>
@@ -68,4 +70,44 @@
         await customAuthStateProvider.UpdateAuthenticationState(logoutModel);
         NavManager.NavigateTo("/", forceLoad: true);
     }
+
+    
+
+    public string DepartmentCssStyle => departmentElementsVisible ? "show" : "hidden";
+    public bool ShowhideDepartment { get; set; } = false;
+
+    public void ShowHideDepartment()
+    {
+        ShowhideDepartment = !ShowhideDepartment;
+        departmentElementsVisible = ShowhideDepartment;
+    }
+
+    private void GeneralDepartmentClicked()
+    {
+        departmentState.GeneralDepartmentClicked();
+    }
+
+    // private bool administrationElementsVisible = true;
+    // private bool departmentElementsVisible = false;
+
+    // private string DepartmentCssStyle = "hidden";
+    // public bool ShowhideDepartment { get; set; } = false;
+    // public void showhideDepartmentContainer()
+    // {
+    //     ShowhideDepartment = !ShowhideDepartment;
+
+    //     if (ShowhideDepartment)
+    //     {
+    //         DepartmentCssStyle = "show";
+    //     }
+    //     else
+    //     {
+    //         DepartmentCssStyle = "hidden";
+    //     }
+    // }
+    // private void GeneralDepartmentClicked()
+    // {
+    //     departmentstate.GeneralDepartmentClicked();
+    // }
+
 }
