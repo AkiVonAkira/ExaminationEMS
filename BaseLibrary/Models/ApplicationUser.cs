@@ -1,4 +1,4 @@
-﻿namespace BaseLibrary.Models
+﻿ namespace BaseLibrary.Models
 {
     public class ApplicationUser
     {

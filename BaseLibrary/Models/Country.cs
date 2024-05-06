@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace BaseLibrary.Models
 {
-   
-    public class City : BaseEntity
+    public class Country
     {
         // en till många relation med City
-        public Country? Country { get; set; }
-        public int CountryId { get; set; }
+        public List<City>? Cities { get; set; }
+        
     }
 }

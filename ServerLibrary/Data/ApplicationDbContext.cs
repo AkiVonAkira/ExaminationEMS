@@ -14,7 +14,7 @@ namespace ServerLibrary.Data
         public DbSet<GeneralDepartment> GeneralDepartments { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Section> Sections { get; set; }
-        public DbSet<City> Cities { get; set; }
+        public DbSet<State> States { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<SystemRole> SystemRoles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
