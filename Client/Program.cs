@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Blazored.Toast;
 using Blazorise;
 using Blazorise.FluentValidation;
 using Blazorise.Icons.FontAwesome;
@@ -36,6 +37,7 @@ builder.Services
   .AddBlazorise()
   .AddTailwindProviders()
   .AddFontAwesomeIcons()
-  .AddBlazoriseFluentValidation();
+  .AddBlazoriseFluentValidation()
+  .AddBlazoredToast();
 
 await builder.Build().RunAsync();

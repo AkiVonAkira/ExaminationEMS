@@ -1,9 +1,7 @@
-﻿@using Blazored.Toast.Services
-@inject ToastService ToastService
+﻿@inject Blazorise.IToastService ToastService
+@* <Button Color="Color.Primary" Clicked="@OpenDialog">Add Department</Button> *@
 
-<Button Color="Color.Primary" Clicked="@OpenDialog">Add Department</Button>
-
-<Modal @ref="modalRef">
+<Modal @ref="generalDepartmentDialog" @bind-Visible="IsVisible">
     <ModalContent Centered>
         <ModalHeader>
             <ModalTitle>Add Department</ModalTitle>
@@ -25,33 +23,37 @@
 @code {
     [Parameter] public GeneralDepartmentDTO Department { get; set; } = new();
     private bool IsVisible { get; set; } = false;
+
     public void OpenDialog()
     {
         IsVisible = true;
+        ShowModal();
         StateHasChanged();
     }
+
     async void SaveChanges()
     {
         if(string.IsNullOrEmpty(Department.Name))
-        await ToastService.ShowToastAsync("Department name is required");
+        await ToastService.Error("Department name is required", "Missing Field");
         else
         {
-            await ToastService.ShowToastAsync("Department added successfully");
+            await ToastService.Success("Department added successfully", "Saved Changes");
             IsVisible = false;
         }
            
     }
+
     // reference to the modal component
-    private Modal modalRef;
+    private Modal generalDepartmentDialog;
 
     private Task ShowModal()
     {
-        return modalRef.Show();
+        return generalDepartmentDialog.Show();
     }
 
     private Task HideModal()
     {
-        return modalRef.Hide();
+        return generalDepartmentDialog.Hide();
     }
 
 }

@@ -2,8 +2,9 @@
 @layout MainLayout
 @using Client.Pages.AdministrationPages
 @using Client.Pages.DepartmentPages
+
 <TableBanner></TableBanner>
-<GeneralDepartmentPage />
+
 @code {
     [CascadingParameter] public Task<AuthenticationState>? authenticationStateTask { get; set; }
     protected override async Task OnInitializedAsync()

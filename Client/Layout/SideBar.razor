@@ -7,7 +7,9 @@
 
 <Bar Breakpoint="Breakpoint.Desktop" NavigationBreakpoint="Breakpoint.Tablet" ThemeContrast="ThemeContrast.Dark"
      Mode="BarMode.VerticalInline" CollapseMode="BarCollapseMode.Small" MenuToggleBehavior=BarMenuToggleBehavior.AllowSingleMenu>
+
     <BarToggler />
+    
     <BarBrand>
         <BarItem>
             <BarLink To="/home/dashboard">
@@ -19,13 +21,14 @@
             </BarLink>
         </BarItem>
     </BarBrand>
+
     <BarMenu>
         <BarStart>
             <BarItem>
                 <BarDropdown @bind-Visible="administrationElementsVisible">
                     <BarDropdownToggle>
                         <BarIcon IconName="IconName.UserTie" />
-                        <Button @onclick="ShowHideDepartment">Administration</Button>
+                        Administration
                     </BarDropdownToggle>
                     <BarDropdownMenu>
                         <BarDropdownItem>User</BarDropdownItem>
@@ -36,16 +39,20 @@
                 <BarDropdown @bind-Visible="departmentElementsVisible">
                     <BarDropdownToggle>
                         <BarIcon IconName="IconName.Book" />
-                        <Button @onclick="GeneralDepartmentClicked">Department</Button>
+                        Department
                     </BarDropdownToggle>
                     <BarDropdownMenu>
-                        <BarDropdownItem>General</BarDropdownItem>
+                        <BarDropdownItem @onclick="GeneralDepartmentClicked">
+                            <BarIcon IconName="IconName.Users" />
+                            General
+                        </BarDropdownItem>
                         <BarDropdownItem>Department</BarDropdownItem>
                         <BarDropdownItem>Branch</BarDropdownItem>
                     </BarDropdownMenu>
                 </BarDropdown>
             </BarItem>
         </BarStart>
+
         <BarEnd>
             <BarItem>
                 <BarLink To="https://Github.com/AkiVonAkira/ExaminationEMS">
@@ -54,12 +61,13 @@
                 </BarLink>
             </BarItem>
         </BarEnd>
+
     </BarMenu>
 </Bar>
 
 @code {
-    private bool administrationElementsVisible = true;
-    private bool departmentElementsVisible = false;
+    private bool administrationElementsVisible = false;
+    private bool departmentElementsVisible = true;
 
     RenderFragment customIcon =@<img src="../images/logos/koalaW.png" style="width:32px; height: 32px" />;
 
@@ -71,43 +79,11 @@
         NavManager.NavigateTo("/", forceLoad: true);
     }
 
-    
-
-    public string DepartmentCssStyle => departmentElementsVisible ? "show" : "hidden";
     public bool ShowhideDepartment { get; set; } = false;
-
-    public void ShowHideDepartment()
-    {
-        ShowhideDepartment = !ShowhideDepartment;
-        departmentElementsVisible = ShowhideDepartment;
-    }
 
     private void GeneralDepartmentClicked()
     {
-        departmentState.GeneralDepartmentClicked();
+        ShowhideDepartment = !departmentState.ShowGeneralDepartment;
+        departmentState.GeneralDepartmentClicked(ShowhideDepartment);
     }
-
-    // private bool administrationElementsVisible = true;
-    // private bool departmentElementsVisible = false;
-
-    // private string DepartmentCssStyle = "hidden";
-    // public bool ShowhideDepartment { get; set; } = false;
-    // public void showhideDepartmentContainer()
-    // {
-    //     ShowhideDepartment = !ShowhideDepartment;
-
-    //     if (ShowhideDepartment)
-    //     {
-    //         DepartmentCssStyle = "show";
-    //     }
-    //     else
-    //     {
-    //         DepartmentCssStyle = "hidden";
-    //     }
-    // }
-    // private void GeneralDepartmentClicked()
-    // {
-    //     departmentstate.GeneralDepartmentClicked();
-    // }
-
 }
