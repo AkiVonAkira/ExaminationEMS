@@ -1,4 +1,5 @@
-﻿@inject Blazorise.IToastService ToastService
+﻿@using BaseLibrary.Models
+@inject Blazorise.IToastService ToastService
 @* <Button Color="Color.Primary" Clicked="@OpenDialog">Add Department</Button> *@
 
 <Modal @ref="generalDepartmentDialog" @bind-Visible="IsVisible">
@@ -21,7 +22,7 @@
 </Modal>
 
 @code {
-    [Parameter] public GeneralDepartmentDTO Department { get; set; } = new();
+    [Parameter] public GeneralDepartment Department { get; set; } = new();
     private bool IsVisible { get; set; } = false;
 
     public void OpenDialog()
