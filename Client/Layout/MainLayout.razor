@@ -3,17 +3,17 @@
 @inherits LayoutComponentBase
 @attribute [Authorize]
 
-<Layout Sider>
-    <LayoutSider>
-        <LayoutSiderContent>
-            <SideBar />
-        </LayoutSiderContent>
-    </LayoutSider>
-    <Layout>
-        <LayoutHeader Fixed>
-            <TopBar />
-        </LayoutHeader>
-        <LayoutContent>
+<Layout>
+    <LayoutHeader Fixed>
+        <TopBar />
+    </LayoutHeader>
+    <Layout Sider>
+        <LayoutSider>
+            <LayoutSiderContent>
+                <SideBar />
+            </LayoutSiderContent>
+        </LayoutSider>
+        <LayoutContent Background="Background.Body" TextColor="TextColor.White">
             @Body
         </LayoutContent>
     </Layout>

@@ -2,18 +2,17 @@
 {
     public class DepartmentState
     {
-        
         public Action? GeneralDepartmentAction { get; set; }
 
         public bool ShowGeneralDepartment { get; set; }
 
         // En metod som hanterar klickhändelsen för General Department.
-        // Återställer alla avdelningar, visar General Departmentn och 
+        // Återställer alla avdelningar, visar General Departmentn och
         // kör den tilldelade åtgärden för General Department om det finns någon.
-        public void GeneralDepartmentClicked()
+        public void GeneralDepartmentClicked(bool enabled)
         {
             ResetAllDepartments(); // Återställer alla avdelningar
-            ShowGeneralDepartment = true; // Visar General Department
+            ShowGeneralDepartment = enabled; // Visar General Department
             GeneralDepartmentAction?.Invoke(); // Kör den tilldelade åtgärden för General Department om det finns någon.
         }
 
@@ -22,6 +21,5 @@
         {
             ShowGeneralDepartment = false; // vilket återställer General Department.
         }
-
     }
 }
