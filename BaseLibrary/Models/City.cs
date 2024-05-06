@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BaseLibrary.Models
+﻿namespace BaseLibrary.Models
 {
-   
+
     public class City : BaseEntity
     {
         // en till många relation med City
