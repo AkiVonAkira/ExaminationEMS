@@ -1,6 +1,6 @@
 ﻿namespace BaseLibrary.Models
 {
-    public class State : BaseEntity
+    public class State : BaseModel
     {
         // en till många relation med Employee
         public List<Employee>? Employees { get; set; }

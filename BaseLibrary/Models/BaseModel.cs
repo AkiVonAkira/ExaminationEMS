@@ -2,7 +2,7 @@
 
 namespace BaseLibrary.Models
 {
-    public class BaseEntity
+    public class BaseModel
     {
         public int Id { get; set; }
 

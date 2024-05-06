@@ -1,6 +1,6 @@
 ﻿namespace BaseLibrary.Models
 {
-    public class Department : BaseEntity
+    public class Department : BaseModel
     {
         // många till en relation med General Department
         public GeneralDepartment? GeneralDepartment { get; set; }
