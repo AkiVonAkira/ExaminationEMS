@@ -20,8 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Data\" />
+	<Folder Include="Migrations\" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj" />
   </ItemGroup>
