@@ -9,6 +9,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load configuration
+builder.Configuration.AddJsonFile("appsettings.json");
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -19,12 +22,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<JwtSection>(builder.Configuration.GetSection("JwtSection"));
 var jwtSection = builder.Configuration.GetSection(nameof(JwtSection)).Get<JwtSection>();
 
-// Start Database Connection.
-//builder.Services.AddDbContext<ApplicationDbContext>();
-builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+// Register a factory for creation of DbContext instances.
+builder.Services.AddDbContextFactory<ApplicationDbContext>((serviceProvider, optionsBuilder) =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ??
-        throw new InvalidOperationException("Sorry no Database Connection was found!"));
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+    optionsBuilder.UseSqlServer(connectionString);
 });
 
 builder.Services.AddAuthentication(options =>
@@ -72,5 +76,10 @@ app.UseAuthorization();
 app.UseAuthentication();
 
 app.MapControllers();
+
+// call the DbContextFactory if needed
+// For example, when running migrations
+var dbContextFactory = app.Services.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
+using var dbContext = dbContextFactory.CreateDbContext();
 
 app.Run();
