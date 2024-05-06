@@ -5,16 +5,16 @@
 
 @if (departmentState.ShowGeneralDepartment)
 {
-    <Card Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.Light">
-        <CardHeader TextColor="TextColor.White50">
+    <Card Border="Border.Primary" Background="Background.Transparent" TextColor="TextColor.White">
+        <CardHeader TextColor="TextColor.White">
             <i class="fa fa-user text-primary"></i>
             General Department
             <CloseButton Class="float-end" onclick="@GeneralDepartmentClicked"></CloseButton>
         </CardHeader>
         <CardBody>
             <Table Class="rounded">
-                <TableHeader ThemeContrast="ThemeContrast.Dark">
-                    <TableRow>
+                <TableHeader TextColor="TextColor.White">
+                    <TableRow Background="Background.Primary">
                         <TableHeaderCell>#</TableHeaderCell>
                         <TableHeaderCell>First Name</TableHeaderCell>
                         <TableHeaderCell>Last Name</TableHeaderCell>
@@ -22,19 +22,19 @@
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <TableRow>
+                    <TableRow Background="Background.Transparent">
                         <TableRowHeader>1</TableRowHeader>
                         <TableRowCell>Ilyas</TableRowCell>
                         <TableRowCell>Kaya</TableRowCell>
                         <TableRowCell>@@Turkish Delight</TableRowCell>
-                    </TableRow>
-                    <TableRow>
+                    </TableRow Background="Background.Transparent">
+                    <TableRow Background="Background.Transparent">
                         <TableRowHeader>2</TableRowHeader>
                         <TableRowCell>Muse</TableRowCell>
                         <TableRowCell>Yusuf</TableRowCell>
                         <TableRowCell>@@Somalian FinalBoss</TableRowCell>
                     </TableRow>
-                    <TableRow>
+                    <TableRow Background="Background.Transparent">
                         <TableRowHeader>3</TableRowHeader>
                         <TableRowCell>Caius</TableRowCell>
                         <TableRowCell>Matei</TableRowCell>
