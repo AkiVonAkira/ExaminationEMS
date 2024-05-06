@@ -1,4 +1,4 @@
-﻿@page "/identity/account/login"
+﻿@page "/identity/account/register"
 @using Client.Pages.OtherPages
 @using System.ComponentModel.DataAnnotations
 @layout AuthenticationLayout
@@ -8,7 +8,7 @@
         <Validations @ref="validations" Mode="ValidationMode.Auto" Model="@User">
             <Card Class="text-white bg-dark !bg-opacity-50">
                 <CardBody>
-                    <CardTitle>Login</CardTitle>
+                    <CardTitle>Register</CardTitle>
                     <div class="container">
                         <div class="flex flex-row justify-center align-center">
                             <img class="rounded ratio-1x1"
@@ -17,10 +17,20 @@
                     </div>
                     <Validation>
                         <Field Vertical>
+                            <FieldLabel ColumnSize="ColumnSize.Is2">Full Name *</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                <TextEdit Role="TextRole.Text" Placeholder="Enter your full name"
+                                          @bind-Text="@User.Fullname">
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field Vertical>
                             <FieldLabel ColumnSize="ColumnSize.Is2">Email *</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10">
-                                <TextEdit Role="TextRole.Email" Placeholder="Enter email" 
-                                    @bind-Text="@User.Email">
+                                <TextEdit Role="TextRole.Email" Placeholder="Enter email"
+                                          @bind-Text="@User.Email">
                                 </TextEdit>
                                 <FieldHelp>We'll never share your email with anyone else.</FieldHelp>
                             </FieldBody>
@@ -30,8 +40,21 @@
                         <Field Vertical>
                             <FieldLabel ColumnSize="ColumnSize.Is2">Password *</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10">
-                                <TextEdit Role="TextRole.Password" Placeholder="Password" 
-                                    @bind-Text="@User.Password">
+                                <TextEdit Role="TextRole.Password" Placeholder="Password"
+                                          @bind-Text="@User.Password" autocomplete="new-password">
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation Validator="@ValidatePassword2Auto">
+                        <Field Vertical>
+                            <FieldLabel ColumnSize="ColumnSize.Is2">Confirm Password *</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                <TextEdit Role="TextRole.Password" Placeholder="Confirm Password"
+                                        @bind-Text="@User.ConfirmPassword" autocomplete="new-password">
+                                    <Feedback>
+                                        <ValidationError>Password does not match!</ValidationError>
+                                    </Feedback>
                                 </TextEdit>
                             </FieldBody>
                         </Field>
@@ -43,15 +66,15 @@
                         }
                         else
                         {
-                            <Button Color="Color.Primary" Clicked="@HandleLogin" Type="ButtonType.Submit">
-                                <i class="fa fa-right-to-bracket mr-2"></i> Login
+                            <Button Color="Color.Primary" Clicked="@HandleRegistration" Type="ButtonType.Submit">
+                                <i class="fa fa-right-to-bracket mr-2"></i> Register
                             </Button>
                         }
                     </div>
                     <CardFooter>
                         <span>
-                            Don't have an account? |
-                            <a class="btn-link" href="identity/account/register">Sign Up Here</a>
+                            Have an account? |
+                            <a class="btn-link" href="identity/account/login">Sign In Here</a>
                         </span>
                     </CardFooter>
                 </CardBody>
@@ -72,26 +95,24 @@
 
     public bool ShowLoadingButton { get; set; } = false;
     public string errorMessage { get; set; } = "";
-    Login User = new();
+    Register User = new();
 
-    [CascadingParameter] public Task<AuthenticationState> authenticationStateTask { get; set; }
+    [CascadingParameter] public Task<AuthenticationState>? authenticationStateTask { get; set; }
     protected override async Task OnInitializedAsync()
     {
         await CheckUserAuthentication();
     }
 
-    async Task HandleLogin()
+    async Task HandleRegistration()
     {
         if (await validations!.ValidateAll())
         {
             ShowLoadingButton = true;
-            var result = await accountService.SignInAsync(User);
+            var result = await accountService.CreateAsync(User);
             if (result.Flag)
             {
-                var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
-                await customAuthStateProvider.UpdateAuthenticationState(new UserSession()
-                    { Token = result.Token, RefreshToken = result.RefreshToken });
-                NavManager.NavigateTo("/", forceLoad: true);
+                User = new();
+                NavManager.NavigateTo("/identity/account/login");
             }
             else
             {
@@ -104,11 +125,30 @@
 
     private async Task CheckUserAuthentication()
     {
-        var user = (await authenticationStateTask).User;
+        var user = (await authenticationStateTask!).User;
         bool isAuthenticated = user.Identity!.IsAuthenticated;
         if (isAuthenticated)
         {
             NavManager.NavigateTo("/home/dashboard");
+        }
+    }
+
+    void ValidatePassword2Auto(ValidatorEventArgs e)
+    {
+        var password2 = Convert.ToString(e.Value);
+
+        if (password2?.Length < 5)
+        {
+            e.Status = ValidationStatus.Error;
+            e.ErrorText = "Password must be at least 5 characters long!";
+        }
+        else if (password2 != User.Password)
+        {
+            e.Status = ValidationStatus.Error;
+        }
+        else
+        {
+            e.Status = ValidationStatus.Success;
         }
     }
 }

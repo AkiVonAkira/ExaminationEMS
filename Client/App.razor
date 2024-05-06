@@ -1,17 +1,90 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Blazorise.Snackbar
+@using Blazorise.Themes
+
 <CascadingAuthenticationState>
-<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-            <Authorizing>Please wait a moment...</Authorizing>
-        </AuthorizeRouteView>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>   
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+    <ThemeProvider Theme="@darkTheme">
+        <Router AppAssembly="@typeof(App).Assembly">
+            <Found Context="routeData">
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                    <Authorizing>
+                        <Snackbar IsOpen="true" Message="Please wait a moment..." BackgroundColor="Color.Info" />
+                    </Authorizing>
+                    </AuthorizeRouteView>
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            </Found>
+            <NotFound>   
+                <PageTitle>Not found</PageTitle>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <Jumbotron Background="Background.Danger" Class="container w-64 sm:w-96 mx-auto mt-4 rounded-4">
+                        <JumbotronTitle Size="JumbotronTitleSize.Is4">Not Found!</JumbotronTitle>
+                        <JumbotronSubtitle>Sorry, there's nothing at this address.</JumbotronSubtitle>
+                        <Button Color="Color.Primary" Type="ButtonType.Link" To="/">Go Back Home?</Button>
+                    </Jumbotron>
+                </LayoutView>
+            </NotFound>
+        </Router>
+    </ThemeProvider>
+    <ToastProvider />
 </CascadingAuthenticationState>
+
+@code {
+    [Inject] IPageProgressService? PageProgressService { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SetPageProgress25();
+        }
+    }
+
+    private Task SetPageProgress25()
+    {
+        return PageProgressService!.Go(25, options => { options.Color = Color.Warning; });
+    }
+
+    private Theme darkTheme = new Theme
+    {
+        TextColorOptions = new ThemeTextColorOptions
+        {
+            Light = "#fff",
+            Black50 = "#1f2937"
+        },
+        BackgroundOptions = new ThemeBackgroundOptions
+        {
+            Body = "#2c2c2c"
+        },
+        BodyOptions = new ThemeBodyOptions
+        {
+            BackgroundColor = "#2c2c2c"
+        },
+        TableOptions = new ThemeTableOptions
+        {
+            BorderRadius = "2em"
+        },
+        IsRounded = true,
+    };
+
+    private Theme lightTheme = new Theme
+    {
+        TextColorOptions = new ThemeTextColorOptions
+        {
+            Light = "#fff",
+            Black50 = "#1f2937"
+        },
+        BackgroundOptions = new ThemeBackgroundOptions
+        {
+            Body = "#2c2c2c"
+        },
+        BodyOptions = new ThemeBodyOptions
+        {
+        BackgroundColor = "#2c2c2c"
+        },
+        TableOptions = new ThemeTableOptions
+        {
+            BorderRadius = "2em"
+        },
+        IsRounded = true,
+    };
+}
