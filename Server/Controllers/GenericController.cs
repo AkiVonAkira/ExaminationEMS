@@ -19,7 +19,7 @@ namespace Server.Controllers
         [HttpGet("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            if(id <= 0)
+            if (id <= 0)
             {
                 return BadRequest("Sorry, Invalid request sent, Try again");
             }
@@ -29,7 +29,7 @@ namespace Server.Controllers
         [HttpGet("singleget/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            if(id <= 0)
+            if (id <= 0)
             {
                 return BadRequest("Sorry, Invalid request sent, Try again");
             }
@@ -39,7 +39,7 @@ namespace Server.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> Add(T model)
         {
-            if(model is null)
+            if (model is null)
             {
                 return BadRequest("Sorry, Invalid request made, Try again");
             }
@@ -49,13 +49,11 @@ namespace Server.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> Update(T model)
         {
-            if(model is null)
+            if (model is null)
             {
                 return BadRequest("Sorry, Invalid request made, Try again");
             }
             return Ok(await genericRepositoryInterface.Update(model));
         }
-
-
     }
 }
