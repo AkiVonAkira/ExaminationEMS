@@ -57,5 +57,11 @@ namespace ServerLibrary.Repositories.Implementations
         {
             await applicationDbContext.SaveChangesAsync();
         }
+
+        private async Task<bool> CheckName(string name)
+        {
+            var nameItem = await applicationDbContext.Departments.FirstOrDefaultAsync(x => x.Name!.ToLower().Equals(name.ToLower()));
+            return nameItem is null;
+        }
     }
 }
