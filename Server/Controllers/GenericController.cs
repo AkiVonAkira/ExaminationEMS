@@ -16,7 +16,7 @@ namespace Server.Controllers
             return Ok(await genericRepositoryInterface.GetAll());
         }
 
-        [HttpGet("delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             if (id <= 0)
@@ -46,7 +46,7 @@ namespace Server.Controllers
             return Ok(await genericRepositoryInterface.Insert(model));
         }
 
-        [HttpPost("update")]
+        [HttpPut("update")]
         public async Task<IActionResult> Update(T model)
         {
             if (model is null)
