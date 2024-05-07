@@ -1,40 +1,69 @@
 ﻿using BaseLibrary.Models;
 using BaseLibrary.Responses;
+using Microsoft.EntityFrameworkCore;
 using ServerLibrary.Data;
 using ServerLibrary.Repositories.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerLibrary.Repositories.Implementations
 {
     public class DepartmentRepository(ApplicationDbContext applicationDbContext) : IGenericRepositoryInterface<Department>
     {
-        public Task<GeneralResponse> DeleteById(int id)
+        public async Task<GeneralResponse> DeleteById(int id)
         {
-            throw new NotImplementedException();
+            var department = await applicationDbContext.Departments.FindAsync(id);
+            if (department is null)
+            {
+                return NotFound();
+            }
+
+            applicationDbContext.Departments.Remove(department);
+            await Commit();
+            return Success();
         }
 
-        public Task<List<Department>> GetAll()
+        public async Task<List<Department>> GetAll() => await applicationDbContext.Departments.ToListAsync();
+
+        public async Task<Department> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await applicationDbContext.Departments.FindAsync(id);
         }
 
-        public Task<Department> GetById(int id)
+        public async Task<GeneralResponse> Insert(Department item)
         {
-            throw new NotImplementedException();
+            if (!await CheckName(item.Name!))
+            {
+                return new GeneralResponse(false, "Sorry Department already exists");
+            }
+            applicationDbContext.Departments.Add(item);
+            await Commit();
+            return Success();
         }
 
-        public Task<GeneralResponse> Insert(Department item)
+        public async Task<GeneralResponse> Update(Department item)
         {
-            throw new NotImplementedException();
+            var department = await applicationDbContext.Departments.FindAsync(item.Id);
+            if (department is null)
+            {
+                return NotFound();
+            }
+            department.Name = item.Name;
+            await Commit();
+            return Success();
         }
 
-        public Task<GeneralResponse> Update(Department item)
+        private static GeneralResponse NotFound() => new(false, "Sorry Department not found");
+
+        private static GeneralResponse Success() => new(true, "Success, Process completed");
+
+        private async Task Commit()
         {
-            throw new NotImplementedException();
+            await applicationDbContext.SaveChangesAsync();
+        }
+
+        private async Task<bool> CheckName(string name)
+        {
+            var nameItem = await applicationDbContext.Departments.FirstOrDefaultAsync(x => x.Name!.ToLower().Equals(name.ToLower()));
+            return nameItem is null;
         }
     }
 }
