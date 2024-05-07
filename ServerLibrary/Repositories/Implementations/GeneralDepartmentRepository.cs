@@ -3,11 +3,6 @@ using BaseLibrary.Responses;
 using Microsoft.EntityFrameworkCore;
 using ServerLibrary.Data;
 using ServerLibrary.Repositories.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerLibrary.Repositories.Implementations
 {
@@ -27,15 +22,15 @@ namespace ServerLibrary.Repositories.Implementations
         }
 
         public async Task<List<GeneralDepartment>> GetAll() => await applicationDbContext.GeneralDepartments.ToListAsync();
-     
-        public Task<GeneralDepartment> GetById(int id)
+
+        public async Task<GeneralDepartment> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await applicationDbContext.GeneralDepartments.FindAsync(id);
         }
 
-        public  async Task<GeneralResponse> Insert(GeneralDepartment item)
+        public async Task<GeneralResponse> Insert(GeneralDepartment item)
         {
-            if(!await CheckName(item.Name!))
+            if (!await CheckName(item.Name!))
             {
                 return new GeneralResponse(false, "Sorry Department already exists");
             }
@@ -44,9 +39,16 @@ namespace ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        public Task<GeneralResponse> Update(GeneralDepartment item)
+        public async Task<GeneralResponse> Update(GeneralDepartment item)
         {
-            throw new NotImplementedException();
+            var department = await applicationDbContext.GeneralDepartments.FindAsync(item.Id);
+            if (department is null)
+            {
+                return NotFound();
+            }
+            department.Name = item.Name;
+            await Commit();
+            return Success();
         }
 
         private static GeneralResponse NotFound() => new(false, "Sorry Department not found");
