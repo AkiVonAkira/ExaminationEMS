@@ -53,6 +53,7 @@
     GeneralDepartment="GeneralDepartment" /> 
 
 @code {
+    [Inject] IToastService? ToastService { get; set; }
     GeneralDepartmentDialog? generalDepartmentDialog; 
     GeneralDepartment GeneralDepartment = new();
     public string Title { get; set; } = "Add Department";
@@ -66,7 +67,7 @@
 
     public async Task GetGeneralDepartments()
     {
-        GeneralDepartments = await generalDepartmentService.GetAll(ClientLibrary.Helpers.ClientConstants.GeneralDepartmentBaseUrl);
+        GeneralDepartments = await generalDepartmentService.GetAll(ClientConstants.GeneralDepartmentBaseUrl);
     }
 
     void OpenDialog()
@@ -76,11 +77,36 @@
 
     private async Task HandleSaveOperationEvent(GeneralDepartment generalDepartment)
     {
-        bool sucsessCheck = false; 
-        if(GeneralDepartment.Id < 0)
+        bool successCheck = false; 
+        if(GeneralDepartment.Id > 0)
         {
-            var result = await generalDepartmentService.Update.
-            
+            var result = await generalDepartmentService.Update(GeneralDepartment, ClientConstants.GeneralDepartmentBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        } 
+        else
+        {
+            var response = await generalDepartmentService.Insert(GeneralDepartment, ClientConstants.GeneralDepartmentBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
+        if(successCheck) 
+        {
+            GeneralDepartment = new ();
+            await GetGeneralDepartments();
+            generalDepartmentDialog?.ChangeTitle("Add");
+        }
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if(flag)
+        {
+            await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
         }
     }
 
