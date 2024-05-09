@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using BaseLibrary.Models
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
@@ -15,10 +16,26 @@
 @using ClientLibrary.Services.Contracts
 
 @inject AuthenticationStateProvider AuthStateProvider
-@inject IUserAccountService accountService
 @inject NavigationManager NavManager
 
+@* Authentication *@
+@inject IUserAccountService accountService
+
+@* Blazorise *@
 @using Blazorise
 @using Blazorise.FluentValidation
 @using Blazorise.Snackbar
 @using Blazorise.Themes
+
+@* // general departments / department / section *@
+@inject IGenericServiceInterface<GeneralDepartment> generalDepartmentService
+@inject IGenericServiceInterface<Department> departmentService
+@inject IGenericServiceInterface<Section> sectionService
+
+@* // country / city / state *@
+@inject IGenericServiceInterface<Country> countryService
+@inject IGenericServiceInterface<City> cityService
+@inject IGenericServiceInterface<State> stateService
+
+@* // employee *@
+@inject IGenericServiceInterface<Employee> employeeService

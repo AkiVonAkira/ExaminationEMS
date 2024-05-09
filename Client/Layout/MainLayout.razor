@@ -1,4 +1,4 @@
-﻿@using Client.Pages.OtherPages
+﻿@using Client.Pages.ComponentPages
 @using Microsoft.AspNetCore.Authorization
 @inherits LayoutComponentBase
 @attribute [Authorize]
@@ -8,11 +8,15 @@
         <TopBar />
     </LayoutHeader>
     <Layout Sider>
-        <LayoutSider Fixed>
-            <LayoutSiderContent>
-                <SideBar />
-            </LayoutSiderContent>
-        </LayoutSider>
+        <AuthorizeView>
+            <Authorized>
+                <LayoutSider Fixed>
+                    <LayoutSiderContent>
+                        <SideBar />
+                    </LayoutSiderContent>
+                </LayoutSider>
+            </Authorized>
+        </AuthorizeView>
         <LayoutContent Background="Background.Body" TextColor="TextColor.White">
             @Body
         </LayoutContent>

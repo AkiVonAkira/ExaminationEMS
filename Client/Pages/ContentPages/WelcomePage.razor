@@ -1,8 +1,14 @@
-﻿@page "/home/dashboard"
+﻿@page "/welcome"
 @layout MainLayout
 @using Client.Pages.ComponentPages
 
-<TableBanner></TableBanner>
+<Container Class="my-4">
+    <Card>
+        <CardHeader>
+            Welcome!
+        </CardHeader>
+    </Card>
+</Container>
 
 @code {
     [CascadingParameter] public Task<AuthenticationState>? authenticationStateTask { get; set; }
@@ -15,9 +21,9 @@
     {
         var user = (await authenticationStateTask!).User;
         bool isAuthenticated = user.Identity!.IsAuthenticated;
-        if (!isAuthenticated)
+        if (isAuthenticated)
         {
-            NavManager.NavigateTo("/welcome");
+            NavManager.NavigateTo("/home/dashboard");
         }
     }
 }
