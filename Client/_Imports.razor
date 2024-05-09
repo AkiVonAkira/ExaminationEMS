@@ -1,19 +1,21 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
-@using BaseLibrary.Models
-@using Client.ApplicationStates
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.JSInterop
-@using Client
+
+@using Client.ApplicationStates
 @using Client.Layout
+@using Client
 
 @using BaseLibrary.DTOs
+@using BaseLibrary.Models
+
 @using ClientLibrary.Helpers
-@using Microsoft.AspNetCore.Components.Authorization
 @using ClientLibrary.Services.Contracts
 
 @inject AuthenticationStateProvider AuthStateProvider
@@ -43,7 +45,6 @@
 
 @* // employee *@
 @inject IGenericServiceInterface<Employee> employeeService
-
 
 @* Blazorise *@
 @using Blazorise
