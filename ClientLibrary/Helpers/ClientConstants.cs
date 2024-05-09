@@ -1,6 +1,6 @@
 ﻿namespace ClientLibrary.Helpers
 {
-    public static class Constants
+    public static class ClientConstants
     {
         public const string GeneralDepartmentBaseUrl = "api/generalDepartment";
         public const string DepartmentBaseUrl = "api/department";
