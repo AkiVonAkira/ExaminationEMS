@@ -9,63 +9,49 @@
             <CloseButton Class="float-end" onclick="@GeneralDepartmentClicked"></CloseButton>
         </CardHeader>
         <CardBody>
-            <Table Class="rounded">
-                <TableHeader TextColor="TextColor.White">
-                    <TableRow Background="Background.Primary">
-                        <TableHeaderCell>#</TableHeaderCell>
-                        <TableHeaderCell>Id</TableHeaderCell>
-                        <TableHeaderCell>General Department</TableHeaderCell>
-                        <TableHeaderCell>Action</TableHeaderCell>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    @if (GeneralDepartments is not null)
-                    {
-                        int count = 1;
-                        foreach (var item in GeneralDepartments)
+            <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                <Table Background="Background.Dark">
+                    <TableHeader Style="border-collapse: separate; border-spacing: 0;">
+                        <TableRow Background="Background.Primary" TextColor="TextColor.White">
+                            <TableHeaderCell>#</TableHeaderCell>
+                            <TableHeaderCell>Id</TableHeaderCell>
+                            <TableHeaderCell>General Department</TableHeaderCell>
+                            <TableHeaderCell>Action</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @if (GeneralDepartments is not null)
+                        {
+                            int count = 1;
+                            foreach (var item in GeneralDepartments)
+                            {
+                                var index = count.ToString();
+
+                                <TableRow>
+                                    <TableRowHeader>@index</TableRowHeader>
+                                    <TableRowCell>@item.Id</TableRowCell>
+                                    <TableRowCell>@item.Name</TableRowCell>
+                                    <TableRowCell Class="flex gap-4">
+                                        <i class="fa fa-pencil text-accent cursor-pointer"
+                                            @onclick="()=>EditClicked(item)"></i>
+                                        <i class="fa fa-trash text-danger cursor-pointer"
+                                            @onclick="()=>DeleteClicked(item)"></i>
+                                    </TableRowCell>
+                                </TableRow>
+                                ++count;
+                            }
+                        }
+                        else
                         {
                             <TableRow>
-                                <TableRowHeader>@count</TableRowHeader>
-                                <TableRowCell>@item.Id</TableRowCell>
-                                <TableRowCell>@item.Name</TableRowCell>
-                                <TableRowCell>
-                                    <i class="fa fa-pencil" id="cursor-style" 
-                                    @onclick="()=>EditClicked(item)"></i>
-                                    @* <i class="fa fa-trash text-danger" id="cursor-style" 
-                                    @onclick="()=>DeleteClicked(item)"></i> *@
-                                    </TableRowCell>
+                                <TableRowCell ColumnSpan="4">
+                                    No General Department Added yet!
+                                </TableRowCell>
                             </TableRow>
-                            count++;
                         }
-                    }
-                    else
-                    {
-                        <TableRow>
-                            <TableRowCell ColumnSpan="4">
-                                No General Department Added yet!
-                            </TableRowCell> 
-                        </TableRow>
-                    }
-                    @*<TableRow Background="Background.Transparent">
-                        <TableRowHeader>1</TableRowHeader>
-                        <TableRowCell>Ilyas</TableRowCell>
-                        <TableRowCell>Kaya</TableRowCell>
-                        <TableRowCell>@@Turkish Delight</TableRowCell>
-                    </TableRow Background="Background.Transparent">
-                    <TableRow Background="Background.Transparent">
-                        <TableRowHeader>2</TableRowHeader>
-                        <TableRowCell>Muse</TableRowCell>
-                        <TableRowCell>Yusuf</TableRowCell>
-                        <TableRowCell>@@Somalian FinalBoss</TableRowCell>
-                    </TableRow>
-                    <TableRow Background="Background.Transparent">
-                        <TableRowHeader>3</TableRowHeader>
-                        <TableRowCell>Caius</TableRowCell>
-                        <TableRowCell>Matei</TableRowCell>
-                        <TableRowCell>@@Romanian Final Boss</TableRowCell>
-                    </TableRow> *@
-                </TableBody>
-            </Table>
+                    </TableBody>
+                </Table>
+            </Div>
         </CardBody>
         <CardFooter>
             <Form>
@@ -81,8 +67,11 @@
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
     GeneralDepartmentDialog? generalDepartmentDialog; 
     GeneralDepartment generalDepartment = new();
+
     public string Title { get; set; } = "";
     public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
 
@@ -102,6 +91,7 @@
         generalDepartmentDialog?.OpenDialog();
     }
 
+    // Add or Update
     private async Task HandleSaveOperationEvent(GeneralDepartment generalDepartment)
     {
         bool successCheck = false; 
@@ -123,6 +113,7 @@
         }
     }
 
+    // Edit
     private void EditClicked(GeneralDepartment department)
     {
         generalDepartmentDialog?.ChangeTitle("Update");
@@ -130,18 +121,22 @@
         OpenDialog();
     }
 
-    private void DeleteClicked(GeneralDepartment department)
+    // Delete
+    private async Task DeleteClicked(GeneralDepartment department)
     {
-        generalDepartmentDialog?.ChangeTitle("Delete");
-        generalDepartment = department;
-        OpenDialog();
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {department.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await generalDepartmentService.DeleteById(department.Id, ClientConstants.GeneralDepartmentBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+            await GetGeneralDepartments();
     }
 
     private async Task<bool> DisplayMessage(bool flag, string message)
     {
         if(flag)
         {
-            await ToastService!.Success(message, "Success");
+            //await ToastService!.Success(message, "Success");
             return true;
         }
         else
@@ -156,6 +151,7 @@
         allState.Action -= StateHasChanged;
     }
 
+    // Close Button
     private void GeneralDepartmentClicked()
     {
         allState.GeneralDepartmentClicked(false);
