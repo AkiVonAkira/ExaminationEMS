@@ -49,7 +49,7 @@ builder.Services.AddScoped<IGenericServiceInterface<State>, GenericServiceImplem
 builder.Services.AddScoped<IGenericServiceInterface<Employee>, GenericServiceImplementations<Employee>>();
 
 // table toggle states
-builder.Services.AddScoped<DepartmentState>();
+builder.Services.AddScoped<AllState>();
 
 // Blazorise Services
 builder.Services

@@ -1,8 +1,10 @@
 ﻿@page "/home/dashboard"
 @layout MainLayout
-@using Client.Pages.ComponentPages
 
-<TableBanner></TableBanner>
+<Container Class="my-4">
+    <TableBanner></TableBanner>
+    <GeneralDepartmentPage />
+</Container>
 
 @code {
     [CascadingParameter] public Task<AuthenticationState>? authenticationStateTask { get; set; }

@@ -1,9 +1,6 @@
-﻿@using BaseLibrary.Models
-@using Client.ApplicationStates
-@implements IDisposable
-@inject DepartmentState departmentState
+﻿@implements IDisposable
 
-@if (departmentState.ShowGeneralDepartment)
+@if (allState.ShowGeneralDepartment)
 {
     <Card Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.White">
         <CardHeader TextColor="TextColor.White">
@@ -59,7 +56,7 @@
 
     protected override void OnInitialized()
     {
-        departmentState.GeneralDepartmentAction += StateHasChanged;
+        allState.Action += StateHasChanged;
     }
 
     void OpenDialog()
@@ -69,11 +66,11 @@
 
     public void Dispose()
     {
-        departmentState.GeneralDepartmentAction -= StateHasChanged;
+        allState.Action -= StateHasChanged;
     }
 
     private void GeneralDepartmentClicked()
     {
-        departmentState.GeneralDepartmentClicked(false);
+        allState.GeneralDepartmentClicked(false);
     }
 }
