@@ -48,7 +48,8 @@
     </Card>
 }
 
-<GeneralDepartmentDialog @ref="generalDepartmentDialog" HandleSaveOperationEvent="HandleSaveOperationEvent" GeneralDepartment="GeneralDepartment" /> 
+<GeneralDepartmentDialog @ref="generalDepartmentDialog" 
+    GeneralDepartment="GeneralDepartment" /> 
 
 @code {
     GeneralDepartmentDialog? generalDepartmentDialog; 
@@ -64,7 +65,7 @@
 
     public async Task GetGeneralDepartments()
     {
-        GeneralDepartment = await generalDepartmentService.GetAll(ClientLibrary.Helpers.Constants.GeneralDepartmentBaseUrl);
+        GeneralDepartments = await generalDepartmentService.GetAll(ClientLibrary.Helpers.Constants.GeneralDepartmentBaseUrl);
     }
 
     void OpenDialog()
