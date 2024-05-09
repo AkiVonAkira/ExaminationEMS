@@ -13,13 +13,40 @@
                 <TableHeader TextColor="TextColor.White">
                     <TableRow Background="Background.Primary">
                         <TableHeaderCell>#</TableHeaderCell>
-                        <TableHeaderCell>First Name</TableHeaderCell>
-                        <TableHeaderCell>Last Name</TableHeaderCell>
-                        <TableHeaderCell>Username</TableHeaderCell>
+                        <TableHeaderCell>Id</TableHeaderCell>
+                        <TableHeaderCell>General Department</TableHeaderCell>
+                        <TableHeaderCell>Action</TableHeaderCell>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <TableRow Background="Background.Transparent">
+                    @if (GeneralDepartments is not null)
+                    {
+                        int count = 1;
+                        foreach (var item in GeneralDepartments)
+                        {
+                            <TableRow>
+                                <TableRowHeader>@count</TableRowHeader>
+                                <TableRowCell>@item.Id</TableRowCell>
+                                <TableRowCell>@item.Name</TableRowCell>
+                                <TableRowCell>
+                                    <i class="fa fa-pencil" id="cursor-style" 
+                                    @onclick="()=>EditClicked(item)"></i>
+                                    @* <i class="fa fa-trash text-danger" id="cursor-style" 
+                                    @onclick="()=>DeleteClicked(item)"></i> *@
+                                    </TableRowCell>
+                            </TableRow>
+                            count++;
+                        }
+                    }
+                    else
+                    {
+                        <TableRow>
+                            <TableRowCell ColumnSpan="4">
+                                No General Department Added yet!
+                            </TableRowCell> 
+                        </TableRow>
+                    }
+                    @*<TableRow Background="Background.Transparent">
                         <TableRowHeader>1</TableRowHeader>
                         <TableRowCell>Ilyas</TableRowCell>
                         <TableRowCell>Kaya</TableRowCell>
@@ -36,7 +63,7 @@
                         <TableRowCell>Caius</TableRowCell>
                         <TableRowCell>Matei</TableRowCell>
                         <TableRowCell>@@Romanian Final Boss</TableRowCell>
-                    </TableRow>
+                    </TableRow> *@
                 </TableBody>
             </Table>
         </CardBody>
@@ -50,13 +77,13 @@
 
 <GeneralDepartmentDialog @ref="generalDepartmentDialog" 
     HandleSaveOperationEvent="HandleSaveOperationEvent" 
-    GeneralDepartment="GeneralDepartment" /> 
+    generalDepartment="generalDepartment" /> 
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
     GeneralDepartmentDialog? generalDepartmentDialog; 
-    GeneralDepartment GeneralDepartment = new();
-    public string Title { get; set; } = "Add Department";
+    GeneralDepartment generalDepartment = new();
+    public string Title { get; set; } = "";
     public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
 
     protected async override Task OnInitializedAsync()
@@ -78,19 +105,19 @@
     private async Task HandleSaveOperationEvent(GeneralDepartment generalDepartment)
     {
         bool successCheck = false; 
-        if(GeneralDepartment.Id > 0)
+        if (this.generalDepartment.Id > 0)
         {
-            var result = await generalDepartmentService.Update(GeneralDepartment, ClientConstants.GeneralDepartmentBaseUrl);
+            var result = await generalDepartmentService.Update(this.generalDepartment, ClientConstants.GeneralDepartmentBaseUrl);
             successCheck = await DisplayMessage(result.Flag, result.Message);
         } 
         else
         {
-            var response = await generalDepartmentService.Insert(GeneralDepartment, ClientConstants.GeneralDepartmentBaseUrl);
+            var response = await generalDepartmentService.Insert(this.generalDepartment, ClientConstants.GeneralDepartmentBaseUrl);
             successCheck = await DisplayMessage(response.Flag, response.Message);
         }
-        if(successCheck) 
+        if (successCheck) 
         {
-            GeneralDepartment = new ();
+            this.generalDepartment = new ();
             await GetGeneralDepartments();
             generalDepartmentDialog?.ChangeTitle("Add");
         }
@@ -99,7 +126,14 @@
     private void EditClicked(GeneralDepartment department)
     {
         generalDepartmentDialog?.ChangeTitle("Update");
-        GeneralDepartment = department;
+        generalDepartment = department;
+        OpenDialog();
+    }
+
+    private void DeleteClicked(GeneralDepartment department)
+    {
+        generalDepartmentDialog?.ChangeTitle("Delete");
+        generalDepartment = department;
         OpenDialog();
     }
 

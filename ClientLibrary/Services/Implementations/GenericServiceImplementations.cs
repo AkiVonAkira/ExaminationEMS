@@ -20,7 +20,7 @@ namespace ClientLibrary.Services.Implementations
         public async Task<List<T>> GetAll(string baseUrl)
         {
             var httpClient = await getHttpClient.GetPrivateHttpClient();
-            var results = await httpClient.GetFromJsonAsync<List<T>>($"{baseUrl}/all");
+            var results = await httpClient.GetFromJsonAsync<List<T>>($"{baseUrl}/getall");
             return results!;
         }
 

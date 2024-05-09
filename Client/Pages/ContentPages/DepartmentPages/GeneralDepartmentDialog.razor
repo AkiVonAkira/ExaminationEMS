@@ -1,28 +1,30 @@
 ﻿<Modal @ref="generalDepartmentDialog" @bind-Visible="IsVisible">
     <ModalContent Centered>
         <ModalHeader>
-            <ModalTitle> @Title </ModalTitle>
+            <ModalTitle>@Title General Department</ModalTitle>
             <CloseButton />
         </ModalHeader>
         <ModalBody>
-            <Field>
-                <FieldLabel>Department</FieldLabel>
-                <TextEdit Placeholder="Enter name..." />
-            </Field>
+            <EditForm Model="generalDepartment" OnSubmit="SaveChanges">
+                <Heading TextSize="TextSize.Medium" Class="mb-2">General Department</Heading>
+                <TextEdit Placeholder="Enter name..." @bind-value="generalDepartment.Name" />
+            </EditForm>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter Class="justify-end">
             <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
-            <Button Color="Color.Primary" Clicked="@HideModal">Save Changes</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Submit" Clicked="@SaveChanges">Save Changes</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
-    [Parameter] public GeneralDepartment GeneralDepartment { get; set; } = new();
+
+    [Parameter] public GeneralDepartment generalDepartment { get; set; } = new();
     [Parameter] public EventCallback<GeneralDepartment> HandleSaveOperationEvent { get; set; }
+
     public bool IsVisible { get; set; } = false;
-    public string Title { get; set; } = "Add Department";
+    public string Title { get; set; } = "Add";
 
     public void OpenDialog()
     {
@@ -33,28 +35,15 @@
 
     public async Task SaveChanges()
     {
-        if(string.IsNullOrEmpty(GeneralDepartment.Name))
-        {
-            await ToastService!.Error("Department name is required", "Missing Field");
-        }
+        if (string.IsNullOrEmpty(generalDepartment.Name))
+            await ToastService!.Error("General Department name is required", "Missing Field");
         else
         {
             IsVisible = false;
-            
-            await HandleSaveOperationEvent.InvokeAsync(GeneralDepartment);
-            await ToastService!.Success("Department added successfully", "Saved Changes");
-        }
 
-        // if(string.IsNullOrEmpty(Department.Name))
-        // {
-        //     return ToastService.Error("Department name is required", "Missing Field");
-        // }
-        // else
-        // {
-        //     IsVisible = false;
-        //     return ToastService.Success("Department added successfully", "Saved Changes");
-        // }
-                
+            await HandleSaveOperationEvent.InvokeAsync(generalDepartment);
+            await ToastService!.Success("General Department added successfully", "Saved Changes");
+        }
     }
 
     public void ChangeTitle(string title)
@@ -72,6 +61,7 @@
 
     private Task HideModal()
     {
+        IsVisible = false;
         return generalDepartmentDialog!.Hide();
     }
 }

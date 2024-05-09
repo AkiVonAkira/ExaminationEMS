@@ -30,9 +30,10 @@ namespace ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Insert(Section item)
         {
-            if (!await CheckName(item.Name!))
+            var checkIfNull = await CheckName(item.Name);
+            if (!checkIfNull)
             {
-                return new GeneralResponse(false, "Sorry Department already exists");
+                return new GeneralResponse(false, "Sorry Section already exists");
             }
             applicationDbContext.Sections.Add(item);
             await Commit();
@@ -51,7 +52,7 @@ namespace ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        private static GeneralResponse NotFound() => new(false, "Sorry Department not found");
+        private static GeneralResponse NotFound() => new(false, "Sorry Section not found");
 
         private static GeneralResponse Success() => new(true, "Success, Process completed");
 

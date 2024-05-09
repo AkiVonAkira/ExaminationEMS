@@ -1,6 +1,5 @@
 ﻿@inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthStateProvider
-@inject AllState departmentState
 @using BaseLibrary.DTOs
 @using Client.ApplicationStates
 @using ClientLibrary.Helpers
@@ -85,11 +84,11 @@
         NavManager.NavigateTo("/", forceLoad: true);
     }
 
-    public bool ShowhideDepartment { get; set; } = false;
+    public bool ShowHideGeneralDepartment { get; set; } = false;
 
     private void GeneralDepartmentClicked()
     {
-        ShowhideDepartment = !departmentState.ShowGeneralDepartment;
-        departmentState.GeneralDepartmentClicked(ShowhideDepartment);
+        ShowHideGeneralDepartment = !allState.ShowGeneralDepartment;
+        allState.GeneralDepartmentClicked(ShowHideGeneralDepartment);
     }
 }

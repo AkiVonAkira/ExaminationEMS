@@ -30,9 +30,10 @@ namespace ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Insert(City item)
         {
-            if (!await CheckName(item.Name!))
+            var checkIfNull = await CheckName(item.Name);
+            if (!checkIfNull)
             {
-                return new GeneralResponse(false, "Sorry Department already exists");
+                return new GeneralResponse(false, "Sorry City already exists");
             }
             applicationDbContext.Cities.Add(item);
             await Commit();
