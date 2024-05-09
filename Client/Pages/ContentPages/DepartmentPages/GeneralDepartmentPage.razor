@@ -49,6 +49,7 @@
 }
 
 <GeneralDepartmentDialog @ref="generalDepartmentDialog" 
+    HandleSaveOperationEvent="HandleSaveOperationEvent" 
     GeneralDepartment="GeneralDepartment" /> 
 
 @code {
@@ -57,7 +58,7 @@
     public string Title { get; set; } = "Add Department";
     public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
 
-    protected override async void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
         await GetGeneralDepartments();
         allState.Action += StateHasChanged;
@@ -65,12 +66,22 @@
 
     public async Task GetGeneralDepartments()
     {
-        GeneralDepartments = await generalDepartmentService.GetAll(ClientLibrary.Helpers.Constants.GeneralDepartmentBaseUrl);
+        GeneralDepartments = await generalDepartmentService.GetAll(ClientLibrary.Helpers.ClientConstants.GeneralDepartmentBaseUrl);
     }
 
     void OpenDialog()
     {
         generalDepartmentDialog?.OpenDialog();
+    }
+
+    private async Task HandleSaveOperationEvent(GeneralDepartment generalDepartment)
+    {
+        bool sucsessCheck = false; 
+        if(GeneralDepartment.Id < 0)
+        {
+            var result = await generalDepartmentService.Update.
+            
+        }
     }
 
     public void Dispose()
