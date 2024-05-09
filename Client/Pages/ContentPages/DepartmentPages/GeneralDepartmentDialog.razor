@@ -1,7 +1,7 @@
 ﻿<Modal @ref="generalDepartmentDialog" @bind-Visible="IsVisible">
     <ModalContent Centered>
         <ModalHeader>
-            <ModalTitle>Add Department</ModalTitle>
+            <ModalTitle> @Title </ModalTitle>
             <CloseButton />
         </ModalHeader>
         <ModalBody>
@@ -18,9 +18,11 @@
 </Modal>
 
 @code {
-    [Inject] IToastService ToastService { get; set; }
-    [Parameter] public GeneralDepartment Department { get; set; } = new();
+    [Inject] IToastService? ToastService { get; set; }
+    [Parameter] public GeneralDepartment GeneralDepartment { get; set; } = new();
+    [Parameter] public EventCallback<GeneralDepartment> HandleSaveOperationEvent { get; set; }
     public bool IsVisible { get; set; } = false;
+    public string Title { get; set; } = "Add Department";
 
     public void OpenDialog()
     {
@@ -29,17 +31,35 @@
         StateHasChanged();
     }
 
-    public Task SaveChanges()
+    public async Task SaveChanges()
     {
-        if(string.IsNullOrEmpty(Department.Name))
+        if(string.IsNullOrEmpty(GeneralDepartment.Name))
         {
-            return ToastService.Error("Department name is required", "Missing Field");
+            await ToastService!.Error("Department name is required", "Missing Field");
         }
         else
         {
             IsVisible = false;
-            return ToastService.Success("Department added successfully", "Saved Changes");
-        }           
+            
+            await HandleSaveOperationEvent.InvokeAsync(GeneralDepartment);
+            await ToastService!.Success("Department added successfully", "Saved Changes");
+        }
+
+        // if(string.IsNullOrEmpty(Department.Name))
+        // {
+        //     return ToastService.Error("Department name is required", "Missing Field");
+        // }
+        // else
+        // {
+        //     IsVisible = false;
+        //     return ToastService.Success("Department added successfully", "Saved Changes");
+        // }
+                
+    }
+
+    public void ChangeTitle(string title)
+    {
+        Title = title;
     }
 
     // reference to the modal component

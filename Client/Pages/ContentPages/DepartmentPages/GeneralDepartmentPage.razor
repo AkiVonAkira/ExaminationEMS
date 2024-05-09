@@ -48,15 +48,23 @@
     </Card>
 }
 
-<GeneralDepartmentDialog @ref="generalDepartmentDialog" /> 
+<GeneralDepartmentDialog @ref="generalDepartmentDialog" HandleSaveOperationEvent="HandleSaveOperationEvent" GeneralDepartment="GeneralDepartment" /> 
 
 @code {
     GeneralDepartmentDialog? generalDepartmentDialog; 
-    GeneralDepartment Department = new();
+    GeneralDepartment GeneralDepartment = new();
+    public string Title { get; set; } = "Add Department";
+    public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
+        await GetGeneralDepartments();
         allState.Action += StateHasChanged;
+    }
+
+    public async Task GetGeneralDepartments()
+    {
+        GeneralDepartment = await generalDepartmentService.GetAll(ClientLibrary.Helpers.Constants.GeneralDepartmentBaseUrl);
     }
 
     void OpenDialog()
