@@ -10,13 +10,13 @@ namespace ServerLibrary.Repositories.Implementations
     {
         public async Task<GeneralResponse> DeleteById(int id)
         {
-            var department = await applicationDbContext.Sections.FindAsync(id);
-            if (department is null)
+            var section = await applicationDbContext.Sections.FindAsync(id);
+            if (section is null)
             {
                 return NotFound();
             }
 
-            applicationDbContext.Sections.Remove(department);
+            applicationDbContext.Sections.Remove(section);
             await Commit();
             return Success();
         }
@@ -41,12 +41,12 @@ namespace ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Update(Section item)
         {
-            var department = await applicationDbContext.Sections.FindAsync(item.Id);
-            if (department is null)
+            var section = await applicationDbContext.Sections.FindAsync(item.Id);
+            if (section is null)
             {
                 return NotFound();
             }
-            department.Name = item.Name;
+            section.Name = item.Name;
             await Commit();
             return Success();
         }

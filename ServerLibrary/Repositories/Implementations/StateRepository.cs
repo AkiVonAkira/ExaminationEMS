@@ -10,13 +10,13 @@ namespace ServerLibrary.Repositories.Implementations
     {
         public async Task<GeneralResponse> DeleteById(int id)
         {
-            var department = await applicationDbContext.States.FindAsync(id);
-            if (department is null)
+            var state = await applicationDbContext.States.FindAsync(id);
+            if (state is null)
             {
                 return NotFound();
             }
 
-            applicationDbContext.States.Remove(department);
+            applicationDbContext.States.Remove(state);
             await Commit();
             return Success();
         }
@@ -41,12 +41,12 @@ namespace ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Update(State item)
         {
-            var department = await applicationDbContext.States.FindAsync(item.Id);
-            if (department is null)
+            var state = await applicationDbContext.States.FindAsync(item.Id);
+            if (state is null)
             {
                 return NotFound();
             }
-            department.Name = item.Name;
+            state.Name = item.Name;
             await Commit();
             return Success();
         }
