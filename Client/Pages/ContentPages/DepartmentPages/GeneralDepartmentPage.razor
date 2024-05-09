@@ -96,6 +96,13 @@
         }
     }
 
+    private void EditClicked(GeneralDepartment department)
+    {
+        generalDepartmentDialog?.ChangeTitle("Update");
+        GeneralDepartment = department;
+        OpenDialog();
+    }
+
     private async Task<bool> DisplayMessage(bool flag, string message)
     {
         if(flag)
