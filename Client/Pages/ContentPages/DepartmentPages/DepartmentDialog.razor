@@ -1,0 +1,67 @@
+﻿<Modal @ref="departmentDialog" @bind-Visible="IsVisible">
+    <ModalContent Centered>
+            <ModalHeader>
+                <ModalTitle>@Title Department</ModalTitle>
+                <CloseButton />
+            </ModalHeader>
+            <ModalBody>
+                <Field Model="generalDepartment" OnSubmit="SaveChanges">
+                    <Heading TextSize="TextSize.Medium" Class="mb-2">Department</Heading>
+                    <TextEdit Placeholder="Enter name..." @bind-Text="department.Name" />
+                </Field>
+            </ModalBody>
+            <ModalFooter Class="justify-end">
+                <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+                <Button Color="Color.Primary" Type="ButtonType.Submit" Clicked="@SaveChanges">Save Changes</Button>
+            </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+
+    [Parameter] public Department department { get; set; } = new();
+    [Parameter] public EventCallback<Department> HandleSaveOperationEvent { get; set; }
+
+    public bool IsVisible { get; set; } = false;
+    public string Title { get; set; } = "Add";
+
+    public void OpenDialog()
+    {
+        IsVisible = true;
+        ShowModal();
+        StateHasChanged();
+    }
+
+    public async Task SaveChanges()
+    {
+        if (string.IsNullOrEmpty(department.Name))
+            await ToastService!.Error("Department name is required", "Missing Field");
+        else
+        {
+            IsVisible = false;
+
+            await HandleSaveOperationEvent.InvokeAsync(department);
+            await ToastService!.Success("Department added successfully", "Saved Changes");
+        }
+    }
+
+    public void ChangeTitle(string title)
+    {
+        Title = title;
+    }
+
+    // reference to the modal component
+    private Modal? departmentDialog;
+
+    private Task ShowModal()
+    {
+        return departmentDialog!.Show();
+    }
+
+    private Task HideModal()
+    {
+        IsVisible = false;
+        return departmentDialog!.Hide();
+    }
+}
