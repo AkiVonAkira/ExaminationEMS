@@ -1,4 +1,6 @@
-﻿namespace BaseLibrary.Models
+﻿using System.Text.Json.Serialization;
+
+namespace BaseLibrary.Models
 {
     public class Department : BaseModel
     {
@@ -8,6 +10,7 @@
         public int GeneralDepartmentId { get; set; }
 
         // en till många relation med Section
+        [JsonIgnore]
         public List<Section>? Sections { get; set; }
     }
 }

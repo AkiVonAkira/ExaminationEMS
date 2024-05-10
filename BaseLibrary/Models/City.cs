@@ -1,4 +1,6 @@
-﻿namespace BaseLibrary.Models
+﻿using System.Text.Json.Serialization;
+
+namespace BaseLibrary.Models
 {
 
     public class City : BaseModel
@@ -8,6 +10,7 @@
         public int CountryId { get; set; }
 
         // en till många relation med State
+        [JsonIgnore]
         public List<State>? States { get; set; }
     }
 }
