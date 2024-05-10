@@ -42,18 +42,48 @@
                         <BarDropdown @bind-Visible="departmentElementsVisible">
                             <BarDropdownToggle>
                                 <BarIcon IconName="IconName.Book" />
-                                Department
+                                Departments
                             </BarDropdownToggle>
                             <BarDropdownMenu>
                                 <BarDropdownItem @onclick="@GeneralDepartmentClicked">
                                     <BarIcon IconName="IconName.Users" />
-                                    General
+                                    General Department
                                 </BarDropdownItem>
                                 <BarDropdownItem @onclick="@DepartmentClicked">
                                     Department
                                 </BarDropdownItem>
-                                <BarDropdownItem>
-                                    Branch
+                                <BarDropdownItem @onclick="@SectionClicked">
+                                    Section
+                                </BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                        <BarDropdown @bind-Visible="countryElementsVisible">
+                            <BarDropdownToggle>
+                                <BarIcon IconName="IconName.Globe" />
+                                Countries
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                <BarDropdownItem @onclick="@CountryClicked">
+                                    <BarIcon IconName="IconName.Flag" />
+                                    Country
+                                </BarDropdownItem>
+                                <BarDropdownItem @onclick="@CityClicked">
+                                    City
+                                </BarDropdownItem>
+                                <BarDropdownItem @onclick="@StateClicked">
+                                    State
+                                </BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                        <BarDropdown @bind-Visible="employeeElementsVisible">
+                            <BarDropdownToggle>
+                                <BarIcon IconName="IconName.Book" />
+                                Employee
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                <BarDropdownItem @onclick="@EmployeeClicked">
+                                    <BarIcon IconName="IconName.Users" />
+                                    Employee
                                 </BarDropdownItem>
                             </BarDropdownMenu>
                         </BarDropdown>
@@ -77,6 +107,8 @@
 @code {
     private bool administrationElementsVisible = false;
     private bool departmentElementsVisible = true;
+    private bool countryElementsVisible = false;
+    private bool employeeElementsVisible = false;
 
     RenderFragment customIcon =@<img src="../images/logos/koalaW.png" style="width:32px; height: 32px" />;
 
@@ -88,19 +120,27 @@
         NavManager.NavigateTo("/", forceLoad: true);
     }
 
-    // General Department
+    // General Department / Department / Section
     public bool ShowGeneralDepartment { get; set; } = false;
-    private void GeneralDepartmentClicked()
-    {
-        ShowGeneralDepartment = !allState.ShowGeneralDepartment;
-        allState.GeneralDepartmentClicked(ShowGeneralDepartment);
-    }
+    private void GeneralDepartmentClicked() => allState.GeneralDepartmentClicked(ShowGeneralDepartment = !allState.ShowGeneralDepartment);
 
-    // Department
     public bool ShowDepartment { get; set; } = false;
-    private void DepartmentClicked()
-    {
-        ShowDepartment = !allState.ShowDepartment;
-        allState.DepartmentClicked(ShowDepartment);
-    }
+    private void DepartmentClicked() => allState.DepartmentClicked(ShowDepartment = !allState.ShowDepartment);
+
+    public bool ShowSection { get; set; } = false;
+    private void SectionClicked() => allState.SectionClicked(ShowSection = !allState.ShowSection);
+
+    // Country / City / State
+    public bool ShowCountry { get; set; } = false;
+    private void CountryClicked() => allState.CountryClicked(ShowCountry = !allState.ShowCountry);
+
+    public bool ShowCity { get; set; } = false;
+    private void CityClicked() => allState.CityClicked(ShowCity = !allState.ShowCity);
+
+    public bool ShowState { get; set; } = false;
+    private void StateClicked() => allState.StateClicked(ShowState = !allState.ShowState);
+
+    // Employee
+    public bool ShowEmployee { get; set; } = false;
+    private void EmployeeClicked() => allState.EmployeeClicked(ShowEmployee = !allState.ShowEmployee);
 }
