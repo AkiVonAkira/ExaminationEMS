@@ -20,7 +20,7 @@
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        @if (GeneralDepartments is not null)
+                        @if (GeneralDepartments != null && GeneralDepartments.Count > 0)
                         {
                             int count = 1;
                             foreach (var item in GeneralDepartments)
@@ -44,8 +44,8 @@
                         else
                         {
                             <TableRow>
-                                <TableRowCell ColumnSpan="4">
-                                    No General Department Added yet!
+                                <TableRowCell ColumnSpan="4" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                    No General Departments Added yet!
                                 </TableRowCell>
                             </TableRow>
                         }

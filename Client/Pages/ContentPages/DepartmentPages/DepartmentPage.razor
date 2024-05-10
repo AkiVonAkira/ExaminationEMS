@@ -15,13 +15,13 @@
                         <TableRow Background="Background.Secondary" TextColor="TextColor.White">
                             <TableHeaderCell>#</TableHeaderCell>
                             <TableHeaderCell>Id</TableHeaderCell>
-                            <TableHeaderCell>Department</TableHeaderCell>
                             <TableHeaderCell>General Department</TableHeaderCell>
+                            <TableHeaderCell>Department</TableHeaderCell>
                             <TableHeaderCell>Action</TableHeaderCell>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        @if (Departments is not null)
+                        @if (Departments != null && Departments.Count > 0)
                         {
                             int count = 1;
                             foreach (var item in Departments)
@@ -31,8 +31,8 @@
                                 <TableRow>
                                     <TableRowHeader>@index</TableRowHeader>
                                     <TableRowCell>@item.Id</TableRowCell>
-                                    <TableRowCell>@item.Name</TableRowCell>
                                     <TableRowCell>@item.GeneralDepartment!.Name</TableRowCell>
+                                    <TableRowCell>@item.Name</TableRowCell>
                                     <TableRowCell Class="flex gap-4">
                                         <i class="fa fa-pencil text-accent cursor-pointer"
                                             @onclick="()=>EditClicked(item)"></i>
@@ -46,8 +46,8 @@
                         else
                         {
                             <TableRow>
-                                <TableRowCell ColumnSpan="4">
-                                    No Department Added yet!
+                                <TableRowCell ColumnSpan="5" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                    No Departments Added yet!
                                 </TableRowCell>
                             </TableRow>
                         }
@@ -84,11 +84,6 @@
         await GetDepartments();
         await GetGeneralDepartments();
         allState.Action += StateHasChanged;
-
-        foreach (var item in Departments)
-        {
-            item.GeneralDepartment = GeneralDepartments.FirstOrDefault(x => x.Id == item.GeneralDepartmentId);
-        }
     }
 
     public async Task GetDepartments()

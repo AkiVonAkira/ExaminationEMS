@@ -21,7 +21,10 @@ namespace ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        public async Task<List<Department>> GetAll() => await applicationDbContext.Departments.ToListAsync();
+        public async Task<List<Department>> GetAll() => await applicationDbContext
+            .Departments.AsNoTracking()
+            .Include(x => x.GeneralDepartment)
+            .ToListAsync();
 
         public async Task<Department> GetById(int id)
         {
