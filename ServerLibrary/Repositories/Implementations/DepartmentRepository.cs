@@ -51,6 +51,7 @@ namespace ServerLibrary.Repositories.Implementations
                 return NotFound();
             }
             department.Name = item.Name;
+            department.GeneralDepartmentId = item.GeneralDepartmentId;
             await Commit();
             return Success();
         }

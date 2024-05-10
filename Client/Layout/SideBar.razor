@@ -42,44 +42,36 @@
                         <BarDropdown @bind-Visible="departmentElementsVisible">
                             <BarDropdownToggle>
                                 <BarIcon IconName="IconName.Book" />
-                                Departments
+                                Management
                             </BarDropdownToggle>
                             <BarDropdownMenu>
                                 <BarDropdownItem @onclick="@GeneralDepartmentClicked">
-                                    <BarIcon IconName="IconName.Users" />
+                                    <BarIcon IconName="IconName.IdCard" />
                                     General Department
                                 </BarDropdownItem>
                                 <BarDropdownItem @onclick="@DepartmentClicked">
+                                    <BarIcon IconName="IconName.Bookmark" />
                                     Department
                                 </BarDropdownItem>
                                 <BarDropdownItem @onclick="@SectionClicked">
+                                    <BarIcon IconName="IconName.Seedling" />
                                     Section
                                 </BarDropdownItem>
                             </BarDropdownMenu>
-                        </BarDropdown>
-                        <BarDropdown @bind-Visible="countryElementsVisible">
-                            <BarDropdownToggle>
-                                <BarIcon IconName="IconName.Globe" />
-                                Countries
-                            </BarDropdownToggle>
                             <BarDropdownMenu>
                                 <BarDropdownItem @onclick="@CountryClicked">
-                                    <BarIcon IconName="IconName.Flag" />
+                                    <BarIcon IconName="IconName.Globe" />
                                     Country
                                 </BarDropdownItem>
                                 <BarDropdownItem @onclick="@CityClicked">
+                                    <BarIcon IconName="IconName.Flag" />
                                     City
                                 </BarDropdownItem>
                                 <BarDropdownItem @onclick="@StateClicked">
+                                    <BarIcon IconName="IconName.Sms" />
                                     State
                                 </BarDropdownItem>
                             </BarDropdownMenu>
-                        </BarDropdown>
-                        <BarDropdown @bind-Visible="employeeElementsVisible">
-                            <BarDropdownToggle>
-                                <BarIcon IconName="IconName.Book" />
-                                Employee
-                            </BarDropdownToggle>
                             <BarDropdownMenu>
                                 <BarDropdownItem @onclick="@EmployeeClicked">
                                     <BarIcon IconName="IconName.Users" />

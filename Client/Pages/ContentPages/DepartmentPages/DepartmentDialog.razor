@@ -21,10 +21,10 @@
                     <TextEdit Placeholder="Enter name..." @bind-Text="Department.Name" />
                     </Field>
                     <Field>
-                        <Heading TextSize="TextSize.Medium" Class="mb-2">General Department</Heading>
+                        <Heading TextSize="TextSize.Medium" Class="mb-2">Select General Department</Heading>
                         @if (Department.GeneralDepartment != null)
                         {
-                            ChangeSelectedGeneralDepartment(GeneralDepartments.FirstOrDefault(x => x.Id == Department.GeneralDepartmentId)?.Name!);
+                            ChangeSelectedGeneralDepartment(GetGeneralDepartmentNameByID(Department.GeneralDepartmentId));
                             <DropdownList TItem="GeneralDepartment" TValue="int" 
                                 Data="@GeneralDepartments"
                                 TextField="@((item)=>item.Name)"
@@ -34,7 +34,7 @@
                                 SelectedValueChanged="OnValueChange">
                                 @if (!string.IsNullOrEmpty(selectedGeneralDepartment))
                                 {
-                                    <Span>Selected: @selectedGeneralDepartment</Span>
+                                    <Span>@selectedGeneralDepartment</Span>
                                 }
                                 else
                                 {
@@ -53,7 +53,7 @@
                                 SelectedValueChanged="OnValueChange">
                                 @if (!string.IsNullOrEmpty(selectedGeneralDepartment))
                                 {
-                                    <Span>Selected: @selectedGeneralDepartment</Span>
+                                    <Span>@selectedGeneralDepartment</Span>
                                 }
                                 else
                                 {
@@ -94,6 +94,8 @@
     {
         if (string.IsNullOrEmpty(Department.Name))
             await ToastService!.Error("Department name is required", "Missing Field");
+        else if (string.IsNullOrEmpty(Department.GeneralDepartmentId.ToString()))
+            await ToastService!.Error("General Department is required", "Missing Field");
         else
         {
             IsVisible = false;
@@ -127,10 +129,16 @@
         return departmentDialog!.Hide();
     }
 
+    private string GetGeneralDepartmentNameByID(int id)
+    {
+        return GeneralDepartments.FirstOrDefault(x => x.Id == id)?.Name!;
+    }
+
     public void OnValueChange(int value)
     {
         Department.GeneralDepartmentId = value;
-        ChangeSelectedGeneralDepartment(GeneralDepartments.FirstOrDefault(x => x.Id == Department.GeneralDepartmentId)?.Name!);
+        ChangeSelectedGeneralDepartment(GetGeneralDepartmentNameByID(Department.GeneralDepartmentId));
+        Console.WriteLine("id:" + Department.GeneralDepartmentId);
         StateHasChanged();
     }
 }
