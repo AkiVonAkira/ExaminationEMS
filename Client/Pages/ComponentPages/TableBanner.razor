@@ -12,6 +12,16 @@
         <Button Width="Width.Is100"><i class="fa fa-hospital text-warning me-2"></i> Doctor</Button>
     </Card>
     <Card Border="Border.Secondary" Background="Background.Dark" TextColor="TextColor.White">
-        <Button Width="Width.Is100"><i class="fa-brands fa-slack text-secondary me-2"></i> Departments</Button>
+        <Button onclick="@DepartmentClicked" Width="Width.Is100"><i class="fa-brands fa-slack text-secondary me-2"></i> Departments</Button>
     </Card>
 </CardDeck>
+
+@code {
+    // Department
+    public bool ShowDepartment { get; set; } = false;
+    private void DepartmentClicked()
+    {
+        ShowDepartment = !allState.ShowDepartment;
+        allState.DepartmentClicked(ShowDepartment);
+    }
+}

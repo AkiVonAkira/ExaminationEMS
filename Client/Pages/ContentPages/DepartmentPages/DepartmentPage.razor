@@ -2,9 +2,9 @@
 
 @if (allState.ShowDepartment)
 {
-    <Card Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.White">
+    <Card Border="Border.Secondary" Background="Background.Dark" TextColor="TextColor.White">
         <CardHeader TextColor="TextColor.White">
-            <i class="fa fa-user text-primary"></i>
+            <i class="fa-brands fa-slack text-secondary"></i>
             Department
             <CloseButton Class="float-end" onclick="@DepartmentClicked"></CloseButton>
         </CardHeader>
@@ -12,10 +12,11 @@
             <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
                 <Table Background="Background.Dark">
                     <TableHeader Style="border-collapse: separate; border-spacing: 0;">
-                        <TableRow Background="Background.Primary" TextColor="TextColor.White">
+                        <TableRow Background="Background.Secondary" TextColor="TextColor.White">
                             <TableHeaderCell>#</TableHeaderCell>
                             <TableHeaderCell>Id</TableHeaderCell>
                             <TableHeaderCell>Department</TableHeaderCell>
+                            <TableHeaderCell>General Department</TableHeaderCell>
                             <TableHeaderCell>Action</TableHeaderCell>
                         </TableRow>
                     </TableHeader>
@@ -31,6 +32,7 @@
                                     <TableRowHeader>@index</TableRowHeader>
                                     <TableRowCell>@item.Id</TableRowCell>
                                     <TableRowCell>@item.Name</TableRowCell>
+                                    <TableRowCell>@item.GeneralDepartment!.Name</TableRowCell>
                                     <TableRowCell Class="flex gap-4">
                                         <i class="fa fa-pencil text-accent cursor-pointer"
                                             @onclick="()=>EditClicked(item)"></i>
@@ -55,30 +57,38 @@
         </CardBody>
         <CardFooter>
             <Form>
-                <Button Color="Color.Primary" @onclick="@OpenDialog">Add Department</Button>
+                <Button Color="Color.Primary" @onclick="@AddClicked">Add Department</Button>
             </Form>
         </CardFooter>
     </Card>
 }
 
-<DepartmentDialog @ref="departmentDialog" 
-    HandleSaveOperationEvent="HandleSaveOperationEvent" 
-    department="department" /> 
+<DepartmentDialog @ref="departmentDialog"
+    HandleSaveOperationEvent="HandleSaveOperationEvent"
+    Department="Department"
+    GeneralDepartments="GeneralDepartments" /> 
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
     [Inject] IMessageService? MessageService { get; set; }
 
     DepartmentDialog? departmentDialog; 
-    Department department = new();
+    Department Department = new();
 
     public string Title { get; set; } = "";
     public List<Department> Departments { get; set; } = new();
+    public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
 
     protected async override Task OnInitializedAsync()
     {
         await GetDepartments();
+        await GetGeneralDepartments();
         allState.Action += StateHasChanged;
+
+        foreach (var item in Departments)
+        {
+            item.GeneralDepartment = GeneralDepartments.FirstOrDefault(x => x.Id == item.GeneralDepartmentId);
+        }
     }
 
     public async Task GetDepartments()
@@ -86,28 +96,41 @@
         Departments = await departmentService.GetAll(ClientConstants.DepartmentBaseUrl);
     }
 
+    public async Task GetGeneralDepartments()
+    {
+        GeneralDepartments = await generalDepartmentService.GetAll(ClientConstants.GeneralDepartmentBaseUrl);
+    }
+
     void OpenDialog()
     {
         departmentDialog?.OpenDialog();
+    }
+
+    void AddClicked()
+    {
+        departmentDialog?.ChangeTitle("Add");
+        departmentDialog?.ChangeSelectedGeneralDepartment("");
+        Department = new();
+        OpenDialog();
     }
 
     // Add or Update
     private async Task HandleSaveOperationEvent(Department department)
     {
         bool successCheck = false; 
-        if (this.department.Id > 0)
+        if (Department.Id > 0)
         {
-            var result = await departmentService.Update(this.department, ClientConstants.DepartmentBaseUrl);
+            var result = await departmentService.Update(department, ClientConstants.DepartmentBaseUrl);
             successCheck = await DisplayMessage(result.Flag, result.Message);
         } 
         else
         {
-            var response = await departmentService.Insert(this.department, ClientConstants.DepartmentBaseUrl);
+            var response = await departmentService.Insert(department, ClientConstants.DepartmentBaseUrl);
             successCheck = await DisplayMessage(response.Flag, response.Message);
         }
         if (successCheck) 
         {
-            this.department = new ();
+            department = new ();
             await GetDepartments();
             departmentDialog?.ChangeTitle("Add");
         }
@@ -117,7 +140,7 @@
     private void EditClicked(Department dep)
     {
         departmentDialog?.ChangeTitle("Update");
-        department = dep;
+        Department = dep;
         OpenDialog();
     }
 
@@ -134,7 +157,7 @@
 
     private async Task<bool> DisplayMessage(bool flag, string message)
     {
-        if(flag)
+        if (flag)
         {
             //await ToastService!.Success(message, "Success");
             return true;
@@ -152,8 +175,8 @@
     }
 
     // Close Button
-    private void GeneralDepartmentClicked()
+    private void DepartmentClicked()
     {
-        allState.GeneralDepartmentClicked(false);
+        allState.DepartmentClicked(false);
     }
 }

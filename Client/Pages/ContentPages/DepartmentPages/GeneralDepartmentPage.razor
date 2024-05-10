@@ -55,7 +55,7 @@
         </CardBody>
         <CardFooter>
             <Form>
-                <Button Color="Color.Primary" @onclick="@OpenDialog">Add department</Button>
+                <Button Color="Color.Primary" @onclick="@AddClicked">Add department</Button>
             </Form>
         </CardFooter>
     </Card>
@@ -63,14 +63,14 @@
 
 <GeneralDepartmentDialog @ref="generalDepartmentDialog" 
     HandleSaveOperationEvent="HandleSaveOperationEvent" 
-    generalDepartment="generalDepartment" /> 
+    GeneralDepartment="GeneralDepartment" /> 
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
     [Inject] IMessageService? MessageService { get; set; }
 
     GeneralDepartmentDialog? generalDepartmentDialog; 
-    GeneralDepartment generalDepartment = new();
+    GeneralDepartment GeneralDepartment = new();
 
     public string Title { get; set; } = "";
     public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
@@ -91,23 +91,30 @@
         generalDepartmentDialog?.OpenDialog();
     }
 
+    void AddClicked()
+    {
+        generalDepartmentDialog?.ChangeTitle("Add");
+        GeneralDepartment = new();
+        OpenDialog();
+    }
+
     // Add or Update
     private async Task HandleSaveOperationEvent(GeneralDepartment generalDepartment)
     {
         bool successCheck = false; 
-        if (this.generalDepartment.Id > 0)
+        if (GeneralDepartment.Id > 0)
         {
-            var result = await generalDepartmentService.Update(this.generalDepartment, ClientConstants.GeneralDepartmentBaseUrl);
+            var result = await generalDepartmentService.Update(generalDepartment, ClientConstants.GeneralDepartmentBaseUrl);
             successCheck = await DisplayMessage(result.Flag, result.Message);
         } 
         else
         {
-            var response = await generalDepartmentService.Insert(this.generalDepartment, ClientConstants.GeneralDepartmentBaseUrl);
+            var response = await generalDepartmentService.Insert(generalDepartment, ClientConstants.GeneralDepartmentBaseUrl);
             successCheck = await DisplayMessage(response.Flag, response.Message);
         }
         if (successCheck) 
         {
-            this.generalDepartment = new ();
+            generalDepartment = new ();
             await GetGeneralDepartments();
             generalDepartmentDialog?.ChangeTitle("Add");
         }
@@ -117,7 +124,7 @@
     private void EditClicked(GeneralDepartment dep)
     {
         generalDepartmentDialog?.ChangeTitle("Update");
-        generalDepartment = dep;
+        GeneralDepartment = dep;
         OpenDialog();
     }
 
@@ -134,7 +141,7 @@
 
     private async Task<bool> DisplayMessage(bool flag, string message)
     {
-        if(flag)
+        if (flag)
         {
             //await ToastService!.Success(message, "Success");
             return true;

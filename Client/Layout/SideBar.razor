@@ -45,12 +45,16 @@
                                 Department
                             </BarDropdownToggle>
                             <BarDropdownMenu>
-                                <BarDropdownItem @onclick="GeneralDepartmentClicked">
+                                <BarDropdownItem @onclick="@GeneralDepartmentClicked">
                                     <BarIcon IconName="IconName.Users" />
                                     General
                                 </BarDropdownItem>
-                                <BarDropdownItem>Department</BarDropdownItem>
-                                <BarDropdownItem>Branch</BarDropdownItem>
+                                <BarDropdownItem @onclick="@DepartmentClicked">
+                                    Department
+                                </BarDropdownItem>
+                                <BarDropdownItem>
+                                    Branch
+                                </BarDropdownItem>
                             </BarDropdownMenu>
                         </BarDropdown>
                     </BarItem>
@@ -84,11 +88,19 @@
         NavManager.NavigateTo("/", forceLoad: true);
     }
 
-    public bool ShowHideGeneralDepartment { get; set; } = false;
-
+    // General Department
+    public bool ShowGeneralDepartment { get; set; } = false;
     private void GeneralDepartmentClicked()
     {
-        ShowHideGeneralDepartment = !allState.ShowGeneralDepartment;
-        allState.GeneralDepartmentClicked(ShowHideGeneralDepartment);
+        ShowGeneralDepartment = !allState.ShowGeneralDepartment;
+        allState.GeneralDepartmentClicked(ShowGeneralDepartment);
+    }
+
+    // Department
+    public bool ShowDepartment { get; set; } = false;
+    private void DepartmentClicked()
+    {
+        ShowDepartment = !allState.ShowDepartment;
+        allState.DepartmentClicked(ShowDepartment);
     }
 }

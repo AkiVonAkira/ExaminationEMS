@@ -5,9 +5,9 @@
                 <CloseButton />
             </ModalHeader>
             <ModalBody>
-                <Field Model="generalDepartment" OnSubmit="SaveChanges">
+                <Field Model="generalDepartment" OnSubmit="@SaveChanges">
                     <Heading TextSize="TextSize.Medium" Class="mb-2">General Department</Heading>
-                    <TextEdit Placeholder="Enter name..." @bind-Text="generalDepartment.Name" />
+                    <TextEdit Placeholder="Enter name..." @bind-Text="GeneralDepartment.Name" />
                 </Field>
             </ModalBody>
             <ModalFooter Class="justify-end">
@@ -20,7 +20,7 @@
 @code {
     [Inject] IToastService? ToastService { get; set; }
 
-    [Parameter] public GeneralDepartment generalDepartment { get; set; } = new();
+    [Parameter] public GeneralDepartment GeneralDepartment { get; set; } = new();
     [Parameter] public EventCallback<GeneralDepartment> HandleSaveOperationEvent { get; set; }
 
     public bool IsVisible { get; set; } = false;
@@ -35,13 +35,13 @@
 
     public async Task SaveChanges()
     {
-        if (string.IsNullOrEmpty(generalDepartment.Name))
+        if (string.IsNullOrEmpty(GeneralDepartment.Name))
             await ToastService!.Error("General Department name is required", "Missing Field");
         else
         {
             IsVisible = false;
 
-            await HandleSaveOperationEvent.InvokeAsync(generalDepartment);
+            await HandleSaveOperationEvent.InvokeAsync(GeneralDepartment);
             await ToastService!.Success("General Department added successfully", "Saved Changes");
         }
     }

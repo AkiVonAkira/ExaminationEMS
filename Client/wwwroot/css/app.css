@@ -1,5 +1,7 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --tw-bg-opacity: 1 !important;
+    background-color: rgb(10 18 21 / var(--tw-bg-opacity)) !important;
 }
 
 h1:focus {

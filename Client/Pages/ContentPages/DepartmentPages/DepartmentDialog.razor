@@ -5,9 +5,64 @@
                 <CloseButton />
             </ModalHeader>
             <ModalBody>
-                <Field Model="generalDepartment" OnSubmit="SaveChanges">
-                    <Heading TextSize="TextSize.Medium" Class="mb-2">Department</Heading>
-                    <TextEdit Placeholder="Enter name..." @bind-Text="department.Name" />
+                <Field Model="Department" OnSubmit="@SaveChanges">
+                    <Field>
+                        <Addons>
+                            <Addon AddonType="AddonType.Start">
+                                <AddonLabel>ID</AddonLabel>
+                            </Addon>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="@Department.Id.ToString()" Disabled></TextEdit>
+                            </Addon>
+                        </Addons>
+                    </Field>
+                    <Field>
+                        <Heading TextSize="TextSize.Medium" Class="mb-2">Department</Heading>
+                    <TextEdit Placeholder="Enter name..." @bind-Text="Department.Name" />
+                    </Field>
+                    <Field>
+                        <Heading TextSize="TextSize.Medium" Class="mb-2">General Department</Heading>
+                        @if (Department.GeneralDepartment != null)
+                        {
+                            ChangeSelectedGeneralDepartment(GeneralDepartments.FirstOrDefault(x => x.Id == Department.GeneralDepartmentId)?.Name!);
+                            <DropdownList TItem="GeneralDepartment" TValue="int" 
+                                Data="@GeneralDepartments"
+                                TextField="@((item)=>item.Name)"
+                                ValueField="@((item)=>item.Id)"
+                                Color="Color.Primary"
+                                MaxMenuHeight="200px"
+                                SelectedValueChanged="OnValueChange">
+                                @if (!string.IsNullOrEmpty(selectedGeneralDepartment))
+                                {
+                                    <Span>Selected: @selectedGeneralDepartment</Span>
+                                }
+                                else
+                                {
+                                    <Span>Select</Span>
+                                }
+                            </DropdownList>
+                        }
+                        else
+                        {
+                            <DropdownList TItem="GeneralDepartment" TValue="int"
+                                Data="@GeneralDepartments"
+                                TextField="@((item)=>item.Name)"
+                                ValueField="@((item)=>item.Id)"
+                                Color="Color.Primary"
+                                MaxMenuHeight="200px"
+                                SelectedValueChanged="OnValueChange">
+                                @if (!string.IsNullOrEmpty(selectedGeneralDepartment))
+                                {
+                                    <Span>Selected: @selectedGeneralDepartment</Span>
+                                }
+                                else
+                                {
+                                    <Span>Select</Span>
+                                }
+                        </DropdownList>
+                        }
+
+                    </Field>
                 </Field>
             </ModalBody>
             <ModalFooter Class="justify-end">
@@ -20,11 +75,13 @@
 @code {
     [Inject] IToastService? ToastService { get; set; }
 
-    [Parameter] public Department department { get; set; } = new();
+    [Parameter] public Department Department { get; set; } = new();
+    [Parameter] public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
     [Parameter] public EventCallback<Department> HandleSaveOperationEvent { get; set; }
 
     public bool IsVisible { get; set; } = false;
     public string Title { get; set; } = "Add";
+    string selectedGeneralDepartment { get; set; } = "";
 
     public void OpenDialog()
     {
@@ -35,13 +92,13 @@
 
     public async Task SaveChanges()
     {
-        if (string.IsNullOrEmpty(department.Name))
+        if (string.IsNullOrEmpty(Department.Name))
             await ToastService!.Error("Department name is required", "Missing Field");
         else
         {
             IsVisible = false;
 
-            await HandleSaveOperationEvent.InvokeAsync(department);
+            await HandleSaveOperationEvent.InvokeAsync(Department);
             await ToastService!.Success("Department added successfully", "Saved Changes");
         }
     }
@@ -49,6 +106,11 @@
     public void ChangeTitle(string title)
     {
         Title = title;
+    }
+
+    public void ChangeSelectedGeneralDepartment(string selected)
+    {
+        selectedGeneralDepartment = selected;
     }
 
     // reference to the modal component
@@ -63,5 +125,12 @@
     {
         IsVisible = false;
         return departmentDialog!.Hide();
+    }
+
+    public void OnValueChange(int value)
+    {
+        Department.GeneralDepartmentId = value;
+        ChangeSelectedGeneralDepartment(GeneralDepartments.FirstOrDefault(x => x.Id == Department.GeneralDepartmentId)?.Name!);
+        StateHasChanged();
     }
 }
