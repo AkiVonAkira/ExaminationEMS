@@ -21,7 +21,10 @@ namespace ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        public async Task<List<City>> GetAll() => await applicationDbContext.Cities.ToListAsync();
+        public async Task<List<City>> GetAll() => await applicationDbContext.Cities
+            .AsNoTracking()
+            .Include(c => c.Country)
+            .ToListAsync();
 
         public async Task<City> GetById(int id)
         {
@@ -48,11 +51,12 @@ namespace ServerLibrary.Repositories.Implementations
                 return NotFound();
             }
             city.Name = item.Name;
+            city.CountryId = item.CountryId;
             await Commit();
             return Success();
         }
 
-        private static GeneralResponse NotFound() => new(false, "Sorry Department not found");
+        private static GeneralResponse NotFound() => new(false, "Sorry City not found");
 
         private static GeneralResponse Success() => new(true, "Success, Process completed");
 

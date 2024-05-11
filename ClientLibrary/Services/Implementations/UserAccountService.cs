@@ -9,6 +9,7 @@ namespace ClientLibrary.Services.Implementations
     public class UserAccountService(GetHttpClient getHttpClient) : IUserAccountService
     {
         public const string AuthUrl = "api/authentication";
+
         public async Task<GeneralResponse> CreateAsync(Register user)
         {
             // för att skapa en ny användare

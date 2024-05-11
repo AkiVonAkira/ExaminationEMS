@@ -10,6 +10,7 @@ namespace BaseLibrary.Models
 
         // många till en relation med City
         public City? City { get; set; }
+
         public int CityId { get; set; }
     }
 }

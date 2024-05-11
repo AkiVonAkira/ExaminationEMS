@@ -7,6 +7,7 @@
 
         // General Department
         public bool ShowGeneralDepartment { get; set; }
+
         // En metod som hanterar klickhändelsen för General Department.
         // Återställer alla avdelningar, visar General Departmentn och
         // kör den tilldelade åtgärden för General Department om det finns någon.
@@ -19,6 +20,7 @@
 
         // Department
         public bool ShowDepartment { get; set; }
+
         public void DepartmentClicked(bool enabled)
         {
             ResetAllDepartments();
@@ -28,6 +30,7 @@
 
         // Section
         public bool ShowSection { get; set; }
+
         public void SectionClicked(bool enabled)
         {
             ResetAllDepartments();
@@ -37,6 +40,7 @@
 
         // Country
         public bool ShowCountry { get; set; }
+
         public void CountryClicked(bool enabled)
         {
             ResetAllDepartments();
@@ -46,6 +50,7 @@
 
         // City
         public bool ShowCity { get; set; }
+
         public void CityClicked(bool enabled)
         {
             ResetAllDepartments();
@@ -55,6 +60,7 @@
 
         // State
         public bool ShowState { get; set; }
+
         public void StateClicked(bool enabled)
         {
             ResetAllDepartments();
@@ -64,6 +70,7 @@
 
         // User
         public bool ShowUser { get; set; }
+
         public void UserClicked(bool enabled)
         {
             ResetAllDepartments();
@@ -73,6 +80,7 @@
 
         // Employee
         public bool ShowEmployee { get; set; }
+
         public void EmployeeClicked(bool enabled)
         {
             ResetAllDepartments();

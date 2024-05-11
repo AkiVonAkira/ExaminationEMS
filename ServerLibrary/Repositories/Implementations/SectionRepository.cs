@@ -24,7 +24,7 @@ namespace ServerLibrary.Repositories.Implementations
         public async Task<List<Section>> GetAll() => await applicationDbContext
             .Sections
             .AsNoTracking()
-            .Include(d=>d.Department)
+            .Include(d => d.Department)
             .ToListAsync();
 
         public async Task<Section> GetById(int id)

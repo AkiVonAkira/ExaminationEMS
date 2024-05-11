@@ -6,12 +6,15 @@ namespace BaseLibrary.Models
     {
         [Required]
         public DateTime StartDate { get; set; }
+
         [Required]
         public DateTime EndDate { get; set; }
+
         public int NumberOfDays => (EndDate - StartDate).Days;
 
         // Många till en relation till overtime type
         public OvertimeType? OvertimeType { get; set; }
+
         [Required]
         public int OvertimeTypeId { get; set; }
     }
