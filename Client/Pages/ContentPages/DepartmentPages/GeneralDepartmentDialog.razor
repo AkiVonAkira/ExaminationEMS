@@ -35,7 +35,7 @@
 
     public async Task SaveChanges()
     {
-        if (string.IsNullOrEmpty(GeneralDepartment.Name))
+        if (string.IsNullOrEmpty(GeneralDepartment.Name)) 
             await ToastService!.Error("General Department name is required", "Missing Field");
         else
         {

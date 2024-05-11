@@ -21,7 +21,11 @@ namespace ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        public async Task<List<Section>> GetAll() => await applicationDbContext.Sections.ToListAsync();
+        public async Task<List<Section>> GetAll() => await applicationDbContext
+            .Sections
+            .AsNoTracking()
+            .Include(d=>d.Department)
+            .ToListAsync();
 
         public async Task<Section> GetById(int id)
         {
@@ -48,6 +52,7 @@ namespace ServerLibrary.Repositories.Implementations
                 return NotFound();
             }
             section.Name = item.Name;
+            section.DepartmentId = item.DepartmentId;
             await Commit();
             return Success();
         }
