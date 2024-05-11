@@ -1,0 +1,67 @@
+﻿<Modal @ref="countryDialog" @bind-Visible="IsVisible">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>@Title Country</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field Model="country" OnSubmit="@SaveChanges">
+                <Heading TextSize="TextSize.Medium" Class="mb-2">Country</Heading>
+                <TextEdit Placeholder="Enter name..." @bind-Text="Country.Name" />
+            </Field>
+        </ModalBody>
+        <ModalFooter Class="justify-end">
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Submit" Clicked="@SaveChanges">Save Changes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+
+    [Parameter] public Country Country { get; set; } = new();
+    [Parameter] public EventCallback<Country> HandleSaveOperationEvent { get; set; }
+  
+
+    public bool IsVisible { get; set; } = false;
+    public string Title { get; set; } = "Add";
+    public void OpenDialog()
+    {
+        IsVisible = true;
+        ShowModal();
+        StateHasChanged();
+    }
+
+    public async Task SaveChanges()
+    {
+        if (string.IsNullOrEmpty(Country.Name))
+        {
+            await ToastService!.Error("Country is required", "Missing Field");
+        }
+        else
+        {
+            IsVisible = false;
+            await HandleSaveOperationEvent.InvokeAsync(Country);
+            await ToastService!.Success("Country added successfully", "Saved Changes");
+        }
+    }
+
+    public void ChangeTitle(string title)
+    {
+        Title = title;
+    }
+    // reference to the modal component
+    private Modal? countryDialog;
+
+    private Task ShowModal()
+    {
+        return countryDialog!.Show();
+    }
+
+    private Task HideModal()
+    {
+        IsVisible = false;
+        return countryDialog!.Hide();
+    }
+
+}

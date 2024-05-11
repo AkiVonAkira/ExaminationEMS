@@ -1,0 +1,166 @@
+﻿@implements IDisposable
+
+@if (allState.ShowCountry)
+{
+    <Card Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.White">
+        <CardHeader TextColor="TextColor.White">
+            <i class="fa fa-user text-primary"></i>
+            Country
+            <CloseButton Class="float-end" onclick="@CountryClicked"></CloseButton>
+        </CardHeader>
+        <CardBody>
+            <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                <Table Background="Background.Dark">
+                    <TableHeader Style="border-collapse: separate; border-spacing: 0;">
+                        <TableRow Background="Background.Primary" TextColor="TextColor.White">
+                            <TableHeaderCell>#</TableHeaderCell>
+                            <TableHeaderCell>Id</TableHeaderCell>
+                            <TableHeaderCell>Country</TableHeaderCell>
+                            <TableHeaderCell>Action</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @if (Countries != null && Countries.Count > 0)
+                        {
+                            int count = 1;
+                            foreach (var item in Countries)
+                            {
+                                var index = count.ToString();
+
+                                <TableRow>
+                                    <TableRowHeader>@index</TableRowHeader>
+                                    <TableRowCell>@item.Id</TableRowCell>
+                                    <TableRowCell>@item.Name</TableRowCell>
+                                    <TableRowCell Class="flex gap-4">
+                                        <i class="fa fa-pencil text-accent cursor-pointer"
+                                           @onclick="()=>EditClicked(item)"></i>
+                                        <i class="fa fa-trash text-danger cursor-pointer"
+                                           @onclick="()=>DeleteClicked(item)"></i>
+                                    </TableRowCell>
+                                </TableRow>
+                                ++count;
+                            }
+                        }
+                        else
+                        {
+                            <TableRow>
+                                <TableRowCell ColumnSpan="4" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                    No Country Added yet!
+                                </TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            </Div>
+        </CardBody>
+        <CardFooter>
+            <Form>
+                <Button Color="Color.Primary" @onclick="@AddClicked">Add country</Button>
+            </Form>
+        </CardFooter>
+    </Card>
+}
+
+<CountryDialog @ref="countryDialog"
+               HandleSaveOperationEvent="HandleSaveOperationEvent"
+               Country="Country"/>
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
+    CountryDialog? countryDialog;
+    Country Country = new();
+    public string Title { get; set; } = "";
+    public List<Country> Countries { get; set; } = new();
+   
+    protected async override Task OnInitializedAsync()
+    {
+        await GetCountry();
+        allState.Action += StateHasChanged;
+    }
+
+    public async Task GetCountry()
+    {
+        Countries = await countryService.GetAll(ClientConstants.CountryBaseUrl);
+    }
+
+
+    void OpenDialog()
+    {
+        countryDialog?.OpenDialog();
+    }
+
+    void AddClicked()
+    {
+        countryDialog?.ChangeTitle("Add");
+        Country = new();
+        OpenDialog();
+    }
+
+    // Add or Update
+    private async Task HandleSaveOperationEvent(Country country)
+    {
+        bool successCheck = false;
+        if (Country.Id > 0)
+        {
+            var result = await countryService.Update(country, ClientConstants.CountryBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        }
+        else
+        {
+            var response = await countryService.Insert(country, ClientConstants.CountryBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
+        if (successCheck)
+        {
+            country = new();
+            await GetCountry();
+            countryDialog?.ChangeTitle("Add");
+        }
+    }
+
+    // Edit
+    private void EditClicked(Country country)
+    {
+        countryDialog?.ChangeTitle("Update");
+        Country = country;
+        OpenDialog();
+    }
+
+    // Delete
+    private async Task DeleteClicked(Country country)
+    {
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {country.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await countryService.DeleteById(country.Id, ClientConstants.CountryBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+            await GetCountry();
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            //await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
+        }
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+    }
+
+    // Close Button
+    private void CountryClicked()
+    {
+        allState.CountryClicked(false);
+    }
+}
