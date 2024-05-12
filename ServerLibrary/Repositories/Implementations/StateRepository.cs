@@ -21,7 +21,11 @@ namespace ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        public async Task<List<State>> GetAll() => await applicationDbContext.States.ToListAsync();
+        public async Task<List<State>> GetAll() => await applicationDbContext
+            .States
+            .AsNoTracking()
+            .Include(c => c.City)
+            .ToListAsync();
 
         public async Task<State> GetById(int id)
         {
@@ -33,7 +37,7 @@ namespace ServerLibrary.Repositories.Implementations
             var checkIfNull = await CheckName(item.Name);
             if (!checkIfNull)
             {
-                return new GeneralResponse(false, "Sorry State already exists");
+                return new GeneralResponse(false, $"Sorry {item.Name} already exists");
             }
             applicationDbContext.States.Add(item);
             await Commit();
@@ -48,11 +52,12 @@ namespace ServerLibrary.Repositories.Implementations
                 return NotFound();
             }
             state.Name = item.Name;
+            state.CityId = item.CityId;
             await Commit();
             return Success();
         }
 
-        private static GeneralResponse NotFound() => new(false, "Sorry Department not found");
+        private static GeneralResponse NotFound() => new(false, "Sorry State not found");
 
         private static GeneralResponse Success() => new(true, "Success, Process completed");
 

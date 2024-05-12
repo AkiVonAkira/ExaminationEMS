@@ -36,7 +36,7 @@ namespace ServerLibrary.Repositories.Implementations
             var checkIfNull = await CheckName(item.Name);
             if (!checkIfNull)
             {
-                return new GeneralResponse(false, "Sorry City already exists");
+                return new GeneralResponse(false, $"Sorry {item.Name} already exists");
             }
             applicationDbContext.Cities.Add(item);
             await Commit();

@@ -1,12 +1,12 @@
 ﻿@implements IDisposable
 
-@if (allState.ShowCity)
+@if (allState.ShowState)
 {
     <Card Border="Border.Secondary" Background="Background.Dark" TextColor="TextColor.White">
         <CardHeader TextColor="TextColor.White">
             <i class="fa-brands fa-slack text-secondary"></i>
-            City
-            <CloseButton Class="float-end" onclick="@CityClicked"></CloseButton>
+            Section
+            <CloseButton Class="float-end" onclick="@StateClicked"></CloseButton>
         </CardHeader>
         <CardBody>
             <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
@@ -15,23 +15,23 @@
                         <TableRow Background="Background.Secondary" TextColor="TextColor.White">
                             <TableHeaderCell>#</TableHeaderCell>
                             <TableHeaderCell>Id</TableHeaderCell>
-                            <TableHeaderCell>Country</TableHeaderCell>
                             <TableHeaderCell>City</TableHeaderCell>
+                            <TableHeaderCell>State</TableHeaderCell>
                             <TableHeaderCell>Action</TableHeaderCell>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        @if (Cities != null && Cities.Count > 0)
+                        @if (States != null && States.Count > 0)
                         {
                             int count = 1;
-                            foreach (var item in Cities)
+                            foreach (var item in States)
                             {
                                 var index = count.ToString();
 
                                 <TableRow>
                                     <TableRowHeader>@index</TableRowHeader>
                                     <TableRowCell>@item.Id</TableRowCell>
-                                    <TableRowCell>@item.Country!.Name</TableRowCell>
+                                    <TableRowCell>@item.City!.Name</TableRowCell>
                                     <TableRowCell>@item.Name</TableRowCell>
                                     <TableRowCell Class="flex gap-4">
                                         <i class="fa fa-pencil text-accent cursor-pointer"
@@ -47,7 +47,7 @@
                         {
                             <TableRow>
                                 <TableRowCell ColumnSpan="5" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
-                                    No Cities Added yet!
+                                    No State Added yet!
                                 </TableRowCell>
                             </TableRow>
                         }
@@ -57,104 +57,98 @@
         </CardBody>
         <CardFooter>
             <Form>
-                <Button Color="Color.Primary" @onclick="@AddClicked">Add City</Button>
+                <Button Color="Color.Primary" @onclick="@AddClicked">Add Section</Button>
             </Form>
         </CardFooter>
     </Card>
 }
 
- <CityDialog @ref="cityDialog"
+<StateDialog @ref="stateDialog"
                HandleSaveOperationEvent="HandleSaveOperationEvent"
-               City="City"
-            Countries="Countries" />
+               State="State" 
+               Cities="Cities"/>
+
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
     [Inject] IMessageService? MessageService { get; set; }
 
-    CityDialog? cityDialog;
-    City City = new();
+    StateDialog? stateDialog;
+    State State = new();
+
     public string Title { get; set; } = "";
     public List<City> Cities { get; set; } = new();
-    public List<Country> Countries { get; set; } = new();
-    string selectedCountry { get; set; } = "";
+    public List<State> States { get; set; } = new();
 
     protected async override Task OnInitializedAsync()
     {
-        await GetCity();
-        await GetCountry();
+        await GetStates();
+        await GetCities();
         allState.Action += StateHasChanged;
     }
 
-    public async Task GetCity()
+    public async Task GetStates()
+    {
+        States = await stateService.GetAll(ClientConstants.StateBaseUrl);
+    }
+
+    public async Task GetCities()
     {
         Cities = await cityService.GetAll(ClientConstants.CityBaseUrl);
     }
 
-    public async Task GetCountry()
-    {
-        Countries = await countryService.GetAll(ClientConstants.CountryBaseUrl);
-    }
-
-
-
     void OpenDialog()
     {
-        cityDialog?.OpenDialog();
-    }
-
-    public void ChangeSelectedCountry(string selected)
-    {
-        selectedCountry = selected;
+        stateDialog?.OpenDialog();
     }
 
     void AddClicked()
     {
-        cityDialog?.ChangeTitle("Add");
-        cityDialog?.ChangeSelectedCountry("");
-        City = new();
+        stateDialog?.ChangeTitle("Add");
+        stateDialog?.ChangeSelectedCity("");
+        State = new();
         OpenDialog();
     }
 
     // Add or Update
-    private async Task HandleSaveOperationEvent(City city)
+    private async Task HandleSaveOperationEvent(State state)
     {
         bool successCheck = false;
-        if (City.Id > 0)
+        if (State.Id > 0)
         {
-            var result = await cityService.Update(city, ClientConstants.CityBaseUrl);
+            var result = await stateService.Update(state, ClientConstants.StateBaseUrl);
             successCheck = await DisplayMessage(result.Flag, result.Message);
         }
         else
         {
-            var response = await cityService.Insert(city, ClientConstants.CityBaseUrl);
+            var response = await stateService.Insert(state, ClientConstants.SectionBaseUrl);
             successCheck = await DisplayMessage(response.Flag, response.Message);
         }
         if (successCheck)
         {
-            city = new();
-            await GetCity();
-            cityDialog?.ChangeTitle("Add");
+            state = new();
+            await GetStates();
+            stateDialog?.ChangeTitle("Add");
         }
     }
 
     // Edit
-    private void EditClicked(City city)
+    private void EditClicked(State state)
     {
-        cityDialog?.ChangeTitle("Update");
-        City = city;
+        stateDialog?.ChangeTitle("Update");
+        State = state;
         OpenDialog();
     }
 
     // Delete
-    private async Task DeleteClicked(City city)
+    private async Task DeleteClicked(State state)
     {
-        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {city.Name}?", "Delete Confirmation");
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {state.Name}?", "Delete Confirmation");
         if (!confirm) return;
 
-        var response = await countryService.DeleteById(city.Id, ClientConstants.CityBaseUrl);
+        var response = await stateService.DeleteById(state.Id, ClientConstants.StateBaseUrl);
         if (await DisplayMessage(response.Flag, response.Message))
-            await GetCity();
+            await GetStates();
     }
 
     private async Task<bool> DisplayMessage(bool flag, string message)
@@ -177,8 +171,8 @@
     }
 
     // Close Button
-    private void CityClicked()
+    private void StateClicked()
     {
-        allState.CityClicked(false);
+        allState.StateClicked(false);
     }
 }
