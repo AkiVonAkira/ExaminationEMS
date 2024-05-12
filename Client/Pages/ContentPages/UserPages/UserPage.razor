@@ -1,0 +1,85 @@
+﻿<h3>UserPage</h3>
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
+    UserDialog? userDialog;
+
+    ManageUser ManageUser = new ManageUser();
+
+    public List<ManageUser> ManagerUsers { get; set; } = new();
+    public List<SystemRole> SystemRoles { get; set; } = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetUsers();
+        await GetRoles();
+    }
+
+    private async Task GetUsers()
+    {
+        ManagerUsers = await accountService.GetUsers(); 
+    }
+
+    private async Task GetRoles()
+    {
+        SystemRoles = await accountService.GetRoles();
+    }
+
+    void OpenDialog()
+    {
+        userDialog?.OpenDialog();
+    }
+
+
+    // Add or Update
+    private async Task HandleSaveOperationEvent(ManageUser user)
+    {
+        var result = await accountService.UpdateUser(user); 
+        bool successCheck = await DisplayMessage(result.Flag, result.Message);
+
+        if (successCheck)
+        {
+            await GetUsers(); // Uppdatera listan med användare
+        }
+    }
+
+    // Edit
+    private void EditClicked(ManageUser user)
+    {
+        ManageUser = user; // Uppdatera ManageUser-objektet för redigering
+        OpenDialog();
+    }
+
+    // Delete
+    private async Task DeleteClicked(ManageUser user)
+    {
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {user.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await accountService.DeleteUser(user.UserId);
+        if (await DisplayMessage(response.Flag, response.Message))
+            await GetUsers(); // Uppdatera listan med användare
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            //await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
+        }
+    }
+
+    // Close Button
+    private void UserClicked()
+    {
+        allState.UserClicked(false);
+    }
+}

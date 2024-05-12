@@ -1,0 +1,101 @@
+﻿<Modal @ref="manageRoleDialog" @bind-Visible="IsVisible">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Update User</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field Model="manageRole" OnSubmit="@SaveChanges">
+                <Heading TextSize="TextSize.Medium" Class="mb-2">Users Name</Heading>
+                <TextEdit Placeholder="Enter name..." @bind-Text="ManageUser.Name" />
+                <Heading TextSize="TextSize.Medium" Class="mb-2">Email</Heading>
+                <TextEdit Placeholder="Enter Email..." @bind-Text="ManageUser.Email" />
+                <Heading TextSize="TextSize.Medium" Class="mb-2">Select Role</Heading>
+                <TextEdit Placeholder="Select Role" @bind-Text="ManageUser.Name" />
+                @if (ManageUser.Role != null)
+                {
+                    ChangeSelectedRole(GetRoleNameByID(ManageUser.RolesId));
+                    <DropdownList TItem="SystemRole" TValue="int"
+                                  Data="@SystemRoles"
+                                  TextField="@((item)=>item.Name)"
+                                  ValueField="@((item)=>item.Id)"
+                                  Color="Color.Primary"
+                                  MaxMenuHeight="200px"
+                                  SelectedValueChanged="OnValueChange">
+                        @if (!string.IsNullOrEmpty(selectedRole))
+                        {
+                            <Span>@selectedRole</Span>
+                        }
+                        else
+                        {
+                            <Span>Select</Span>
+                        }
+                    </DropdownList>
+                }
+            </Field>
+        </ModalBody>
+        <ModalFooter Class="justify-end">
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Submit" Clicked="@SaveChanges">Save Changes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+
+    [Parameter] public ManageUser ManageUser { get; set; } = new();
+    [Parameter] public List<SystemRole> SystemRoles { get; set; } = new();
+    [Parameter] public EventCallback<ManageUser> HandleSaveOperationEvent { get; set; }
+    string selectedRole { get; set; } = "";
+
+    public bool IsVisible { get; set; } = false;
+    public void OpenDialog()
+    {
+        IsVisible = true;
+        ShowModal();
+        StateHasChanged();
+    }
+
+    public async Task SaveChanges()
+    {
+        if (string.IsNullOrEmpty(ManageUser.Name) || string.IsNullOrEmpty(ManageUser.Role))
+            await ToastService!.Error("Role name is required", "Missing Field");
+        else
+        {
+            IsVisible = false;
+            await HandleSaveOperationEvent.InvokeAsync(ManageUser);
+            await ToastService!.Success("Role added successfully", "Saved Changes");
+        }
+    }
+    public void ChangeSelectedRole(string selected)
+    {
+        selectedRole = selected;
+    }
+    // reference to the modal component
+    private Modal? manageRoleDialog;
+
+    private Task ShowModal()
+    {
+        return manageRoleDialog!.Show();
+    }
+
+    private Task HideModal()
+    {
+        IsVisible = false;
+        return manageRoleDialog!.Hide();
+    }
+
+    private string GetRoleNameByID(int id)
+    {
+        return SystemRoles.FirstOrDefault(x => x.Id == id)?.Name ?? string.Empty;
+    }
+
+    // Error här Behöver fixas
+    public void OnValueChange(int value)
+    {
+        ManageUser.RoleId = value; 
+        ChangeSelectedRole(GetRoleNameByID(ManageUser.RoleId)); 
+        StateHasChanged();
+    }
+
+}
