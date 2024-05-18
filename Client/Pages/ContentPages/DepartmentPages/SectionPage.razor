@@ -2,9 +2,9 @@
 
 @if (allState.ShowSection)
 {
-    <Card Border="Border.Secondary" Background="Background.Dark" TextColor="TextColor.White">
-        <CardHeader TextColor="TextColor.White">
-            <i class="fa-brands fa-slack text-secondary"></i>
+    <Card Border="Border.Success" Background="Background.Dark" TextColor="TextColor.White">
+        <CardHeader TextColor="TextColor.Success">
+            <i class="fa fa-seedling text-white"></i>
             Section
             <CloseButton Class="float-end" onclick="@SectionClicked"></CloseButton>
         </CardHeader>
@@ -12,7 +12,7 @@
             <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
                 <Table Background="Background.Dark">
                     <TableHeader Style="border-collapse: separate; border-spacing: 0;">
-                        <TableRow Background="Background.Secondary" TextColor="TextColor.White">
+                        <TableRow Background="Background.Success" TextColor="TextColor.White">
                             <TableHeaderCell>#</TableHeaderCell>
                             <TableHeaderCell>Id</TableHeaderCell>
                             <TableHeaderCell>Department</TableHeaderCell>

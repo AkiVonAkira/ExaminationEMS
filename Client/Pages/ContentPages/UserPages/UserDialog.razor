@@ -6,32 +6,37 @@
         </ModalHeader>
         <ModalBody>
             <Field Model="manageRole" OnSubmit="@SaveChanges">
-                <Heading TextSize="TextSize.Medium" Class="mb-2">Users Name</Heading>
-                <TextEdit Placeholder="Enter name..." @bind-Text="ManageUser.Name" />
-                <Heading TextSize="TextSize.Medium" Class="mb-2">Email</Heading>
-                <TextEdit Placeholder="Enter Email..." @bind-Text="ManageUser.Email" />
-                <Heading TextSize="TextSize.Medium" Class="mb-2">Select Role</Heading>
-                <TextEdit Placeholder="Select Role" @bind-Text="ManageUser.Name" />
-                @if (ManageUser.Role != null)
-                {
-                    ChangeSelectedRole(GetRoleNameByID(ManageUser.RolesId));
-                    <DropdownList TItem="SystemRole" TValue="int"
-                                  Data="@SystemRoles"
-                                  TextField="@((item)=>item.Name)"
-                                  ValueField="@((item)=>item.Id)"
-                                  Color="Color.Primary"
-                                  MaxMenuHeight="200px"
-                                  SelectedValueChanged="OnValueChange">
-                        @if (!string.IsNullOrEmpty(selectedRole))
-                        {
-                            <Span>@selectedRole</Span>
-                        }
-                        else
-                        {
-                            <Span>Select</Span>
-                        }
-                    </DropdownList>
-                }
+                <Field>
+                    <Heading TextSize="TextSize.Medium" Class="mb-2">Users Name</Heading>
+                    <TextEdit Placeholder="Enter name..." @bind-Text="ManageUser.Name" />
+                </Field>
+                <Field>
+                    <Heading TextSize="TextSize.Medium" Class="mb-2">Email</Heading>
+                    <TextEdit Placeholder="Enter Email..." @bind-Text="ManageUser.Email" />
+                </Field>
+                <Field>
+                    <Heading TextSize="TextSize.Medium" Class="mb-2">Select Role</Heading>
+                    @if (ManageUser.Role != null)
+                    {
+                        ChangeSelectedRole(GetRoleName(ManageUser.Role));
+                        <DropdownList TItem="SystemRole" TValue="SystemRole"
+                                      Data="@SystemRoles"
+                                      TextField="@((item)=>item.Name)"
+                                      ValueField="@((item)=>item)"
+                                      Color="Color.Primary"
+                                      MaxMenuHeight="200px"
+                                      SelectedValueChanged="OnValueChange">
+                            @if (!string.IsNullOrEmpty(selectedRole))
+                            {
+                                <Span>@selectedRole</Span>
+                            }
+                            else
+                            {
+                                <Span>Select</Span>
+                            }
+                        </DropdownList>
+                    }
+                </Field>
             </Field>
         </ModalBody>
         <ModalFooter Class="justify-end">
@@ -67,10 +72,12 @@
             await ToastService!.Success("Role added successfully", "Saved Changes");
         }
     }
+
     public void ChangeSelectedRole(string selected)
     {
         selectedRole = selected;
     }
+
     // reference to the modal component
     private Modal? manageRoleDialog;
 
@@ -85,17 +92,15 @@
         return manageRoleDialog!.Hide();
     }
 
-    private string GetRoleNameByID(int id)
+    private string GetRoleName(string name)
     {
-        return SystemRoles.FirstOrDefault(x => x.Id == id)?.Name ?? string.Empty;
+        return SystemRoles.FirstOrDefault(x => x.Name == name)?.Name ?? string.Empty;
     }
 
-    // Error här Behöver fixas
-    public void OnValueChange(int value)
+    public void OnValueChange(SystemRole args)
     {
-        ManageUser.RoleId = value; 
-        ChangeSelectedRole(GetRoleNameByID(ManageUser.RoleId)); 
+        ManageUser.Role = args.Name;
+        ChangeSelectedRole(args.Name!);
         StateHasChanged();
     }
-
 }

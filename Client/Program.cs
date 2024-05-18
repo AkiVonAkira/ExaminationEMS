@@ -40,16 +40,17 @@ builder.Services.AddScoped<IGenericServiceInterface<GeneralDepartment>, GenericS
 builder.Services.AddScoped<IGenericServiceInterface<Department>, GenericServiceImplementations<Department>>();
 builder.Services.AddScoped<IGenericServiceInterface<Section>, GenericServiceImplementations<Section>>();
 
-// country / city / state
+// country / city / Town
 builder.Services.AddScoped<IGenericServiceInterface<Country>, GenericServiceImplementations<Country>>();
 builder.Services.AddScoped<IGenericServiceInterface<City>, GenericServiceImplementations<City>>();
-builder.Services.AddScoped<IGenericServiceInterface<State>, GenericServiceImplementations<State>>();
+builder.Services.AddScoped<IGenericServiceInterface<Town>, GenericServiceImplementations<Town>>();
 
 // employee
 builder.Services.AddScoped<IGenericServiceInterface<Employee>, GenericServiceImplementations<Employee>>();
 
 // table toggle states
 builder.Services.AddScoped<AllState>();
+//builder.Services.AddScoped(typeof(AppState<>));
 
 // Blazorise Services
 builder.Services

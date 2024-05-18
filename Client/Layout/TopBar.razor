@@ -32,15 +32,15 @@
             <AuthorizeView>
                 <NotAuthorized>
                     <BarItem>
-                        <Button Outline Color="Color.Primary" Class="me-4">
+                        <Button Type="ButtonType.Link" To="/identity/account/login" Outline Color="Color.Primary" Class="me-4">
                             <BarIcon Class="fa fa-right-to-bracket" style="width: 2rem;" aria-hidden="true"></BarIcon>
-                            <BarLink Padding="Padding.Is0" TextColor="TextColor.White" To="/identity/account/login">Login</BarLink>
+                            <BarLink Padding="Padding.Is0" TextColor="TextColor.White" >Login</BarLink>
                         </Button>
                     </BarItem>
                     <BarItem>
-                        <Button Outline Color="Color.Secondary">
+                        <Button Type="ButtonType.Link" To="/identity/account/register" Outline Color="Color.Secondary">
                             <BarIcon Class="fa fa-user-plus" style="width: 2rem;" aria-hidden="true"></BarIcon>
-                            <BarLink Padding="Padding.Is0" TextColor="TextColor.White" To="/identity/account/register">Register</BarLink>
+                            <BarLink Padding="Padding.Is0" TextColor="TextColor.White">Register</BarLink>
                         </Button>
                     </BarItem>
                 </NotAuthorized>

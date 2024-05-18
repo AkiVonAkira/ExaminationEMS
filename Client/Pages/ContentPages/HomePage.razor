@@ -8,7 +8,8 @@
     <SectionPage></SectionPage>
     <CountryPage></CountryPage>
     <CityPage></CityPage>
-    <StatePage></StatePage>
+    <TownPage></TownPage>
+    <UserPage></UserPage>
 </Container>
 
 @code {
@@ -16,6 +17,8 @@
     protected override async Task OnInitializedAsync()
     {
         await CheckUserAuthentication();
+
+        // countryState = new AppState<Country>(countryService, ClientConstants.CountryBaseUrl);
     }
 
     private async Task CheckUserAuthentication()

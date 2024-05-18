@@ -1,4 +1,69 @@
-﻿<h3>UserPage</h3>
+﻿@implements IDisposable
+
+@if (allState.ShowUser)
+{
+    <Card Border="Border.Secondary" Background="Background.Dark" TextColor="TextColor.White">
+        <CardHeader TextColor="TextColor.White">
+            <i class="fa fa-user text-primary"></i>
+            Users
+            <CloseButton Class="float-end" onclick="@UserClicked"></CloseButton>
+        </CardHeader>
+        <CardBody>
+            <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                <Table Background="Background.Dark">
+                    <TableHeader Style="border-collapse: separate; border-spacing: 0;">
+                        <TableRow Background="Background.Primary" TextColor="TextColor.White">
+                            <TableHeaderCell>#</TableHeaderCell>
+                            <TableHeaderCell>Id</TableHeaderCell>
+                            <TableHeaderCell>Name</TableHeaderCell>
+                            <TableHeaderCell>Email</TableHeaderCell>
+                            <TableHeaderCell>Role</TableHeaderCell>
+                            <TableHeaderCell>Action</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @if (ManagerUsers != null && ManagerUsers.Count > 0)
+                        {
+                            int count = 1;
+                            foreach (var item in ManagerUsers)
+                            {
+                                var index = count.ToString();
+
+                                <TableRow>
+                                    <TableRowHeader>@index</TableRowHeader>
+                                    <TableRowCell>@item.UserId</TableRowCell>
+                                    <TableRowCell>@item.Name</TableRowCell>
+                                    <TableRowCell>@item.Email</TableRowCell>
+                                    <TableRowCell>@item.Role</TableRowCell>
+                                    <TableRowCell Class="flex gap-4">
+                                        <i class="fa fa-pencil text-accent cursor-pointer"
+                                           @onclick="()=>EditClicked(item)"></i>
+                                        <i class="fa fa-trash text-danger cursor-pointer"
+                                           @onclick="()=>DeleteClicked(item)"></i>
+                                    </TableRowCell>
+                                </TableRow>
+                                ++count;
+                            }
+                        }
+                        else
+                        {
+                            <TableRow>
+                                <TableRowCell ColumnSpan="5" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                    No Users Added yet!
+                                </TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            </Div>
+        </CardBody>
+    </Card>
+}
+
+<UserDialog @ref="userDialog"
+                  HandleSaveOperationEvent="HandleSaveOperationEvent"
+                  ManageUser="ManageUser"
+                  SystemRoles="SystemRoles" />
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
@@ -6,7 +71,7 @@
 
     UserDialog? userDialog;
 
-    ManageUser ManageUser = new ManageUser();
+    ManageUser ManageUser = new();
 
     public List<ManageUser> ManagerUsers { get; set; } = new();
     public List<SystemRole> SystemRoles { get; set; } = new();
@@ -15,6 +80,7 @@
     {
         await GetUsers();
         await GetRoles();
+        allState.Action += StateHasChanged;
     }
 
     private async Task GetUsers()
@@ -34,7 +100,7 @@
 
 
     // Add or Update
-    private async Task HandleSaveOperationEvent(ManageUser user)
+    public async Task HandleSaveOperationEvent(ManageUser user)
     {
         var result = await accountService.UpdateUser(user); 
         bool successCheck = await DisplayMessage(result.Flag, result.Message);
@@ -75,6 +141,11 @@
             await ToastService!.Error(message, "Error");
             return false;
         }
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
     }
 
     // Close Button
