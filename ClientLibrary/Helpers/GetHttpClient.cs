@@ -24,7 +24,7 @@ namespace ClientLibrary.Helpers
             return client;
         }
 
-        public HttpClient GetPublicHttpClient()
+        public async Task<HttpClient> GetPublicHttpClient()
         {
             var client = httpClientFactory.CreateClient("ServerApiClient");
             client.DefaultRequestHeaders.Remove(HeadKey);
