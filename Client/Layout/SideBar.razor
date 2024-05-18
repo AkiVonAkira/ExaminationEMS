@@ -27,17 +27,23 @@
 
             <BarMenu>
                 <BarStart>
-                    <BarItem>
-                        <BarDropdown @bind-Visible="administrationElementsVisible">
-                            <BarDropdownToggle>
-                                <BarIcon IconName="IconName.UserTie" />
-                                Administration
-                            </BarDropdownToggle>
-                            <BarDropdownMenu>
-                                <BarDropdownItem>Users</BarDropdownItem>
-                            </BarDropdownMenu>
-                        </BarDropdown>
-                    </BarItem>
+                    @if (context.User.IsInRole("Admin"))
+                    {
+                        <BarItem>
+                            <BarDropdown @bind-Visible="administrationElementsVisible">
+                                <BarDropdownToggle>
+                                    <BarIcon IconName="IconName.UserTie" />
+                                    Administration
+                                </BarDropdownToggle>
+                                <BarDropdownMenu>
+                                    <BarDropdownItem @onclick="@UserClicked">
+                                        <BarIcon IconName="IconName.Users" />
+                                        Users
+                                    </BarDropdownItem>
+                                </BarDropdownMenu>
+                            </BarDropdown>
+                        </BarItem>
+                    }
                     <BarItem>
                         <BarDropdown @bind-Visible="departmentElementsVisible">
                             <BarDropdownToggle>
@@ -47,35 +53,35 @@
                             <BarDropdownMenu>
                                 <BarDropdownItem @onclick="@GeneralDepartmentClicked">
                                     <BarIcon IconName="IconName.IdCard" />
-                                    General Department
+                                    General Departments
                                 </BarDropdownItem>
                                 <BarDropdownItem @onclick="@DepartmentClicked">
                                     <BarIcon IconName="IconName.Bookmark" />
-                                    Department
+                                    Departments
                                 </BarDropdownItem>
                                 <BarDropdownItem @onclick="@SectionClicked">
                                     <BarIcon IconName="IconName.Seedling" />
-                                    Section
+                                    Sections
                                 </BarDropdownItem>
                             </BarDropdownMenu>
                             <BarDropdownMenu>
                                 <BarDropdownItem @onclick="@CountryClicked">
                                     <BarIcon IconName="IconName.Globe" />
-                                    Country
+                                    Countries
                                 </BarDropdownItem>
                                 <BarDropdownItem @onclick="@CityClicked">
-                                    <BarIcon IconName="IconName.Flag" />
-                                    City
+                                    <BarIcon IconName="IconName.Building" />
+                                    Cities
                                 </BarDropdownItem>
-                                <BarDropdownItem @onclick="@StateClicked">
-                                    <BarIcon IconName="IconName.Sms" />
-                                    State
+                                <BarDropdownItem @onclick="@TownClicked">
+                                    <BarIcon IconName="IconName.Flag" />
+                                    Towns
                                 </BarDropdownItem>
                             </BarDropdownMenu>
                             <BarDropdownMenu>
                                 <BarDropdownItem @onclick="@EmployeeClicked">
                                     <BarIcon IconName="IconName.Users" />
-                                    Employee
+                                    Employees
                                 </BarDropdownItem>
                             </BarDropdownMenu>
                         </BarDropdown>
@@ -122,17 +128,21 @@
     public bool ShowSection { get; set; } = false;
     private void SectionClicked() => allState.SectionClicked(ShowSection = !allState.ShowSection);
 
-    // Country / City / State
+    // Country / City / Town
     public bool ShowCountry { get; set; } = false;
     private void CountryClicked() => allState.CountryClicked(ShowCountry = !allState.ShowCountry);
 
     public bool ShowCity { get; set; } = false;
     private void CityClicked() => allState.CityClicked(ShowCity = !allState.ShowCity);
 
-    public bool ShowState { get; set; } = false;
-    private void StateClicked() => allState.StateClicked(ShowState = !allState.ShowState);
+    public bool ShowTown { get; set; } = false;
+    private void TownClicked() => allState.TownClicked(ShowTown = !allState.ShowTown);
 
     // Employee
     public bool ShowEmployee { get; set; } = false;
     private void EmployeeClicked() => allState.EmployeeClicked(ShowEmployee = !allState.ShowEmployee);
+    
+    // User
+    public bool ShowUser { get; set; } = false;
+    private void UserClicked() => allState.UserClicked(ShowUser = !allState.ShowUser);
 }

@@ -9,8 +9,8 @@ namespace BaseLibrary.Models
 
         public int CountryId { get; set; }
 
-        // en till många relation med State
+        // en till många relation med Town
         [JsonIgnore]
-        public List<State>? States { get; set; }
+        public List<Town>? Towns { get; set; }
     }
 }

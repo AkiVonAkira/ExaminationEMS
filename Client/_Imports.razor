@@ -33,16 +33,25 @@
 @using Client.Pages.ContentPages
 @using Client.Pages.ContentPages.DepartmentPages
 @using Client.Pages.ContentPages.DepartmentPages.LocationPages
+@using Client.Pages.ContentPages.UserPages
 
 @* // general departments / department / section *@
 @inject IGenericServiceInterface<GeneralDepartment> generalDepartmentService
 @inject IGenericServiceInterface<Department> departmentService
 @inject IGenericServiceInterface<Section> sectionService
+@* @inject AppState<GeneralDepartment> generalDepartmentState
+@inject AppState<Department> departmentState
+@inject AppState<Section> sectionState *@
 
-@* // country / city / state *@
+
+@* // country / city / Town *@
 @inject IGenericServiceInterface<Country> countryService
 @inject IGenericServiceInterface<City> cityService
-@inject IGenericServiceInterface<State> stateService
+@inject IGenericServiceInterface<Town> townService
+@* @inject AppState<Country> countryState
+@inject AppState<City> cityState
+@inject AppState<State> stateState *@
+
 
 @* // employee *@
 @inject IGenericServiceInterface<Employee> employeeService

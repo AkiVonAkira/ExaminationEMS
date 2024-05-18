@@ -29,7 +29,7 @@ namespace BaseLibrary.Models
         public Section? Section { get; set; }
         public int SectionId { get; set; }
 
-        public State? State { get; set; }
-        public int StateId { get; set; }
+        public Town? Town { get; set; }
+        public int TownId { get; set; }
     }
 }

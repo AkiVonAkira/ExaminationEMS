@@ -58,13 +58,13 @@
             Action?.Invoke();
         }
 
-        // State
-        public bool ShowState { get; set; }
+        // Town
+        public bool ShowTown { get; set; }
 
-        public void StateClicked(bool enabled)
+        public void TownClicked(bool enabled)
         {
             ResetAllDepartments();
-            ShowState = enabled;
+            ShowTown = enabled;
             Action?.Invoke();
         }
 
@@ -96,7 +96,7 @@
             ShowSection = false;
             ShowCountry = false;
             ShowCity = false;
-            ShowState = false;
+            ShowTown = false;
             ShowUser = false;
             ShowEmployee = false;
         }
