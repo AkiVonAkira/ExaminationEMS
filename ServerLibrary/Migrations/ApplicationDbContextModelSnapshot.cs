@@ -52,12 +52,35 @@ namespace ServerLibrary.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CountryId");
+
                     b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
                 });
 
             modelBuilder.Entity("BaseLibrary.Models.Department", b =>
@@ -68,12 +91,53 @@ namespace ServerLibrary.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("GeneralDepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GeneralDepartmentId");
+
                     b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Doctor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MedicalDiagnose")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MedicalRecommendation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SocialSecurityNumberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Doctors");
                 });
 
             modelBuilder.Entity("BaseLibrary.Models.Employee", b =>
@@ -85,55 +149,47 @@ namespace ServerLibrary.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Fullname")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GeneralDepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("JobTitle")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("Photo")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Photo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SectionId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SocialSecurityNumberID")
+                    b.Property<string>("SocialSecurityNumberId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TownId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("GeneralDepartmentId");
-
                     b.HasIndex("SectionId");
+
+                    b.HasIndex("TownId");
 
                     b.ToTable("Employees");
                 });
@@ -147,11 +203,64 @@ namespace ServerLibrary.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("GeneralDepartments");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Overtime", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OvertimeTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SocialSecurityNumberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OvertimeTypeId");
+
+                    b.ToTable("Overtimes");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.OvertimeType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OvertimeTypes");
                 });
 
             modelBuilder.Entity("BaseLibrary.Models.RefreshTokenInfo", b =>
@@ -181,10 +290,16 @@ namespace ServerLibrary.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Sections");
                 });
@@ -203,6 +318,28 @@ namespace ServerLibrary.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SystemRoles");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Town", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("Towns");
                 });
 
             modelBuilder.Entity("BaseLibrary.Models.UserRole", b =>
@@ -224,68 +361,181 @@ namespace ServerLibrary.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("BaseLibrary.Models.Employee", b =>
+            modelBuilder.Entity("BaseLibrary.Models.Vacation", b =>
                 {
-                    b.HasOne("BaseLibrary.Models.City", "City")
-                        .WithMany("Employees")
-                        .HasForeignKey("CityId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FileNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SocialSecurityNumberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VacationTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VacationTypeId");
+
+                    b.ToTable("Vacations");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.VacationType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VacationTypes");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.City", b =>
+                {
+                    b.HasOne("BaseLibrary.Models.Country", "Country")
+                        .WithMany("Cities")
+                        .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BaseLibrary.Models.Department", "Department")
-                        .WithMany("Employees")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Country");
+                });
 
-                    b.HasOne("BaseLibrary.Models.Employee", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("EmployeeId");
-
+            modelBuilder.Entity("BaseLibrary.Models.Department", b =>
+                {
                     b.HasOne("BaseLibrary.Models.GeneralDepartment", "GeneralDepartment")
-                        .WithMany("Employees")
+                        .WithMany("Departments")
                         .HasForeignKey("GeneralDepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("GeneralDepartment");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Employee", b =>
+                {
                     b.HasOne("BaseLibrary.Models.Section", "Section")
                         .WithMany("Employees")
                         .HasForeignKey("SectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("City");
-
-                    b.Navigation("Department");
-
-                    b.Navigation("GeneralDepartment");
+                    b.HasOne("BaseLibrary.Models.Town", "Town")
+                        .WithMany("Employees")
+                        .HasForeignKey("TownId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Section");
+
+                    b.Navigation("Town");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Overtime", b =>
+                {
+                    b.HasOne("BaseLibrary.Models.OvertimeType", "OvertimeType")
+                        .WithMany("Overtimes")
+                        .HasForeignKey("OvertimeTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OvertimeType");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Section", b =>
+                {
+                    b.HasOne("BaseLibrary.Models.Department", "Department")
+                        .WithMany("Sections")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Town", b =>
+                {
+                    b.HasOne("BaseLibrary.Models.City", "City")
+                        .WithMany("Towns")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Vacation", b =>
+                {
+                    b.HasOne("BaseLibrary.Models.VacationType", "VacationType")
+                        .WithMany("Vacations")
+                        .HasForeignKey("VacationTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("VacationType");
                 });
 
             modelBuilder.Entity("BaseLibrary.Models.City", b =>
                 {
-                    b.Navigation("Employees");
+                    b.Navigation("Towns");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Country", b =>
+                {
+                    b.Navigation("Cities");
                 });
 
             modelBuilder.Entity("BaseLibrary.Models.Department", b =>
                 {
-                    b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("BaseLibrary.Models.Employee", b =>
-                {
-                    b.Navigation("Employees");
+                    b.Navigation("Sections");
                 });
 
             modelBuilder.Entity("BaseLibrary.Models.GeneralDepartment", b =>
                 {
-                    b.Navigation("Employees");
+                    b.Navigation("Departments");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.OvertimeType", b =>
+                {
+                    b.Navigation("Overtimes");
                 });
 
             modelBuilder.Entity("BaseLibrary.Models.Section", b =>
                 {
                     b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.Town", b =>
+                {
+                    b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("BaseLibrary.Models.VacationType", b =>
+                {
+                    b.Navigation("Vacations");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,183 @@
+﻿@implements IDisposable
+
+@if (allState.ShowCity)
+{
+    <Card Border="Border.Secondary" Background="Background.Dark" TextColor="TextColor.White">
+        <CardHeader TextColor="TextColor.White">
+            <i class="fa fa-building text-secondary"></i>
+            City
+            <CloseButton Class="float-end" onclick="@CityClicked"></CloseButton>
+        </CardHeader>
+        <CardBody>
+            <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                <Table Background="Background.Dark">
+                    <TableHeader Style="border-collapse: separate; border-spacing: 0;">
+                        <TableRow Background="Background.Secondary" TextColor="TextColor.White">
+                            <TableHeaderCell>#</TableHeaderCell>
+                            <TableHeaderCell>Id</TableHeaderCell>
+                            <TableHeaderCell>Country</TableHeaderCell>
+                            <TableHeaderCell>City</TableHeaderCell>
+                            <TableHeaderCell>Action</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @if (Cities != null && Cities.Count > 0)
+                        {
+                            int count = 1;
+                            foreach (var item in Cities)
+                            {
+                                var index = count.ToString();
+
+                                <TableRow>
+                                    <TableRowHeader>@index</TableRowHeader>
+                                    <TableRowCell>@item.Id</TableRowCell>
+                                    <TableRowCell>@item.Country!.Name</TableRowCell>
+                                    <TableRowCell>@item.Name</TableRowCell>
+                                    <TableRowCell Class="flex gap-4">
+                                        <i class="fa fa-pencil text-accent cursor-pointer"
+                                           @onclick="()=>EditClicked(item)"></i>
+                                        <i class="fa fa-trash text-danger cursor-pointer"
+                                           @onclick="()=>DeleteClicked(item)"></i>
+                                    </TableRowCell>
+                                </TableRow>
+                                ++count;
+                            }
+                        }
+                        else
+                        {
+                            <TableRow>
+                                <TableRowCell ColumnSpan="5" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                    No Cities Added yet!
+                                </TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            </Div>
+        </CardBody>
+        <CardFooter>
+            <Form>
+                <Button Color="Color.Primary" @onclick="@AddClicked">Add City</Button>
+            </Form>
+        </CardFooter>
+    </Card>
+}
+
+ <CityDialog @ref="cityDialog"
+               HandleSaveOperationEvent="HandleSaveOperationEvent"
+               City="City"
+            Countries="Countries" />
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
+    CityDialog? cityDialog;
+    City City = new();
+    public string Title { get; set; } = "";
+    public List<City> Cities { get; set; } = new();
+    public List<Country> Countries { get; set; } = new();
+    string selectedCountry { get; set; } = "";
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetCity();
+        await GetCountry();
+        allState.Action += StateHasChanged;
+    }
+
+    public async Task GetCity()
+    {
+        Cities = await cityService.GetAll(ClientConstants.CityBaseUrl);
+    }
+
+    public async Task GetCountry()
+    {
+        Countries = await countryService.GetAll(ClientConstants.CountryBaseUrl);
+    }
+
+
+    void OpenDialog()
+    {
+        cityDialog?.OpenDialog();
+    }
+
+    public void ChangeSelectedCountry(string selected)
+    {
+        selectedCountry = selected;
+    }
+
+    void AddClicked()
+    {
+        cityDialog?.ChangeTitle("Add");
+        cityDialog?.ChangeSelectedCountry("");
+        City = new();
+        OpenDialog();
+    }
+
+    // Add or Update
+    private async Task HandleSaveOperationEvent(City city)
+    {
+        bool successCheck = false;
+        if (City.Id > 0)
+        {
+            var result = await cityService.Update(city, ClientConstants.CityBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        }
+        else
+        {
+            var response = await cityService.Insert(city, ClientConstants.CityBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
+        if (successCheck)
+        {
+            city = new();
+            await GetCity();
+            cityDialog?.ChangeTitle("Add");
+        }
+    }
+
+    // Edit
+    private void EditClicked(City city)
+    {
+        cityDialog?.ChangeTitle("Update");
+        City = city;
+        OpenDialog();
+    }
+
+    // Delete
+    private async Task DeleteClicked(City city)
+    {
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {city.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await countryService.DeleteById(city.Id, ClientConstants.CityBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+            await GetCity();
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            //await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
+        }
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+    }
+
+    // Close Button
+    private void CityClicked()
+    {
+        allState.CityClicked(false);
+    }
+}

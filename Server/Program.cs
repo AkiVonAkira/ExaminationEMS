@@ -1,3 +1,4 @@
+using BaseLibrary.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +10,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load configuration
+builder.Configuration.AddJsonFile("appsettings.json");
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -19,12 +23,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<JwtSection>(builder.Configuration.GetSection("JwtSection"));
 var jwtSection = builder.Configuration.GetSection(nameof(JwtSection)).Get<JwtSection>();
 
-// Start Database Connection.
-//builder.Services.AddDbContext<ApplicationDbContext>();
-builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+// Register a factory for creation of DbContext instances.
+builder.Services.AddDbContextFactory<ApplicationDbContext>((serviceProvider, optionsBuilder) =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ??
-        throw new InvalidOperationException("Sorry no Database Connection was found!"));
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+    optionsBuilder.UseSqlServer(connectionString);
 });
 
 builder.Services.AddAuthentication(options =>
@@ -46,12 +51,22 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddScoped<IUserAccount, UserAccountRepository>();
+builder.Services.AddScoped<IGenericRepositoryInterface<GeneralDepartment>, GeneralDepartmentRepository>();
+builder.Services.AddScoped<IGenericRepositoryInterface<Department>, DepartmentRepository>();
+builder.Services.AddScoped<IGenericRepositoryInterface<Section>, SectionRepository>();
+
+builder.Services.AddScoped<IGenericRepositoryInterface<Country>, CountryRepository>();
+builder.Services.AddScoped<IGenericRepositoryInterface<City>, CityRepository>();
+builder.Services.AddScoped<IGenericRepositoryInterface<Town>, TownRepository>();
+
+builder.Services.AddScoped<IGenericRepositoryInterface<Employee>, EmployeeRepository>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorWasm",
         // CORS for client port and server port respectively
-        builder => builder.WithOrigins("http://localhost:5152", "https://localhost:7075")
+        builder => builder
+        .WithOrigins("http://localhost:5152", "https://localhost:7075")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
@@ -72,5 +87,10 @@ app.UseAuthorization();
 app.UseAuthentication();
 
 app.MapControllers();
+
+// call the DbContextFactory if needed
+// For example, when running migrations
+var dbContextFactory = app.Services.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
+using var dbContext = dbContextFactory.CreateDbContext();
 
 app.Run();

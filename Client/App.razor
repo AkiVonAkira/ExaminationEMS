@@ -3,7 +3,7 @@
 @using Blazorise.Themes
 
 <CascadingAuthenticationState>
-    <ThemeProvider Theme="@darkTheme">
+    <ThemeProvider Theme="@theme">
         <Router AppAssembly="@typeof(App).Assembly">
             <Found Context="routeData">
                 <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
@@ -24,8 +24,9 @@
                 </LayoutView>
             </NotFound>
         </Router>
+        <ToastProvider />
+        <MessageProvider />
     </ThemeProvider>
-    <ToastProvider />
 </CascadingAuthenticationState>
 
 @code {
@@ -44,47 +45,37 @@
         return PageProgressService!.Go(25, options => { options.Color = Color.Warning; });
     }
 
-    private Theme darkTheme = new Theme
+    private Theme theme = new Theme
     {
-        TextColorOptions = new ThemeTextColorOptions
+        ColorOptions = new ThemeColorOptions
         {
-            Light = "#fff",
-            Black50 = "#1f2937"
+            Primary = "#21a6c4",
+            Secondary = "#7a3733",
+            Light = "#cfe2e9",
+            Dark = "#151e21",
         },
         BackgroundOptions = new ThemeBackgroundOptions
         {
-            Body = "#2c2c2c"
+            Primary = "#21a6c4",
+            Secondary = "#7a3733",
+            Light = "#cfe2e9",
+            Dark = "#151e21",
         },
         BodyOptions = new ThemeBodyOptions
         {
-            BackgroundColor = "#2c2c2c"
+          BackgroundColor = "#0a1215"  
         },
-        TableOptions = new ThemeTableOptions
+        BarOptions = new ThemeBarOptions
         {
-            BorderRadius = "2em"
+            DarkColors = new ThemeBarColorOptions
+            {
+                DropdownColorOptions = new ThemeBarDropdownColorOptions
+                {
+                    BackgroundColor = "#0a1215"
+                }
+            }
         },
-        IsRounded = true,
-    };
 
-    private Theme lightTheme = new Theme
-    {
-        TextColorOptions = new ThemeTextColorOptions
-        {
-            Light = "#fff",
-            Black50 = "#1f2937"
-        },
-        BackgroundOptions = new ThemeBackgroundOptions
-        {
-            Body = "#2c2c2c"
-        },
-        BodyOptions = new ThemeBodyOptions
-        {
-        BackgroundColor = "#2c2c2c"
-        },
-        TableOptions = new ThemeTableOptions
-        {
-            BorderRadius = "2em"
-        },
         IsRounded = true,
     };
 }

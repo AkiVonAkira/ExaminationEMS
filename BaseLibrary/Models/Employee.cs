@@ -1,27 +1,35 @@
-﻿namespace BaseLibrary.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BaseLibrary.Models
 {
-    public class Employee : BaseEntity
+    public class Employee : BaseModel
     {
-        public string? SocialSecurityNumberID { get; set; }
-        public string? Fullname { get; set; }
-        public string? JobTitle { get; set; }
-        public string? Address { get; set; }
-        public string? PhoneNumber { get; set; } // We need string for ex. "+(46) 7...."
-        public Guid Photo { get; set; }
-        public string? Description { get; set; }
+        [Required]
+        public string? SocialSecurityNumberId { get; set; } = string.Empty;
 
-        //Relation: En till många relation
+        [Required]
+        public string? Fullname { get; set; } = string.Empty;
 
-        public GeneralDepartment? GeneralDepartment { get; set; }
-        public int GeneralDepartmentId { get; set; }
+        [Required]
+        public string? JobTitle { get; set; } = string.Empty;
 
-        public Department? Department { get; set; }
-        public int DepartmentId { get; set; }
+        [Required]
+        public string? Address { get; set; } = string.Empty;
+
+        [Required, DataType(DataType.PhoneNumber)]
+        public string? PhoneNumber { get; set; } = string.Empty; // We need string for ex. "+(46) 7...."
+
+        [Required]
+        public string? Photo { get; set; } = string.Empty;
+
+        public string? Description { get; set; } = string.Empty;
+
+        //Relation: En till många relation till Section
 
         public Section? Section { get; set; }
         public int SectionId { get; set; }
 
-        public City? City { get; set; }
-        public int CityId { get; set; }
+        public Town? Town { get; set; }
+        public int TownId { get; set; }
     }
 }

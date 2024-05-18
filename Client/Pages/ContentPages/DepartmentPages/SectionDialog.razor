@@ -1,0 +1,143 @@
+﻿<Modal @ref="sectionDialog" @bind-Visible="IsVisible">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>@Title Section</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field Model="Section" OnSubmit="@SaveChanges">
+                <Field>
+                    <Addons>
+                        <Addon AddonType="AddonType.Start">
+                            <AddonLabel>ID</AddonLabel>
+                        </Addon>
+                        <Addon AddonType="AddonType.Body">
+                            <TextEdit Placeholder="@Section.Id.ToString()" Disabled></TextEdit>
+                        </Addon>
+                    </Addons>
+                </Field>
+                <Field>
+                    <Heading TextSize="TextSize.Medium" Class="mb-2">Section</Heading>
+                    <TextEdit Placeholder="Enter name..." @bind-Text="Section.Name" />
+                </Field>
+                <Field>
+                    <Heading TextSize="TextSize.Medium" Class="mb-2">Select Department</Heading>
+                    @if (Section.Department != null)
+                    {
+                        ChangeSelectedSection(GetDepartmentNameByID(Section.DepartmentId));
+                        <DropdownList TItem="Department" TValue="int"
+                                      Data="@Departments"
+                                      TextField="@((item)=>item.Name)"
+                                      ValueField="@((item)=>item.Id)"
+                                      Color="Color.Primary"
+                                      MaxMenuHeight="200px"
+                                      SelectedValueChanged="(int selectedDepartmentId) => OnValueChange(selectedDepartmentId)">
+                            @if (!string.IsNullOrEmpty(selectedSection))
+                            {
+                                <Span>@selectedSection</Span>
+                            }
+                            else
+                            {
+                                <Span>Select</Span>
+                            }
+                        </DropdownList>
+                    }
+                    else
+                    {
+                        <DropdownList TItem="Department" TValue="int"
+                                      Data="@Departments"
+                                      TextField="@((item)=>item.Name)"
+                                      ValueField="@((item)=>item.Id)"
+                                      Color="Color.Primary"
+                                      MaxMenuHeight="200px"
+                                      SelectedValueChanged="(int selectedDepartmentId) => OnValueChange(selectedDepartmentId)">
+                            @if (!string.IsNullOrEmpty(selectedSection))
+                            {
+                                <Span>@selectedSection</Span>
+                            }
+                            else
+                            {
+                                <Span>Select</Span>
+                            }
+                        </DropdownList>
+                    }
+
+                </Field>
+            </Field>
+        </ModalBody>
+        <ModalFooter Class="justify-end">
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Submit" Clicked="@SaveChanges">Save Changes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+
+    [Parameter] public Section Section { get; set; } = new();
+    [Parameter] public List<Department> Departments { get; set; } = new();
+    [Parameter] public EventCallback<Section> HandleSaveOperationEvent { get; set; }
+    string selectedSection { get; set; } = "";
+
+    public bool IsVisible { get; set; } = false;
+    public string Title { get; set; } = "Add";
+    public void OpenDialog()
+    {
+        IsVisible = true;
+        ShowModal();
+        StateHasChanged();
+    }
+
+    public async Task SaveChanges()
+    {
+        if (string.IsNullOrEmpty(Section.Name) || Section.DepartmentId <= 0)
+            await ToastService!.Error("Section name is required", "Missing Field");
+        else if (string.IsNullOrEmpty(Section.DepartmentId.ToString()))
+            await ToastService!.Error("Section is required", "Missing Field");
+        else
+        {
+            IsVisible = false;
+            await HandleSaveOperationEvent.InvokeAsync(Section);
+            await ToastService!.Success("Section added successfully", "Saved Changes");
+        }
+    }
+
+    public void ChangeTitle(string title)
+    {
+        Title = title;
+    }
+    public void ChangeSelectedSection(string selected)
+    {
+        selectedSection = selected;
+    }
+    // reference to the modal component
+    private Modal? sectionDialog;
+
+    private Task ShowModal()
+    {
+        return sectionDialog!.Show();
+    }
+
+    private Task HideModal()
+    {
+        IsVisible = false;
+        return sectionDialog!.Hide();
+    }
+    
+    private string GetDepartmentNameByID(int id)
+    {
+        return Departments.FirstOrDefault(x => x.Id == id)?.Name!;
+    }
+
+    public void OnValueChange(int value)
+    {
+        
+        Section.DepartmentId = value;
+        ChangeSelectedSection(GetDepartmentNameByID(Section.DepartmentId));
+        Console.WriteLine("id:" + Section.DepartmentId);
+        StateHasChanged();
+    }
+
+}

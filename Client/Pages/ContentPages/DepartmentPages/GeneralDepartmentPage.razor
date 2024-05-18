@@ -1,0 +1,166 @@
+﻿@implements IDisposable
+
+@if (allState.ShowGeneralDepartment)
+{
+    <Card Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.White">
+        <CardHeader TextColor="TextColor.White">
+            <i class="fa fa-user text-primary"></i>
+            General Department
+            <CloseButton Class="float-end" onclick="@GeneralDepartmentClicked"></CloseButton>
+        </CardHeader>
+        <CardBody>
+            <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                <Table Background="Background.Dark">
+                    <TableHeader Style="border-collapse: separate; border-spacing: 0;">
+                        <TableRow Background="Background.Primary" TextColor="TextColor.White">
+                            <TableHeaderCell>#</TableHeaderCell>
+                            <TableHeaderCell>Id</TableHeaderCell>
+                            <TableHeaderCell>General Department</TableHeaderCell>
+                            <TableHeaderCell>Action</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @if (GeneralDepartments != null && GeneralDepartments.Count > 0)
+                        {
+                            int count = 1;
+                            foreach (var item in GeneralDepartments)
+                            {
+                                var index = count.ToString();
+
+                                <TableRow>
+                                    <TableRowHeader>@index</TableRowHeader>
+                                    <TableRowCell>@item.Id</TableRowCell>
+                                    <TableRowCell>@item.Name</TableRowCell>
+                                    <TableRowCell Class="flex gap-4">
+                                        <i class="fa fa-pencil text-accent cursor-pointer"
+                                            @onclick="()=>EditClicked(item)"></i>
+                                        <i class="fa fa-trash text-danger cursor-pointer"
+                                            @onclick="()=>DeleteClicked(item)"></i>
+                                    </TableRowCell>
+                                </TableRow>
+                                ++count;
+                            }
+                        }
+                        else
+                        {
+                            <TableRow>
+                                <TableRowCell ColumnSpan="4" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                    No General Departments Added yet!
+                                </TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            </Div>
+        </CardBody>
+        <CardFooter>
+            <Form>
+                <Button Color="Color.Primary" @onclick="@AddClicked">Add department</Button>
+            </Form>
+        </CardFooter>
+    </Card>
+}
+
+<GeneralDepartmentDialog @ref="generalDepartmentDialog" 
+    HandleSaveOperationEvent="HandleSaveOperationEvent" 
+    GeneralDepartment="GeneralDepartment" /> 
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
+    GeneralDepartmentDialog? generalDepartmentDialog; 
+    GeneralDepartment GeneralDepartment = new();
+
+    public string Title { get; set; } = "";
+    public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetGeneralDepartments();
+        allState.Action += StateHasChanged;
+    }
+
+    public async Task GetGeneralDepartments()
+    {
+        GeneralDepartments = await generalDepartmentService.GetAll(ClientConstants.GeneralDepartmentBaseUrl);
+    }
+
+    void OpenDialog()
+    {
+        generalDepartmentDialog?.OpenDialog();
+    }
+
+    void AddClicked()
+    {
+        generalDepartmentDialog?.ChangeTitle("Add");
+        GeneralDepartment = new();
+        OpenDialog();
+    }
+
+    // Add or Update
+    private async Task HandleSaveOperationEvent(GeneralDepartment generalDepartment)
+    {
+        bool successCheck = false; 
+        if (GeneralDepartment.Id > 0)
+        {
+            var result = await generalDepartmentService.Update(generalDepartment, ClientConstants.GeneralDepartmentBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        } 
+        else
+        {
+            var response = await generalDepartmentService.Insert(generalDepartment, ClientConstants.GeneralDepartmentBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
+        if (successCheck) 
+        {
+            generalDepartment = new ();
+            await GetGeneralDepartments();
+            generalDepartmentDialog?.ChangeTitle("Add");
+        }
+    }
+
+    // Edit
+    private void EditClicked(GeneralDepartment dep)
+    {
+        generalDepartmentDialog?.ChangeTitle("Update");
+        GeneralDepartment = dep;
+        OpenDialog();
+    }
+
+    // Delete
+    private async Task DeleteClicked(GeneralDepartment department)
+    {
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {department.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await generalDepartmentService.DeleteById(department.Id, ClientConstants.GeneralDepartmentBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+            await GetGeneralDepartments();
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            //await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
+        }
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+    }
+
+    // Close Button
+    private void GeneralDepartmentClicked()
+    {
+        allState.GeneralDepartmentClicked(false);
+    }
+}

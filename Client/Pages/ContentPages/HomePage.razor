@@ -1,15 +1,24 @@
 ﻿@page "/home/dashboard"
 @layout MainLayout
-@using Client.Pages.AdministrationPages
-@using Client.Pages.DepartmentPages
 
-<TableBanner></TableBanner>
+<Container Class="my-4">
+    <TableBanner></TableBanner>
+    <GeneralDepartmentPage></GeneralDepartmentPage>
+    <DepartmentPage></DepartmentPage>
+    <SectionPage></SectionPage>
+    <CountryPage></CountryPage>
+    <CityPage></CityPage>
+    <TownPage></TownPage>
+    <UserPage></UserPage>
+</Container>
 
 @code {
     [CascadingParameter] public Task<AuthenticationState>? authenticationStateTask { get; set; }
     protected override async Task OnInitializedAsync()
     {
         await CheckUserAuthentication();
+
+        // countryState = new AppState<Country>(countryService, ClientConstants.CountryBaseUrl);
     }
 
     private async Task CheckUserAuthentication()
@@ -18,7 +27,7 @@
         bool isAuthenticated = user.Identity!.IsAuthenticated;
         if (!isAuthenticated)
         {
-            NavManager.NavigateTo("/identity/account/login");
+            NavManager.NavigateTo("/welcome");
         }
     }
 }

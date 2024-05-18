@@ -1,0 +1,27 @@
+﻿<CardDeck Class="flex-wrap gap-4 !flex-row mb-4">
+    <Card Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.White">
+        <Button Width="Width.Is100"><i class="fa fa-users text-primary me-2"></i> Employees</Button>
+    </Card>
+    <Card Border="Border.Success" Background="Background.Dark" TextColor="TextColor.White">
+        <Button Width="Width.Is100"><i class="fa fa-sun text-success me-2"></i> Vacation</Button>
+    </Card>
+    <Card Border="Border.Danger" Background="Background.Dark" TextColor="TextColor.White">
+        <Button Width="Width.Is100"><i class="fa fa-stopwatch text-danger me-2"></i> Overtime</Button>
+    </Card>
+    <Card Border="Border.Warning" Background="Background.Dark" TextColor="TextColor.White">
+        <Button Width="Width.Is100"><i class="fa fa-hospital text-warning me-2"></i> Doctor</Button>
+    </Card>
+    <Card Border="Border.Secondary" Background="Background.Dark" TextColor="TextColor.White">
+        <Button onclick="@DepartmentClicked" Width="Width.Is100"><i class="fa fa-department text-secondary me-2"></i> Departments</Button>
+    </Card>
+</CardDeck>
+
+@code {
+    // Department
+    public bool ShowDepartment { get; set; } = false;
+    private void DepartmentClicked()
+    {
+        ShowDepartment = !allState.ShowDepartment;
+        allState.DepartmentClicked(ShowDepartment);
+    }
+}

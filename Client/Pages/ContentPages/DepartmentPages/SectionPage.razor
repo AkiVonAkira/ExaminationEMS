@@ -1,0 +1,178 @@
+﻿@implements IDisposable
+
+@if (allState.ShowSection)
+{
+    <Card Border="Border.Success" Background="Background.Dark" TextColor="TextColor.White">
+        <CardHeader TextColor="TextColor.Success">
+            <i class="fa fa-seedling text-white"></i>
+            Section
+            <CloseButton Class="float-end" onclick="@SectionClicked"></CloseButton>
+        </CardHeader>
+        <CardBody>
+            <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                <Table Background="Background.Dark">
+                    <TableHeader Style="border-collapse: separate; border-spacing: 0;">
+                        <TableRow Background="Background.Success" TextColor="TextColor.White">
+                            <TableHeaderCell>#</TableHeaderCell>
+                            <TableHeaderCell>Id</TableHeaderCell>
+                            <TableHeaderCell>Department</TableHeaderCell>
+                            <TableHeaderCell>Section</TableHeaderCell>
+                            <TableHeaderCell>Action</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @if (Sections != null && Sections.Count > 0)
+                        {
+                            int count = 1;
+                            foreach (var item in Sections)
+                            {
+                                var index = count.ToString();
+
+                                <TableRow>
+                                    <TableRowHeader>@index</TableRowHeader>
+                                    <TableRowCell>@item.Id</TableRowCell>
+                                    <TableRowCell>@item.Department!.Name</TableRowCell>
+                                    <TableRowCell>@item.Name</TableRowCell>
+                                    <TableRowCell Class="flex gap-4">
+                                        <i class="fa fa-pencil text-accent cursor-pointer"
+                                           @onclick="()=>EditClicked(item)"></i>
+                                        <i class="fa fa-trash text-danger cursor-pointer"
+                                           @onclick="()=>DeleteClicked(item)"></i>
+                                    </TableRowCell>
+                                </TableRow>
+                                ++count;
+                            }
+                        }
+                        else
+                        {
+                            <TableRow>
+                                <TableRowCell ColumnSpan="5" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                    No Section Added yet!
+                                </TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            </Div>
+        </CardBody>
+        <CardFooter>
+            <Form>
+                <Button Color="Color.Primary" @onclick="@AddClicked">Add Section</Button>
+            </Form>
+        </CardFooter>
+    </Card>
+}
+
+<SectionDialog @ref="sectionsDialog"
+                  HandleSaveOperationEvent="HandleSaveOperationEvent"
+                  Section="Section"
+                  Departments="Departments" />
+
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
+    SectionDialog? sectionsDialog;
+    Section Section = new();
+
+    public string Title { get; set; } = "";
+    public List<Department> Departments { get; set; } = new();
+    public List<Section> Sections { get; set; } = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetSections();
+        await GetDepartments();
+        allState.Action += StateHasChanged;
+    }
+
+    public async Task GetSections()
+    {
+        Sections = await sectionService.GetAll(ClientConstants.SectionBaseUrl);
+    }
+
+    public async Task GetDepartments()
+    {
+        Departments = await departmentService.GetAll(ClientConstants.DepartmentBaseUrl);
+    }
+
+    void OpenDialog()
+    {
+        sectionsDialog?.OpenDialog();
+    }
+
+    void AddClicked()
+    {
+        sectionsDialog?.ChangeTitle("Add");
+        sectionsDialog?.ChangeSelectedSection("");
+        Section = new();
+        OpenDialog();
+    }
+
+    // Add or Update
+    private async Task HandleSaveOperationEvent(Section section)
+    {
+        bool successCheck = false;
+        if (Section.Id > 0)
+        {
+            var result = await sectionService.Update(section, ClientConstants.SectionBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        }
+        else
+        {
+            var response = await sectionService.Insert(section, ClientConstants.SectionBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
+        if (successCheck)
+        {
+            section = new();
+            await GetSections();
+            sectionsDialog?.ChangeTitle("Add");
+        }
+    }
+
+    // Edit
+    private void EditClicked(Section section)
+    {
+        sectionsDialog?.ChangeTitle("Update");
+        Section = section;
+        OpenDialog();
+    }
+
+    // Delete
+    private async Task DeleteClicked(Section section)
+    {
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {section.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await sectionService.DeleteById(section.Id, ClientConstants.SectionBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+            await GetSections();
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            //await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
+        }
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+    }
+
+    // Close Button
+    private void SectionClicked()
+    {
+        allState.SectionClicked(false);
+    }
+}

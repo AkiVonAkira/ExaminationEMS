@@ -1,0 +1,33 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <Dropdown>
+            <Button Color="Color.Primary">
+                @context.User.Identity!.Name
+            </Button>
+            <DropdownToggle Color="Color.Dark" Split></DropdownToggle>
+
+            <DropdownMenu>
+                <DropdownHeader>User Actions</DropdownHeader>
+                <DropdownDivider />
+                <DropdownItem>
+                    <Button Outline Color="Color.Danger" @onclick="logoutClicked">
+                        <Icon Class="fa fa-right-from-bracket" style="width: 2rem;" aria-hidden="true"></Icon>
+                        <Label TextColor="TextColor.White">Logout</Label>
+                    </Button>
+                </DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    RenderFragment customIcon =@<img src="../images/logos/koalaBG.jpg" style="width:32px; height: 32px; border-radius: 0.25rem;" />;
+
+    public async Task logoutClicked()
+    {
+        var logoutModel = new UserSession();
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(logoutModel);
+        NavManager.NavigateTo("/", forceLoad: true);
+    }
+}

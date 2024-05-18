@@ -1,6 +1,5 @@
 @page "/"
 
-@inject NavigationManager NavManager
 @code {
     [CascadingParameter] public Task<AuthenticationState>? authenticationStateTask { get; set; }
 
@@ -13,7 +12,7 @@
 
         } else 
         {
-            NavManager.NavigateTo("/identity/account/login");
+            NavManager.NavigateTo("/welcome");
         }
 
     }

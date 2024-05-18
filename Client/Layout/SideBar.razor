@@ -1,73 +1,112 @@
 ﻿@inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthStateProvider
-@inject DepartmentState departmentState
 @using BaseLibrary.DTOs
 @using Client.ApplicationStates
 @using ClientLibrary.Helpers
 
-<Bar Breakpoint="Breakpoint.Desktop" NavigationBreakpoint="Breakpoint.Tablet" ThemeContrast="ThemeContrast.Dark"
-     Mode="BarMode.VerticalInline" CollapseMode="BarCollapseMode.Small" MenuToggleBehavior=BarMenuToggleBehavior.AllowSingleMenu>
+<AuthorizeView>
+    <Authorized>
+        <Bar Breakpoint="Breakpoint.Desktop"
+             ThemeContrast="ThemeContrast.Dark"
+             Background="Background.Dark"
+             NavigationBreakpoint="Breakpoint.Tablet"
+             Mode="BarMode.VerticalInline"
+             CollapseMode="BarCollapseMode.Small"
+             MenuToggleBehavior=BarMenuToggleBehavior.AllowSingleMenu>
 
-    <BarToggler />
-    
-    <BarBrand>
-        <BarItem>
-            <BarLink To="/home/dashboard">
-                <BarIcon IconName="customIcon" />
-                <AuthorizeView>
-                    <Authorized>Hi, @context.User.Identity!.Name</Authorized>
-                    <NotAuthorized>Welcome Guest</NotAuthorized>
-                </AuthorizeView>
-            </BarLink>
-        </BarItem>
-    </BarBrand>
+            <BarToggler />
 
-    <BarMenu>
-        <BarStart>
-            <BarItem>
-                <BarDropdown @bind-Visible="administrationElementsVisible">
-                    <BarDropdownToggle>
-                        <BarIcon IconName="IconName.UserTie" />
-                        Administration
-                    </BarDropdownToggle>
-                    <BarDropdownMenu>
-                        <BarDropdownItem>User</BarDropdownItem>
-                    </BarDropdownMenu>
-                </BarDropdown>
-            </BarItem>
-            <BarItem>
-                <BarDropdown @bind-Visible="departmentElementsVisible">
-                    <BarDropdownToggle>
-                        <BarIcon IconName="IconName.Book" />
-                        Department
-                    </BarDropdownToggle>
-                    <BarDropdownMenu>
-                        <BarDropdownItem @onclick="GeneralDepartmentClicked">
-                            <BarIcon IconName="IconName.Users" />
-                            General
-                        </BarDropdownItem>
-                        <BarDropdownItem>Department</BarDropdownItem>
-                        <BarDropdownItem>Branch</BarDropdownItem>
-                    </BarDropdownMenu>
-                </BarDropdown>
-            </BarItem>
-        </BarStart>
+            <BarBrand>
+                <BarItem>
+                    <BarLink To="/home/dashboard">
+                        <BarIcon IconName="customIcon" />
+                        Hi, @context.User.Identity!.Name
+                    </BarLink>
+                </BarItem>
+            </BarBrand>
 
-        <BarEnd>
-            <BarItem>
-                <BarLink To="https://Github.com/AkiVonAkira/ExaminationEMS">
-                    <BarIcon Class="fa-brands fa-github"></BarIcon>
-                    GitHub
-                </BarLink>
-            </BarItem>
-        </BarEnd>
+            <BarMenu>
+                <BarStart>
+                    @if (context.User.IsInRole("Admin"))
+                    {
+                        <BarItem>
+                            <BarDropdown @bind-Visible="administrationElementsVisible">
+                                <BarDropdownToggle>
+                                    <BarIcon IconName="IconName.UserTie" />
+                                    Administration
+                                </BarDropdownToggle>
+                                <BarDropdownMenu>
+                                    <BarDropdownItem @onclick="@UserClicked">
+                                        <BarIcon IconName="IconName.Users" />
+                                        Users
+                                    </BarDropdownItem>
+                                </BarDropdownMenu>
+                            </BarDropdown>
+                        </BarItem>
+                    }
+                    <BarItem>
+                        <BarDropdown @bind-Visible="departmentElementsVisible">
+                            <BarDropdownToggle>
+                                <BarIcon IconName="IconName.Book" />
+                                Management
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                <BarDropdownItem @onclick="@GeneralDepartmentClicked">
+                                    <BarIcon IconName="IconName.IdCard" />
+                                    General Departments
+                                </BarDropdownItem>
+                                <BarDropdownItem @onclick="@DepartmentClicked">
+                                    <BarIcon IconName="IconName.Bookmark" />
+                                    Departments
+                                </BarDropdownItem>
+                                <BarDropdownItem @onclick="@SectionClicked">
+                                    <BarIcon IconName="IconName.Seedling" />
+                                    Sections
+                                </BarDropdownItem>
+                            </BarDropdownMenu>
+                            <BarDropdownMenu>
+                                <BarDropdownItem @onclick="@CountryClicked">
+                                    <BarIcon IconName="IconName.Globe" />
+                                    Countries
+                                </BarDropdownItem>
+                                <BarDropdownItem @onclick="@CityClicked">
+                                    <BarIcon IconName="IconName.Building" />
+                                    Cities
+                                </BarDropdownItem>
+                                <BarDropdownItem @onclick="@TownClicked">
+                                    <BarIcon IconName="IconName.Flag" />
+                                    Towns
+                                </BarDropdownItem>
+                            </BarDropdownMenu>
+                            <BarDropdownMenu>
+                                <BarDropdownItem @onclick="@EmployeeClicked">
+                                    <BarIcon IconName="IconName.Users" />
+                                    Employees
+                                </BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                </BarStart>
 
-    </BarMenu>
-</Bar>
+                <BarEnd>
+                    <BarItem>
+                        <BarLink To="https://Github.com/AkiVonAkira/ExaminationEMS">
+                            <BarIcon Class="fa-brands fa-github"></BarIcon>
+                            GitHub
+                        </BarLink>
+                    </BarItem>
+                </BarEnd>
+
+            </BarMenu>
+        </Bar>
+    </Authorized>
+</AuthorizeView>
 
 @code {
     private bool administrationElementsVisible = false;
     private bool departmentElementsVisible = true;
+    private bool countryElementsVisible = false;
+    private bool employeeElementsVisible = false;
 
     RenderFragment customIcon =@<img src="../images/logos/koalaW.png" style="width:32px; height: 32px" />;
 
@@ -79,11 +118,31 @@
         NavManager.NavigateTo("/", forceLoad: true);
     }
 
-    public bool ShowhideDepartment { get; set; } = false;
+    // General Department / Department / Section
+    public bool ShowGeneralDepartment { get; set; } = false;
+    private void GeneralDepartmentClicked() => allState.GeneralDepartmentClicked(ShowGeneralDepartment = !allState.ShowGeneralDepartment);
 
-    private void GeneralDepartmentClicked()
-    {
-        ShowhideDepartment = !departmentState.ShowGeneralDepartment;
-        departmentState.GeneralDepartmentClicked(ShowhideDepartment);
-    }
+    public bool ShowDepartment { get; set; } = false;
+    private void DepartmentClicked() => allState.DepartmentClicked(ShowDepartment = !allState.ShowDepartment);
+
+    public bool ShowSection { get; set; } = false;
+    private void SectionClicked() => allState.SectionClicked(ShowSection = !allState.ShowSection);
+
+    // Country / City / Town
+    public bool ShowCountry { get; set; } = false;
+    private void CountryClicked() => allState.CountryClicked(ShowCountry = !allState.ShowCountry);
+
+    public bool ShowCity { get; set; } = false;
+    private void CityClicked() => allState.CityClicked(ShowCity = !allState.ShowCity);
+
+    public bool ShowTown { get; set; } = false;
+    private void TownClicked() => allState.TownClicked(ShowTown = !allState.ShowTown);
+
+    // Employee
+    public bool ShowEmployee { get; set; } = false;
+    private void EmployeeClicked() => allState.EmployeeClicked(ShowEmployee = !allState.ShowEmployee);
+    
+    // User
+    public bool ShowUser { get; set; } = false;
+    private void UserClicked() => allState.UserClicked(ShowUser = !allState.ShowUser);
 }

@@ -1,6 +1,10 @@
-﻿namespace BaseLibrary.Models
+﻿using System.Text.Json.Serialization;
+
+namespace BaseLibrary.Models
 {
-    public class GeneralDepartment : BaseEntity
+    public class GeneralDepartment : BaseModel
     {
+        [JsonIgnore]
+        public List<Department>? Departments { get; set; }
     }
 }

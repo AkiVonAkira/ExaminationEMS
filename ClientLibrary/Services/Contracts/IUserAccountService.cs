@@ -1,4 +1,5 @@
 ﻿using BaseLibrary.DTOs;
+using BaseLibrary.Models;
 using BaseLibrary.Responses;
 
 namespace ClientLibrary.Services.Contracts
@@ -13,5 +14,10 @@ namespace ClientLibrary.Services.Contracts
 
         // Metod för att uppdatera användarens åtkomsttoken
         Task<LoginResponse> RefreshTokenAsync(RefreshToken token);
+
+        Task<List<ManageUser>> GetUsers();
+        Task<GeneralResponse> UpdateUser(ManageUser user);
+        Task<List<SystemRole>> GetRoles();
+        Task<GeneralResponse> DeleteUser(int id);
     }
 }

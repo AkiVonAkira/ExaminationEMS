@@ -1,3 +1,4 @@
+using BaseLibrary.Models;
 using Blazored.LocalStorage;
 using Blazored.Toast;
 using Blazorise;
@@ -27,12 +28,31 @@ builder.Services.AddHttpClient("ServerApiClient", client =>
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredLocalStorage();
+
+// Scopes for http and api endpoints
 builder.Services.AddScoped<GetHttpClient>();
 builder.Services.AddScoped<LocalDataStrorage>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
-builder.Services.AddScoped<DepartmentState>();
 
+// general department / department / section
+builder.Services.AddScoped<IGenericServiceInterface<GeneralDepartment>, GenericServiceImplementations<GeneralDepartment>>();
+builder.Services.AddScoped<IGenericServiceInterface<Department>, GenericServiceImplementations<Department>>();
+builder.Services.AddScoped<IGenericServiceInterface<Section>, GenericServiceImplementations<Section>>();
+
+// country / city / Town
+builder.Services.AddScoped<IGenericServiceInterface<Country>, GenericServiceImplementations<Country>>();
+builder.Services.AddScoped<IGenericServiceInterface<City>, GenericServiceImplementations<City>>();
+builder.Services.AddScoped<IGenericServiceInterface<Town>, GenericServiceImplementations<Town>>();
+
+// employee
+builder.Services.AddScoped<IGenericServiceInterface<Employee>, GenericServiceImplementations<Employee>>();
+
+// table toggle states
+builder.Services.AddScoped<AllState>();
+//builder.Services.AddScoped(typeof(AppState<>));
+
+// Blazorise Services
 builder.Services
   .AddBlazorise()
   .AddTailwindProviders()

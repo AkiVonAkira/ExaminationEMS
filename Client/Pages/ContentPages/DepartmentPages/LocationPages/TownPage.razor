@@ -1,0 +1,178 @@
+﻿@implements IDisposable
+
+@if (allState.ShowTown)
+{
+    <Card Border="Border.White" Background="Background.Dark" TextColor="TextColor.White">
+        <CardHeader TextColor="TextColor.White">
+            <i class="fa fa-flag text-white"></i>
+            Town
+            <CloseButton Class="float-end" onclick="@TownClicked"></CloseButton>
+        </CardHeader>
+        <CardBody>
+            <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                <Table Background="Background.Dark">
+                    <TableHeader Style="border-collapse: separate; border-spacing: 0;">
+                        <TableRow Background="Background.White" TextColor="TextColor.Black50">
+                            <TableHeaderCell>#</TableHeaderCell>
+                            <TableHeaderCell>Id</TableHeaderCell>
+                            <TableHeaderCell>City</TableHeaderCell>
+                            <TableHeaderCell>Town</TableHeaderCell>
+                            <TableHeaderCell>Action</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @if (Towns != null && Towns.Count > 0)
+                        {
+                            int count = 1;
+                            foreach (var item in Towns)
+                            {
+                                var index = count.ToString();
+
+                                <TableRow>
+                                    <TableRowHeader>@index</TableRowHeader>
+                                    <TableRowCell>@item.Id</TableRowCell>
+                                    <TableRowCell>@item.City!.Name</TableRowCell>
+                                    <TableRowCell>@item.Name</TableRowCell>
+                                    <TableRowCell Class="flex gap-4">
+                                        <i class="fa fa-pencil text-accent cursor-pointer"
+                                           @onclick="()=>EditClicked(item)"></i>
+                                        <i class="fa fa-trash text-danger cursor-pointer"
+                                           @onclick="()=>DeleteClicked(item)"></i>
+                                    </TableRowCell>
+                                </TableRow>
+                                ++count;
+                            }
+                        }
+                        else
+                        {
+                            <TableRow>
+                                <TableRowCell ColumnSpan="5" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                    No Town Added yet!
+                                </TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            </Div>
+        </CardBody>
+        <CardFooter>
+            <Form>
+                <Button Color="Color.Primary" @onclick="@AddClicked">Add Town</Button>
+            </Form>
+        </CardFooter>
+    </Card>
+}
+
+<TownDialog @ref="townDialog"
+               HandleSaveOperationEvent="HandleSaveOperationEvent"
+               Town="Town" 
+               Cities="Cities"/>
+
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
+    TownDialog? townDialog;
+    Town Town = new();
+
+    public string Title { get; set; } = "";
+    public List<City> Cities { get; set; } = new();
+    public List<Town> Towns { get; set; } = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetTowns();
+        await GetCities();
+        allState.Action += StateHasChanged;
+    }
+
+    public async Task GetTowns()
+    {
+        Towns = await townService.GetAll(ClientConstants.TownBaseUrl);
+    }
+
+    public async Task GetCities()
+    {
+        Cities = await cityService.GetAll(ClientConstants.CityBaseUrl);
+    }
+
+    void OpenDialog()
+    {
+        townDialog?.OpenDialog();
+    }
+
+    void AddClicked()
+    {
+        townDialog?.ChangeTitle("Add");
+        townDialog?.ChangeSelectedCity("");
+        Town = new();
+        OpenDialog();
+    }
+
+    // Add or Update
+    private async Task HandleSaveOperationEvent(Town town)
+    {
+        bool successCheck = false;
+        if (Town.Id > 0)
+        {
+            var result = await townService.Update(town, ClientConstants.TownBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        }
+        else
+        {
+            var response = await townService.Insert(town, ClientConstants.TownBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
+        if (successCheck)
+        {
+            town = new();
+            await GetTowns();
+            townDialog?.ChangeTitle("Add");
+        }
+    }
+
+    // Edit
+    private void EditClicked(Town town)
+    {
+        townDialog?.ChangeTitle("Update");
+        Town = town;
+        OpenDialog();
+    }
+
+    // Delete
+    private async Task DeleteClicked(Town town)
+    {
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {town.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await townService.DeleteById(town.Id, ClientConstants.TownBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+            await GetTowns();
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            //await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
+        }
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+    }
+
+    // Close Button
+    private void TownClicked()
+    {
+        allState.TownClicked(false);
+    }
+}

@@ -1,0 +1,177 @@
+﻿@implements IDisposable
+
+@if (allState.ShowDepartment)
+{
+    <Card Border="Border.Secondary" Background="Background.Dark" TextColor="TextColor.White">
+        <CardHeader TextColor="TextColor.White">
+            <i class="fa fa-bookmark text-secondary"></i>
+            Department
+            <CloseButton Class="float-end" onclick="@DepartmentClicked"></CloseButton>
+        </CardHeader>
+        <CardBody>
+            <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                <Table Background="Background.Dark">
+                    <TableHeader Style="border-collapse: separate; border-spacing: 0;">
+                        <TableRow Background="Background.Secondary" TextColor="TextColor.White">
+                            <TableHeaderCell>#</TableHeaderCell>
+                            <TableHeaderCell>Id</TableHeaderCell>
+                            <TableHeaderCell>General Department</TableHeaderCell>
+                            <TableHeaderCell>Department</TableHeaderCell>
+                            <TableHeaderCell>Action</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @if (Departments != null && Departments.Count > 0)
+                        {
+                            int count = 1;
+                            foreach (var item in Departments)
+                            {
+                                var index = count.ToString();
+
+                                <TableRow>
+                                    <TableRowHeader>@index</TableRowHeader>
+                                    <TableRowCell>@item.Id</TableRowCell>
+                                    <TableRowCell>@item.GeneralDepartment!.Name</TableRowCell>
+                                    <TableRowCell>@item.Name</TableRowCell>
+                                    <TableRowCell Class="flex gap-4">
+                                        <i class="fa fa-pencil text-accent cursor-pointer"
+                                            @onclick="()=>EditClicked(item)"></i>
+                                        <i class="fa fa-trash text-danger cursor-pointer"
+                                            @onclick="()=>DeleteClicked(item)"></i>
+                                    </TableRowCell>
+                                </TableRow>
+                                ++count;
+                            }
+                        }
+                        else
+                        {
+                            <TableRow>
+                                <TableRowCell ColumnSpan="5" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                    No Departments Added yet!
+                                </TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            </Div>
+        </CardBody>
+        <CardFooter>
+            <Form>
+                <Button Color="Color.Primary" @onclick="@AddClicked">Add Department</Button>
+            </Form>
+        </CardFooter>
+    </Card>
+}
+
+<DepartmentDialog @ref="departmentDialog"
+    HandleSaveOperationEvent="HandleSaveOperationEvent"
+    Department="Department"
+    GeneralDepartments="GeneralDepartments" /> 
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
+    DepartmentDialog? departmentDialog; 
+    Department Department = new();
+
+    public string Title { get; set; } = "";
+    public List<Department> Departments { get; set; } = new();
+    public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetDepartments();
+        await GetGeneralDepartments();
+        allState.Action += StateHasChanged;
+    }
+
+    public async Task GetDepartments()
+    {
+        Departments = await departmentService.GetAll(ClientConstants.DepartmentBaseUrl);
+    }
+
+    public async Task GetGeneralDepartments()
+    {
+        GeneralDepartments = await generalDepartmentService.GetAll(ClientConstants.GeneralDepartmentBaseUrl);
+    }
+
+    void OpenDialog()
+    {
+        departmentDialog?.OpenDialog();
+    }
+
+    void AddClicked()
+    {
+        departmentDialog?.ChangeTitle("Add");
+        departmentDialog?.ChangeSelectedGeneralDepartment("");
+        Department = new();
+        OpenDialog();
+    }
+
+    // Add or Update
+    private async Task HandleSaveOperationEvent(Department department)
+    {
+        bool successCheck = false; 
+        if (Department.Id > 0)
+        {
+            var result = await departmentService.Update(department, ClientConstants.DepartmentBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        } 
+        else
+        {
+            var response = await departmentService.Insert(department, ClientConstants.DepartmentBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
+        if (successCheck) 
+        {
+            department = new ();
+            await GetDepartments();
+            departmentDialog?.ChangeTitle("Add");
+        }
+    }
+
+    // Edit
+    private void EditClicked(Department dep)
+    {
+        departmentDialog?.ChangeTitle("Update");
+        Department = dep;
+        OpenDialog();
+    }
+
+    // Delete
+    private async Task DeleteClicked(Department department)
+    {
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {department.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await departmentService.DeleteById(department.Id, ClientConstants.DepartmentBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+            await GetDepartments();
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            //await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
+        }
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+    }
+
+    // Close Button
+    private void DepartmentClicked()
+    {
+        allState.DepartmentClicked(false);
+    }
+}

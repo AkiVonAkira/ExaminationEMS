@@ -1,0 +1,142 @@
+﻿<Modal @ref="townDialog" @bind-Visible="IsVisible">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>@Title Town</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field Model="Town" OnSubmit="@SaveChanges">
+                <Field>
+                    <Addons>
+                        <Addon AddonType="AddonType.Start">
+                            <AddonLabel>ID</AddonLabel>
+                        </Addon>
+                        <Addon AddonType="AddonType.Body">
+                            <TextEdit Placeholder="@Town.Id.ToString()" Disabled></TextEdit>
+                        </Addon>
+                    </Addons>
+                </Field>
+                <Field>
+                    <Heading TextSize="TextSize.Medium" Class="mb-2">Town</Heading>
+                    <TextEdit Placeholder="Enter name..." @bind-Text="Town.Name" />
+                </Field>
+                <Field>
+                    <Heading TextSize="TextSize.Medium" Class="mb-2">Select City</Heading>
+                    @if (Town.City != null)
+                    {
+                        ChangeSelectedCity(GetCityNameByID(Town.CityId));
+                        <DropdownList TItem="City" TValue="int"
+                                      Data="@Cities"
+                                      TextField="@((item)=>item.Name)"
+                                      ValueField="@((item)=>item.Id)"
+                                      Color="Color.Primary"
+                                      MaxMenuHeight="200px"
+                                      SelectedValueChanged="OnValueChange">
+                            @if (!string.IsNullOrEmpty(selectedCity))
+                            {
+                                <Span>@selectedCity</Span>
+                            }
+                            else
+                            {
+                                <Span>Select</Span>
+                            }
+                        </DropdownList>
+                    }
+                    else
+                    {
+                        <DropdownList TItem="City" TValue="int"
+                                      Data="@Cities"
+                                      TextField="@((item)=>item.Name)"
+                                      ValueField="@((item)=>item.Id)"
+                                      Color="Color.Primary"
+                                      MaxMenuHeight="200px"
+                                      SelectedValueChanged="OnValueChange">
+                            @if (!string.IsNullOrEmpty(selectedCity))
+                            {
+                                <Span>@selectedCity</Span>
+                            }
+                            else
+                            {
+                                <Span>Select</Span>
+                            }
+                        </DropdownList>
+                    }
+
+                </Field>
+            </Field>
+        </ModalBody>
+        <ModalFooter Class="justify-end">
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Submit" Clicked="@SaveChanges">Save Changes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+
+    [Parameter] public Town Town { get; set; } = new();
+    [Parameter] public List<City> Cities { get; set; } = new();
+    [Parameter] public EventCallback<Town> HandleSaveOperationEvent { get; set; }
+
+    public bool IsVisible { get; set; } = false;
+    public string Title { get; set; } = "Add";
+    string selectedCity { get; set; } = "";
+
+    public void OpenDialog()
+    {
+        IsVisible = true;
+        ShowModal();
+        StateHasChanged();
+    }
+
+    public async Task SaveChanges()
+    {
+        if (string.IsNullOrEmpty(Town.Name) || Town.CityId <= 0)
+            await ToastService!.Error("Town name is required", "Missing Field");
+        else if (string.IsNullOrEmpty(Town.CityId.ToString()))
+            await ToastService!.Error("City is required", "Missing Field");
+        else
+        {
+            IsVisible = false;
+            await HandleSaveOperationEvent.InvokeAsync(Town);
+            await ToastService!.Success("Town added successfully", "Saved Changes");
+        }
+    }
+
+    public void ChangeTitle(string title)
+    {
+        Title = title;
+    }
+
+    public void ChangeSelectedCity(string selected)
+    {
+        selectedCity = selected;
+    }
+
+    // reference to the modal component
+    private Modal? townDialog;
+
+    private Task ShowModal()
+    {
+        return townDialog!.Show();
+    }
+
+    private Task HideModal()
+    {
+        IsVisible = false;
+        return townDialog!.Hide();
+    }
+
+    private string GetCityNameByID(int id)
+    {
+        return Cities.FirstOrDefault(x => x.Id == id)?.Name!;
+    }
+
+    public void OnValueChange(int value)
+    {
+        Town.CityId = value;
+        ChangeSelectedCity(GetCityNameByID(Town.CityId));
+        Console.WriteLine("id:" + Town.CityId);
+        StateHasChanged();
+    }
+}
