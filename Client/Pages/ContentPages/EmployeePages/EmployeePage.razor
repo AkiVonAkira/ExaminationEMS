@@ -12,49 +12,22 @@
             </CardHeader>
             <CardBody>
                 <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
-                    <Table Background="Background.Dark">
-                        <TableHeader Style="border-collapse: separate; border-spacing: 0;">
-                            <TableRow Background="Background.Primary" TextColor="TextColor.White">
-                                <TableHeaderCell>#</TableHeaderCell>
-                                <TableHeaderCell>Id</TableHeaderCell>
-                                <TableHeaderCell>Name</TableHeaderCell>
-                                <TableHeaderCell>Action</TableHeaderCell>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            @if (Employees != null && Employees.Count > 0)
-                            {
-                                int count = 1;
-                                foreach (var item in Employees)
-                                {
-                                    var index = count.ToString();
-
-                                    <TableRow>
-                                        <TableRowHeader>@index</TableRowHeader>
-                                        <TableRowCell>@item.Id</TableRowCell>
-                                        <TableRowCell>@item.Name</TableRowCell>
-                                        <TableRowCell Class="flex gap-4">
-                                            <i class="fa fa-pencil text-accent cursor-pointer">
-                                               @* @onclick="()=>EditClicked(item)"> *@
-                                           </i>
-                                            <i class="fa fa-trash text-danger cursor-pointer">
-                                               @* @onclick="()=>DeleteClicked(item)"> *@
-                                           </i>
-                                        </TableRowCell>
-                                    </TableRow>
-                                    ++count;
-                                }
-                            }
-                            else
-                            {
-                                <TableRow>
-                                    <TableRowCell ColumnSpan="5" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
-                                        No Employees Added yet!
-                                    </TableRowCell>
-                                </TableRow>
-                            }
-                        </TableBody>
-                    </Table>
+                    <DataGrid TItem="Employee" Data="Employees" AutoGenerateColumns="false" 
+                              Pagination="true" PageSize="10">
+                        <DataGridColumns>
+                            <DataGridColumn Caption="Employee Image">
+                                    <Image Source="@Employee!.Photo" alt="@Employee.Name" Class="w-8 h-8"></Image>
+                            </DataGridColumn>
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.SocialSecurityNumber)" Caption="SSN" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.FileNumber)" Caption="File Number" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.Name)" Caption="Name" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.PhoneNumber)" Caption="Phone Number" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.JobTitle)" Caption="Job Title" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.Town.Name)" Caption="Town" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.Section.Name)" Caption="Section" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.Description)" Caption="Description" />
+                        </DataGridColumns>
+                    </DataGrid>
                 </Div>
             </CardBody>
             <CardFooter>
@@ -166,7 +139,7 @@
         }
         if (successCheck)
         {
-            employeeForm?.ClearContent();
+            //employeeForm?.ClearContent();
         }
     }
 

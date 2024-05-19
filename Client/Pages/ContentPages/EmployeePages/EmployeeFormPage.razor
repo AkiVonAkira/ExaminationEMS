@@ -13,34 +13,43 @@
                         <CloseButton onclick="@CloseForm" Class="float-end"></CloseButton>
                     </CardHeader>
                 </Card>
-                <Row Class="justify-center gap-2">
-                    <Badge Color="Color.Primary">1</Badge>
+                <Row Class="justify-center gap-8">
                     @if (FirstLayer)
                     {
-                        <Div Class="flex items-center w-96">
-                            <Progress Value="50" Animated Striped Class="h-fit" />
-                        </Div>
-                        <Badge Color="Color.Primary">2</Badge>
-                        <Div Class="flex items-center w-96">
-                            <Progress Value="0" Height="Height.Is100" Class="h-fit" />
-                        </Div>
+                        <Row>
+                            <Badge Color="Color.Primary" Class="me-2">1</Badge>
+                            <Div Class="flex items-center w-32 sm:w-72 md:w-92">
+                                <Progress Value="100" Striped Class="h-fit" />
+                            </Div>
+                        </Row>
+                        <Row>
+                            <Badge Color="Color.Primary" Class="me-2">2</Badge>
+                            <Div Class="flex items-center w-32 sm:w-72 md:w-92">
+                                <Progress Value="0" Height="Height.Is100" Class="h-fit" />
+                            </Div>
+                        </Row>
                     }
                     @if (SecondLayer)
                     {
-                        <Div Class="flex items-center w-96">
-                            <Progress Value="100" Animated Striped Class="h-fit" />
-                        </Div>
-                        <Badge Color="Color.Primary">2</Badge>
-                        <Div Class="flex items-center w-96">
-                            <Progress Value="50" Animated Striped Class="h-fit" />
-                        </Div>
+                        <Row>
+                            <Badge Color="Color.Primary" Class="me-2">1</Badge>
+                            <Div Class="flex items-center w-32 sm:w-72 md:w-92">
+                                <Progress Value="100" Striped Class="h-fit" />
+                            </Div>
+                        </Row>
+                        <Row>
+                            <Badge Color="Color.Primary" Class="me-2">2</Badge>
+                            <Div Class="flex items-center w-32 sm:w-72 md:w-92">
+                                <Progress Value="50" Striped Class="h-fit" />
+                            </Div>
+                        </Row>
                     }
                 </Row>
             </Div>
             @* First Layer *@
             @if (FirstLayer)
             {
-                <Validations @ref="validations" Mode="ValidationMode.Auto" Model="EmployeeGroup1">
+                <EditForm Enhance OnValidSubmit="Form1" Model="EmployeeGroup1">
                     <Column Class="mb-4">
                         <Row Class="!justify-center" Gap="Gap.Is4">
                             <Card Class="text-white bg-dark">
@@ -52,6 +61,7 @@
                                             <FieldBody ColumnSize="ColumnSize.Is10">
                                                 <TextEdit @bind-Text="@EmployeeGroup1.Name">
                                                 </TextEdit>
+                                                @* <ValidationMessage For="() => EmployeeGroup1.Name" /> *@
                                             </FieldBody>
                                         </Field>
                                     </Validation>
@@ -119,17 +129,17 @@
                             <Button Color="Color.Danger" onclick="@CloseForm">
                                 <i class="fa fa-x mr-2"></i> Cancel
                             </Button>
-                            <Button Color="Color.Primary" Type="ButtonType.Submit" onclick="@ToggleForms">
+                            <Button Color="Color.Primary" Type="ButtonType.Submit">
                                 <i class="fa fa-arrow-right mr-2"></i> Next
                             </Button>
                         </div>
                     </Column>
-                </Validations>
+                </EditForm>
             }
             @* Second Layer *@
             @if (SecondLayer)
             {
-                <Validations @ref="validations" Mode="ValidationMode.Auto" Model="EmployeeGroup1">
+                <EditForm Enhance OnValidSubmit="Form2" Model="EmployeeGroup2">
                     <Column Class="mb-4">
                         <Row Class="!justify-center" Gap="Gap.Is4">
                             <Card Class="text-white bg-dark">
@@ -139,8 +149,7 @@
                                         <Field Vertical>
                                             <FieldLabel ColumnSize="ColumnSize.Is2">Job Title</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10">
-                                                <TextEdit Placeholder="Enter Job Title"
-                                                          @bind-Text="@EmployeeGroup2.JobTitle">
+                                                <TextEdit @bind-Text="@EmployeeGroup2.JobTitle">
                                                 </TextEdit>
                                             </FieldBody>
                                         </Field>
@@ -304,7 +313,7 @@
                             </Button>
                         </div>
                     </Column>
-                </Validations>
+                </EditForm>
             }
         </Container>
     }
@@ -344,26 +353,6 @@
     string selectedDepartment { get; set; } = "";
     string selectedSection { get; set; } = "";
 
-
-    protected async override Task OnInitializedAsync()
-    {
-        //await LoadLists();
-    }
-
-    public async Task SaveChanges()
-    {
-        // if (string.IsNullOrEmpty(EmployeeGroup1.Fullname))
-        //     await ToastService!.Error("Full name is required", "Missing Field");
-        // else if (string.IsNullOrEmpty(EmployeeGroup1.PhoneNumber))
-        //     await ToastService!.Error("Phone Number is required", "Missing Field");
-        // else
-        // {
-        //     ShowEmployeeForm = false;
-        //     //MergedEmployee = EmployeeGroup2 + EmployeeGroup1;
-        //     await HandleSaveOperationEvent.InvokeAsync(MergedEmployee);
-        //     await ToastService!.Success("Department added successfully", "Saved Changes");
-        // }
-    }
 
     public void ChangeTitle(string title)
     {
@@ -423,6 +412,7 @@
             Employee.Address = EmployeeGroup1.Address;
             Employee.Photo = EmployeeGroup1.Photo;
             Employee.SocialSecurityNumber = EmployeeGroup1.SocialSecurityNumber;
+            Employee.FileNumber = EmployeeGroup1.FileNumber;
 
             ToggleForms();
         }
@@ -440,6 +430,7 @@
             Employee.SectionId = EmployeeGroup2.SectionId;
 
             await HandleSaveEmployeeClickedEvent.InvokeAsync(Employee);
+            await CloseForm();
             ClearContent();
         }
     }
