@@ -50,17 +50,23 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// user
 builder.Services.AddScoped<IUserAccount, UserAccountRepository>();
+
+// general department / department / section
 builder.Services.AddScoped<IGenericRepositoryInterface<GeneralDepartment>, GeneralDepartmentRepository>();
 builder.Services.AddScoped<IGenericRepositoryInterface<Department>, DepartmentRepository>();
 builder.Services.AddScoped<IGenericRepositoryInterface<Section>, SectionRepository>();
 
+// country / city / Town
 builder.Services.AddScoped<IGenericRepositoryInterface<Country>, CountryRepository>();
 builder.Services.AddScoped<IGenericRepositoryInterface<City>, CityRepository>();
 builder.Services.AddScoped<IGenericRepositoryInterface<Town>, TownRepository>();
 
+// employee
 builder.Services.AddScoped<IGenericRepositoryInterface<Employee>, EmployeeRepository>();
 
+// Cors
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorWasm",

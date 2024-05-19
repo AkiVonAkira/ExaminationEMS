@@ -1,0 +1,112 @@
+﻿@implements IDisposable
+
+@if (allState.ShowEmployee)
+{
+    @if (ShowMainPage)
+    {
+        <Card Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.White">
+            <CardHeader TextColor="TextColor.White">
+                <i class="fa fa-users text-primary"></i>
+                Employees
+                <CloseButton Class="float-end" onclick="@EmployeeClicked"></CloseButton>
+            </CardHeader>
+            <CardBody>
+                <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                    <Table Background="Background.Dark">
+                        <TableHeader Style="border-collapse: separate; border-spacing: 0;">
+                            <TableRow Background="Background.Primary" TextColor="TextColor.White">
+                                <TableHeaderCell>#</TableHeaderCell>
+                                <TableHeaderCell>Id</TableHeaderCell>
+                                <TableHeaderCell>Name</TableHeaderCell>
+                                <TableHeaderCell>Action</TableHeaderCell>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            @if (Employees != null && Employees.Count > 0)
+                            {
+                                int count = 1;
+                                foreach (var item in Employees)
+                                {
+                                    var index = count.ToString();
+
+                                    <TableRow>
+                                        <TableRowHeader>@index</TableRowHeader>
+                                        <TableRowCell>@item.Id</TableRowCell>
+                                        <TableRowCell>@item.Name</TableRowCell>
+                                        <TableRowCell Class="flex gap-4">
+                                            <i class="fa fa-pencil text-accent cursor-pointer"
+                                               @onclick="()=>EditClicked(item)"></i>
+                                            <i class="fa fa-trash text-danger cursor-pointer"
+                                               @onclick="()=>DeleteClicked(item)"></i>
+                                        </TableRowCell>
+                                    </TableRow>
+                                    ++count;
+                                }
+                            }
+                            else
+                            {
+                                <TableRow>
+                                    <TableRowCell ColumnSpan="5" TextColor="TextColor.Warning" TextAlignment="TextAlignment.Center">
+                                        No Employees Added yet!
+                                    </TableRowCell>
+                                </TableRow>
+                            }
+                        </TableBody>
+                    </Table>
+                </Div>
+            </CardBody>
+            <CardFooter>
+                <Form>
+                    <Button Color="Color.Primary" @onclick="@AddClicked">Add Employee</Button>
+                </Form>
+            </CardFooter>
+        </Card>
+    }
+}
+
+<EmployeeFormPage @ref="employeeForm"
+                  ShowEmployeeForm="ShowEmployeeForm" />
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
+    public List<Employee> Employees { get; set; } = new();
+    EmployeeFormPage? employeeForm;
+
+    protected async override Task OnInitializedAsync()
+    {
+        allState.Action += StateHasChanged;
+        await LoadEmployees();
+    }
+
+    public async Task LoadEmployees()
+    {
+        Employees = await employeeService.GetAll(ClientConstants.EmployeeBaseUrl);
+    }
+
+    public bool ShowMainPage { get; set; } = true;
+    public bool ShowEmployeeForm { get; set; } = false;
+
+    public void ShowForm()
+    {
+        ShowMainPage = !ShowMainPage;
+        ShowEmployeeForm = !ShowEmployeeForm;
+    }
+
+    void AddClicked()
+    {
+        ShowForm();
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+    }
+
+    // Close Button
+    private void EmployeeClicked()
+    {
+        allState.EmployeeClicked(false);
+    }
+}
