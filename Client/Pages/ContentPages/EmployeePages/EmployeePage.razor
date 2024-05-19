@@ -34,10 +34,12 @@
                                         <TableRowCell>@item.Id</TableRowCell>
                                         <TableRowCell>@item.Name</TableRowCell>
                                         <TableRowCell Class="flex gap-4">
-                                            <i class="fa fa-pencil text-accent cursor-pointer"
-                                               @onclick="()=>EditClicked(item)"></i>
-                                            <i class="fa fa-trash text-danger cursor-pointer"
-                                               @onclick="()=>DeleteClicked(item)"></i>
+                                            <i class="fa fa-pencil text-accent cursor-pointer">
+                                               @* @onclick="()=>EditClicked(item)"> *@
+                                           </i>
+                                            <i class="fa fa-trash text-danger cursor-pointer">
+                                               @* @onclick="()=>DeleteClicked(item)"> *@
+                                           </i>
                                         </TableRowCell>
                                     </TableRow>
                                     ++count;
@@ -65,24 +67,114 @@
 }
 
 <EmployeeFormPage @ref="employeeForm"
-                  ShowEmployeeForm="ShowEmployeeForm" />
+    Employee="Employee"
+    ShowEmployeeForm="ShowEmployeeForm"
+    NotifyParentFormClosed="NotifyParentFormClosed"
+    Countries="DefaultCountries"
+    Cities="SelectedCities"
+    Towns="SelectedTowns"
+    GeneralDepartments="DefaultGeneralDepartments"
+    Departments="SelectedDepartments"
+    Sections="SelectedSections"
+    HandleCountrySelectedEvent="HandleCountrySelectedEvent"
+    HandleCitySelectedEvent="HandleCitySelectedEvent"
+    HandleGeneralDepartmentSelectedEvent="HandleGeneralDepartmentSelectedEvent"
+    HandleDepartmentSelectedEvent="HandleDepartmentSelectedEvent"
+    HandleSaveEmployeeClickedEvent="HandleSaveEmployeeClickedEvent"
+    >
+</EmployeeFormPage>
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
     [Inject] IMessageService? MessageService { get; set; }
 
-    public List<Employee> Employees { get; set; } = new();
+    public List<Employee> Employees { get; set; } = [];
+    public Employee Employee { get; set; } = new();
     EmployeeFormPage? employeeForm;
+
+    // Default Lists
+    // Country, City, Town
+    [Parameter] public List<Country> DefaultCountries { get; set; } = new();
+    [Parameter] public List<City> DefaultCities { get; set; } = new();
+    [Parameter] public List<Town> DefaultTowns { get; set; } = new();
+
+    // Gen Dep, Department, Section
+    [Parameter] public List<GeneralDepartment> DefaultGeneralDepartments { get; set; } = new();
+    [Parameter] public List<Department> DefaultDepartments { get; set; } = new();
+    [Parameter] public List<Section> DefaultSections { get; set; } = new();
+
+    // Selected Lists
+    [Parameter] public List<City> SelectedCities { get; set; } = new();
+    [Parameter] public List<Town> SelectedTowns { get; set; } = new();
+    [Parameter] public List<Department> SelectedDepartments { get; set; } = new();
+    [Parameter] public List<Section> SelectedSections { get; set; } = new();
+
 
     protected async override Task OnInitializedAsync()
     {
         allState.Action += StateHasChanged;
         await LoadEmployees();
+        await LoadDefaults();
     }
 
-    public async Task LoadEmployees()
+    // Get all default lists
+    public async Task LoadDefaults()
     {
-        Employees = await employeeService.GetAll(ClientConstants.EmployeeBaseUrl);
+        DefaultCountries = await countryService.GetAll(ClientConstants.CountryBaseUrl);
+        DefaultCities = await cityService.GetAll(ClientConstants.CityBaseUrl);
+        DefaultTowns = await townService.GetAll(ClientConstants.TownBaseUrl);
+
+        DefaultGeneralDepartments = await generalDepartmentService.GetAll(ClientConstants.GeneralDepartmentBaseUrl);
+        DefaultDepartments = await departmentService.GetAll(ClientConstants.DepartmentBaseUrl);
+        DefaultSections = await sectionService.GetAll(ClientConstants.SectionBaseUrl);
+    }
+
+    // Get Cities from Selected Country
+    private void HandleCountrySelectedEvent(int countryId) => 
+    SelectedCities = DefaultCities.Where(c => c.CountryId == countryId).ToList();
+
+    // Get Towns from Selected City
+    private void HandleCitySelectedEvent(int cityId) => 
+    SelectedTowns = DefaultTowns.Where(c => c.CityId == cityId).ToList();
+
+    // Get Department from Selected General Department
+    private void HandleGeneralDepartmentSelectedEvent(int generalDepartmentId) => 
+    SelectedDepartments = DefaultDepartments.Where(d => d.GeneralDepartmentId == generalDepartmentId).ToList();
+
+    // Get Section from Selected Department
+    private void HandleDepartmentSelectedEvent(int departmentId) => 
+    SelectedSections = DefaultSections.Where(d => d.DepartmentId == departmentId).ToList();
+
+    // Load Employees
+    public async Task LoadEmployees() => 
+    Employees = await employeeService.GetAll(ClientConstants.EmployeeBaseUrl);
+
+
+    // Add or Update
+    private async Task HandleSaveEmployeeClickedEvent(Employee employee)
+    {
+        bool successCheck = false;
+        if (employee.Id > 0)
+        {
+            var result = await employeeService.Update(employee, ClientConstants.EmployeeBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        }
+        else
+        {
+            var response = await employeeService.Insert(employee, ClientConstants.EmployeeBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
+        if (successCheck)
+        {
+            employeeForm?.ClearContent();
+        }
+    }
+
+    // Notify parent when form closes
+    private async Task NotifyParentFormClosed()
+    {
+        ShowForm();
+        await LoadEmployees();
     }
 
     public bool ShowMainPage { get; set; } = true;
@@ -97,6 +189,21 @@
     void AddClicked()
     {
         ShowForm();
+        employeeForm.ChangeTitle("Add");
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            //await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
+        }
     }
 
     public void Dispose()

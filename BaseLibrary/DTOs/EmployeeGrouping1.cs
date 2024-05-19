@@ -13,13 +13,14 @@ namespace BaseLibrary.DTOs
         [Required]
         public string PhoneNumber { get; set; } = string.Empty;
 
-        [Required]
-        public string Photo { get; set; } = string.Empty;
-
-        [Required]
-        public string SocialSecurityNumberId { get; set; } = string.Empty;
 
         [Required]
         public string FileNumber { get; set; } = string.Empty;
+
+        [Required]
+        public string SocialSecurityNumber { get; set; } = string.Empty;
+
+        [Required]
+        public string Photo { get; set; } = string.Empty;
     }
 }

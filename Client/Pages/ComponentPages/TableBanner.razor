@@ -1,6 +1,6 @@
 ﻿<CardDeck Class="flex-wrap gap-4 !flex-row mb-4">
     <Card Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.White">
-        <Button Width="Width.Is100"><i class="fa fa-users text-primary me-2"></i> Employees</Button>
+        <Button onclick="@EmployeeClicked" Width="Width.Is100"><i class="fa fa-users text-primary me-2"></i> Employees</Button>
     </Card>
     <Card Border="Border.Success" Background="Background.Dark" TextColor="TextColor.White">
         <Button Width="Width.Is100"><i class="fa fa-sun text-success me-2"></i> Vacation</Button>
@@ -23,5 +23,13 @@
     {
         ShowDepartment = !allState.ShowDepartment;
         allState.DepartmentClicked(ShowDepartment);
+    }
+
+    // Employee
+    public bool ShowEmployee { get; set; } = true;
+    private void EmployeeClicked()
+    {
+        ShowEmployee = !allState.ShowEmployee;
+        allState.EmployeeClicked(ShowEmployee);
     }
 }

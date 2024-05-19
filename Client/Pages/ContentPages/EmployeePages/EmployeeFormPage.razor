@@ -4,175 +4,308 @@
 {
     if (ShowEmployeeForm)
     {
-        <Container>
-            <Row Class="my-4">
-                <Heading>
-                    Add Employee
-                </Heading>
-                <CloseButton onclick="@CloseForm" Float="Float.End"></CloseButton>
-            </Row>
-
-            <Row>
-                <Column>
-                    @* Employee Form *@
-                    <Container Fluid>
-                        <Div Class="mb-4">
-                            <Progress Value="75" Animated Striped />
+        <Container Fluid>
+            @* Employee Form *@
+            <Div Class="my-4">
+                <Card Class="mb-4 px-4 !bg-transparent">
+                    <CardHeader>
+                        @Title Employee
+                        <CloseButton onclick="@CloseForm" Class="float-end"></CloseButton>
+                    </CardHeader>
+                </Card>
+                <Row Class="justify-center gap-2">
+                    <Badge Color="Color.Primary">1</Badge>
+                    @if (FirstLayer)
+                    {
+                        <Div Class="flex items-center w-96">
+                            <Progress Value="50" Animated Striped Class="h-fit" />
                         </Div>
-                        @if (FirstLayer)
-                        {
-                            <Validations @ref="validations" Mode="ValidationMode.Auto" Model="EmployeeGroup1">
-                                <Row Class="!justify-center" Gap="Gap.Is4">
-                                    <Card Class="text-white bg-dark">
-                                        <CardBody>
-                                            <CardTitle>Personal Information</CardTitle>
-                                            <Validation>
-                                                <Field Vertical>
-                                                    <FieldLabel ColumnSize="ColumnSize.Is2">Fullname *</FieldLabel>
-                                                    <FieldBody ColumnSize="ColumnSize.Is8">
-                                                        <TextEdit Placeholder="Enter Fullname"
-                                                                  @bind-Text="@EmployeeGroup1.Name">
-                                                        </TextEdit>
-                                                        <ValidationMessage For="()=> EmployeeGroup1.Name" class="text-danger"></ValidationMessage>
-                                                    </FieldBody>
-                                                </Field>
-                                            </Validation>
-                                            <Validation>
-                                                <Field Vertical>
-                                                    <FieldLabel ColumnSize="ColumnSize.Is2">Phone Number *</FieldLabel>
-                                                    <FieldBody ColumnSize="ColumnSize.Is8">
-                                                        <TextEdit Placeholder="Enter Phone Number" Role="TextRole.Telephone"
-                                                                  @bind-Text="@EmployeeGroup1.PhoneNumber">
-                                                        </TextEdit>
-                                                        <ValidationMessage For="()=> EmployeeGroup1.PhoneNumber" class="text-danger"></ValidationMessage>
-                                                    </FieldBody>
-                                                </Field>
-                                            </Validation>
-                                            <Validation>
-                                                <Field Vertical>
-                                                    <FieldLabel ColumnSize="ColumnSize.Is2">Adress *</FieldLabel>
-                                                    <FieldBody ColumnSize="ColumnSize.Is8">
-                                                        <TextEdit Placeholder="Enter Adress"
-                                                                  @bind-Text="@EmployeeGroup1.Address">
-                                                        </TextEdit>
-                                                        <ValidationMessage For="()=> EmployeeGroup1.Address" class="text-danger"></ValidationMessage>
-                                                    </FieldBody>
-                                                </Field>
-                                            </Validation>
-                                        </CardBody>
-                                    </Card>
-                                    <Card Class="text-white bg-dark">
-                                        <CardBody>
-                                            <CardTitle>Other Information</CardTitle>
-                                            <Validation>
-                                                <Field Vertical>
-                                                    <FieldLabel ColumnSize="ColumnSize.Is2">Social Security Number *</FieldLabel>
-                                                    <FieldBody ColumnSize="ColumnSize.Is8">
-                                                        <TextEdit Placeholder="Enter your Social Security Number"
-                                                                  @bind-Text="@EmployeeGroup1.SocialSecurityNumberId">
-                                                        </TextEdit>
-                                                        <ValidationMessage For="()=> EmployeeGroup1.SocialSecurityNumberId" class="text-danger"></ValidationMessage>
-                                                    </FieldBody>
-                                                </Field>
-                                            </Validation>
-                                            <Validation>
-                                                <Field Vertical>
-                                                    <FieldLabel ColumnSize="ColumnSize.Is2">Photo *</FieldLabel>
-                                                    <FieldBody ColumnSize="ColumnSize.Is8">
-                                                        <TextEdit Placeholder="Photo"
-                                                                  @bind-Text="@EmployeeGroup1.Photo">
-                                                        </TextEdit>
-                                                        <ValidationMessage For="()=> EmployeeGroup1.Photo" class="text-danger"></ValidationMessage>
-                                                    </FieldBody>
-                                                </Field>
-                                            </Validation>
-                                            <Validation>
-                                                <Field Vertical>
-                                                    <FieldLabel ColumnSize="ColumnSize.Is2">File Number *</FieldLabel>
-                                                    <FieldBody ColumnSize="ColumnSize.Is8">
-                                                        <TextEdit Placeholder="File Number"
-                                                                  @bind-Text="@EmployeeGroup1.FileNumber">
-                                                        </TextEdit>
-                                                        <ValidationMessage For="()=> EmployeeGroup1.FileNumber" class="text-danger"></ValidationMessage>
-                                                    </FieldBody>
-                                                </Field>
-                                            </Validation>
-                                        </CardBody>
-                                        @if (!string.IsNullOrEmpty(errorMessage))
-                                        {
-                                            <ListGroup Flush Class="p-2 !border-y-0 !bg-transparent">
-                                                <ListGroupItem Color="Color.Danger" Class="rounded">@errorMessage</ListGroupItem>
-                                            </ListGroup>
-                                        }
-                                    </Card>
-                                </Row>
-                                <div class="flex flex-row justify-center align-center mt-3 px-2 gap-2">
-                                    <Button Color="Color.Danger" onclick="@CloseForm">
-                                        <i class="fa fa-x mr-2"></i> Cancel
-                                    </Button>
-                                    <Button Color="Color.Primary" Type="ButtonType.Submit" onclick="@ToggleForms">
-                                        <i class="fa fa-arrow-right mr-2"></i> Next
-                                    </Button>
-                                </div>
-                            </Validations>
-                        }
-                        @if (SecondLayer)
-                        {
-                            <Validations @ref="validations" Mode="ValidationMode.Auto" Model="EmployeeGroup2">
-                                <Row Class="!justify-center" Gap="Gap.Is4">
-                                    <Card Class="text-white bg-dark">
-                                        <CardBody>
-                                            <CardTitle>Job Information</CardTitle>
-                                            <Validation>
-                                                <Field Vertical>
-                                                    <FieldLabel ColumnSize="ColumnSize.Is2">Job Title *</FieldLabel>
-                                                    <FieldBody ColumnSize="ColumnSize.Is8">
-                                                        <TextEdit Placeholder="Enter Job Title"
-                                                                  @bind-Text="@EmployeeGroup2.JobTitle">
-                                                        </TextEdit>
-                                                        <ValidationMessage For="()=> EmployeeGroup2.JobTitle" class="text-danger"></ValidationMessage>
-                                                        @if (EmployeeGroup2 != null)
-                                                        {
-                                                            @* ChangeSelectedGeneralDepartment(GetGeneralDepartmentNameByID(EmployeeGroup2.)); *@
-                                                            <DropdownList TItem="GeneralDepartment" TValue="int" Data="@GeneralDepartments"
-                                                                          TextField="@((item)=>item.Name)" ValueField="@((item)=>item.Id)"
-                                                                          Color="Color.Primary" MaxMenuHeight="200px"
-                                                                          SelectedValueChanged="OnGeneralDepartmentValueChange">
-                                                                @if (!string.IsNullOrEmpty(selectedGeneralDepartment))
-                                                                {
-                                                                    <Span>@selectedGeneralDepartment</Span>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <Span>Select</Span>
-                                                                }
-                                                            </DropdownList>
-                                                        }
-                                                    </FieldBody>
-                                                </Field>
-                                            </Validation>
-                                        </CardBody>
-                                        @if (!string.IsNullOrEmpty(errorMessage))
-                                        {
-                                            <ListGroup Flush Class="p-2 !border-y-0 !bg-transparent">
-                                                <ListGroupItem Color="Color.Danger" Class="rounded">@errorMessage</ListGroupItem>
-                                            </ListGroup>
-                                        }
-                                    </Card>
-                                </Row>
-                                <div class="flex flex-row justify-center align-center mt-3 px-2 gap-2">
-                                    <Button Color="Color.Secondary" onclick="@ToggleForms">
-                                        <i class="fa fa-arrow-left mr-2"></i> Back
-                                    </Button>
-                                    <Button Color="Color.Primary" Type="ButtonType.Submit">
-                                        <i class="fa fa-arrow-right mr-2"></i> Submit
-                                    </Button>
-                                </div>
-                            </Validations>
-                        }
-                    </Container>
-                </Column>
-            </Row>
+                        <Badge Color="Color.Primary">2</Badge>
+                        <Div Class="flex items-center w-96">
+                            <Progress Value="0" Height="Height.Is100" Class="h-fit" />
+                        </Div>
+                    }
+                    @if (SecondLayer)
+                    {
+                        <Div Class="flex items-center w-96">
+                            <Progress Value="100" Animated Striped Class="h-fit" />
+                        </Div>
+                        <Badge Color="Color.Primary">2</Badge>
+                        <Div Class="flex items-center w-96">
+                            <Progress Value="50" Animated Striped Class="h-fit" />
+                        </Div>
+                    }
+                </Row>
+            </Div>
+            @* First Layer *@
+            @if (FirstLayer)
+            {
+                <Validations @ref="validations" Mode="ValidationMode.Auto" Model="EmployeeGroup1">
+                    <Column Class="mb-4">
+                        <Row Class="!justify-center" Gap="Gap.Is4">
+                            <Card Class="text-white bg-dark">
+                                <CardBody>
+                                    <CardTitle>Personal Information</CardTitle>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Full Name</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <TextEdit @bind-Text="@EmployeeGroup1.Name">
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Phone Number</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <TextEdit @bind-Text="@EmployeeGroup1.PhoneNumber">
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Address</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <TextEdit @bind-Text="@EmployeeGroup1.Address">
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                </CardBody>
+                            </Card>
+                            @* col 2 *@
+                            <Card Class="text-white bg-dark">
+                                <CardBody>
+                                    <CardTitle>Other Information</CardTitle>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">File Number</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <TextEdit @bind-Text="@EmployeeGroup1.FileNumber">
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Social Security Number</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <TextEdit @bind-Text="@EmployeeGroup1.SocialSecurityNumber">
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Photo</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <TextEdit @bind-Text="@EmployeeGroup1.Photo">
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                </CardBody>
+                                @if (!string.IsNullOrEmpty(errorMessage))
+                                {
+                                    <ListGroup Flush Class="p-2 !border-y-0 !bg-transparent">
+                                        <ListGroupItem Color="Color.Danger" Class="rounded">@errorMessage</ListGroupItem>
+                                    </ListGroup>
+                                }
+                            </Card>
+                        </Row>
+                        <div class="flex flex-row justify-center align-center mt-3 px-2 gap-2 w-48">
+                            <Button Color="Color.Danger" onclick="@CloseForm">
+                                <i class="fa fa-x mr-2"></i> Cancel
+                            </Button>
+                            <Button Color="Color.Primary" Type="ButtonType.Submit" onclick="@ToggleForms">
+                                <i class="fa fa-arrow-right mr-2"></i> Next
+                            </Button>
+                        </div>
+                    </Column>
+                </Validations>
+            }
+            @* Second Layer *@
+            @if (SecondLayer)
+            {
+                <Validations @ref="validations" Mode="ValidationMode.Auto" Model="EmployeeGroup1">
+                    <Column Class="mb-4">
+                        <Row Class="!justify-center" Gap="Gap.Is4">
+                            <Card Class="text-white bg-dark">
+                                <CardBody>
+                                    <CardTitle>Job Information</CardTitle>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Job Title</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <TextEdit Placeholder="Enter Job Title"
+                                                          @bind-Text="@EmployeeGroup2.JobTitle">
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">General Department</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <DropdownList TItem="GeneralDepartment" TValue="int" Data="@GeneralDepartments"
+                                                              TextField="@((item)=>item.Name)" ValueField="@((item)=>item.Id)"
+                                                              Color="Color.Primary" MaxMenuHeight="200px"
+                                                              SelectedValueChanged="OnGeneralDepartmentValueChange">
+                                                    @if (!string.IsNullOrEmpty(selectedGeneralDepartment))
+                                                    {
+                                                        <Span>@selectedGeneralDepartment</Span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Span>Select General Department</Span>
+                                                    }
+                                                </DropdownList>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Department</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <DropdownList TItem="Department" TValue="int" Data="@Departments"
+                                                              TextField="@((item)=>item.Name)" ValueField="@((item)=>item.Id)"
+                                                              Color="Color.Primary" MaxMenuHeight="200px"
+                                                              SelectedValueChanged="OnDepartmentValueChange">
+                                                    @if (!string.IsNullOrEmpty(selectedDepartment))
+                                                    {
+                                                        <Span>@selectedDepartment</Span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Span>Select Department</Span>
+                                                    }
+                                                </DropdownList>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Section</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <DropdownList TItem="Section" TValue="int" Data="@Sections"
+                                                              TextField="@((item)=>item.Name)" ValueField="@((item)=>item.Id)"
+                                                              Color="Color.Primary" MaxMenuHeight="200px"
+                                                              SelectedValueChanged="OnSectionValueChange">
+                                                    @if (!string.IsNullOrEmpty(selectedSection))
+                                                    {
+                                                        <Span>@selectedSection</Span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Span>Select Section</Span>
+                                                    }
+                                                </DropdownList>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                </CardBody>
+                                @if (!string.IsNullOrEmpty(errorMessage))
+                                {
+                                    <ListGroup Flush Class="p-2 !border-y-0 !bg-transparent">
+                                        <ListGroupItem Color="Color.Danger" Class="rounded">@errorMessage</ListGroupItem>
+                                    </ListGroup>
+                                }
+                            </Card>
+                            @* col 2 *@
+                            <Card Class="text-white bg-dark">
+                                <CardBody>
+                                    <CardTitle>Location Information</CardTitle>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Country</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <DropdownList TItem="Country" TValue="int" Data="@Countries"
+                                                              TextField="@((item)=>item.Name)" ValueField="@((item)=>item.Id)"
+                                                              Color="Color.Primary" MaxMenuHeight="200px"
+                                                              SelectedValueChanged="OnCountryValueChange">
+                                                    @if (!string.IsNullOrEmpty(selectedCountry))
+                                                    {
+                                                        <Span>@selectedCountry</Span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Span>Select Country</Span>
+                                                    }
+                                                </DropdownList>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">City</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <DropdownList TItem="City" TValue="int" Data="@Cities"
+                                                              TextField="@((item)=>item.Name)" ValueField="@((item)=>item.Id)"
+                                                              Color="Color.Primary" MaxMenuHeight="200px"
+                                                              SelectedValueChanged="OnCityValueChange">
+                                                    @if (!string.IsNullOrEmpty(selectedCity))
+                                                    {
+                                                        <Span>@selectedCity</Span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Span>Select City</Span>
+                                                    }
+                                                </DropdownList>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation>
+                                        <Field Vertical>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2">Town</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10">
+                                                <DropdownList TItem="Town" TValue="int" Data="@Towns"
+                                                              TextField="@((item)=>item.Name)" ValueField="@((item)=>item.Id)"
+                                                              Color="Color.Primary" MaxMenuHeight="200px"
+                                                              SelectedValueChanged="OnTownValueChange">
+                                                    @if (!string.IsNullOrEmpty(selectedTown))
+                                                    {
+                                                        <Span>@selectedTown</Span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Span>Select Town</Span>
+                                                    }
+                                                </DropdownList>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Field Vertical>
+                                        <FieldLabel ColumnSize="ColumnSize.Is2">Description</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10">
+                                            <InputTextArea class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 disabled:cursor-not-allowed disabled:opacity-75 p-2.5 text-sm bg-gray-50 border border-primary-500 text-white-900 placeholder-primary-700 focus:ring-primary-500 dark:bg-gray-700 focus:border-primary-500 dark:text-primary-500 dark:placeholder-primary-500 dark:border-primary-500"
+                                                           Placeholder="Optional"
+                                                           @bind-Value="@EmployeeGroup2.Description">
+                                            </InputTextArea>
+                                        </FieldBody>
+                                    </Field>
+                                </CardBody>
+                                @if (!string.IsNullOrEmpty(errorMessage))
+                                {
+                                    <ListGroup Flush Class="p-2 !border-y-0 !bg-transparent">
+                                        <ListGroupItem Color="Color.Danger" Class="rounded">@errorMessage</ListGroupItem>
+                                    </ListGroup>
+                                }
+                            </Card>
+                        </Row>
+                        <div class="flex flex-row justify-center align-center mt-3 px-2 gap-2 w-48">
+                            <Button Color="Color.Secondary" onclick="@ToggleForms">
+                                <i class="fa fa-arrow-left mr-2"></i> Back
+                            </Button>
+                            <Button Color="Color.Primary" Type="ButtonType.Submit">
+                                <i class="fa fa-arrow-right mr-2"></i> Submit
+                            </Button>
+                        </div>
+                    </Column>
+                </Validations>
+            }
         </Container>
     }
 }
@@ -197,11 +330,12 @@
     [Parameter] public List<Department> Departments { get; set; } = new();
     [Parameter] public List<Section> Sections { get; set; } = new();
 
-    // Bools
-    [Parameter] public bool ShowEmployeeForm { get; set; } = false;
+    // Bools and strings
+    [Parameter] public bool ShowEmployeeForm { get; set; }
     bool FirstLayer { get; set; } = true;
     bool SecondLayer { get; set; } = false;
 
+    [Parameter] public string Title { get; set; } = "Add";
     string selectedCountry { get; set; } = "";
     string selectedCity { get; set; } = "";
     string selectedTown { get; set; } = "";
@@ -209,6 +343,12 @@
     string selectedGeneralDepartment { get; set; } = "";
     string selectedDepartment { get; set; } = "";
     string selectedSection { get; set; } = "";
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        //await LoadLists();
+    }
 
     public async Task SaveChanges()
     {
@@ -223,6 +363,11 @@
         //     await HandleSaveOperationEvent.InvokeAsync(MergedEmployee);
         //     await ToastService!.Success("Department added successfully", "Saved Changes");
         // }
+    }
+
+    public void ChangeTitle(string title)
+    {
+        Title = title;
     }
 
     public void ToggleForms()
@@ -240,6 +385,73 @@
         await NotifyParentFormClosed.InvokeAsync();
     }
 
+    // Form Validation
+    // Form 1
+    private bool ValidateEmployeeGroup1()
+    {
+        if (string.IsNullOrEmpty(EmployeeGroup1.Name)
+        || string.IsNullOrEmpty(EmployeeGroup1.PhoneNumber)
+        || string.IsNullOrEmpty(EmployeeGroup1.Address)
+        || string.IsNullOrEmpty(EmployeeGroup1.Photo)
+        || string.IsNullOrEmpty(EmployeeGroup1.SocialSecurityNumber)
+        || string.IsNullOrEmpty(EmployeeGroup1.FileNumber))
+            return false;
+        else
+            return true;
+    }
+
+    // Form 2
+    private bool ValidateEmployeeGroup2()
+    {
+        if (string.IsNullOrEmpty(EmployeeGroup2.JobTitle)
+        || EmployeeGroup2.TownId == 0
+        || EmployeeGroup2.SectionId == 0)
+            return false;
+        else
+            return true;
+    }
+
+    [Parameter] public EventCallback<Employee> HandleSaveEmployeeClickedEvent { get; set; }
+    private void Form1()
+    {
+        var isValid = ValidateEmployeeGroup1();
+
+        if (isValid)
+        {
+            Employee.Name = EmployeeGroup1.Name;
+            Employee.PhoneNumber = EmployeeGroup1.PhoneNumber;
+            Employee.Address = EmployeeGroup1.Address;
+            Employee.Photo = EmployeeGroup1.Photo;
+            Employee.SocialSecurityNumber = EmployeeGroup1.SocialSecurityNumber;
+
+            ToggleForms();
+        }
+    }
+
+    private async Task Form2()
+    {
+        var isValid = ValidateEmployeeGroup2();
+
+        if (isValid)
+        {
+            Employee.JobTitle = EmployeeGroup2.JobTitle;
+            Employee.Description = EmployeeGroup2.Description;
+            Employee.TownId = EmployeeGroup2.TownId;
+            Employee.SectionId = EmployeeGroup2.SectionId;
+
+            await HandleSaveEmployeeClickedEvent.InvokeAsync(Employee);
+            ClearContent();
+        }
+    }
+
+    public void ClearContent()
+    {
+        EmployeeGroup1 = new();
+        EmployeeGroup2 = new();
+        Employee = new();
+        StateHasChanged();
+    }
+
     protected override void OnInitialized()
     {
         allState.Action += StateHasChanged;
@@ -252,41 +464,79 @@
 
     // Value Change related code
 
+    // country, city and town
     [Parameter] public EventCallback<int> HandleCountrySelectedEvent { get; set; }
     public void OnCountryValueChange(int value)
     {
         HandleCountrySelectedEvent.InvokeAsync(value);
+        ChangeSelectedCountry(GetCountryNameByID(value));
     }
+
     [Parameter] public EventCallback<int> HandleCitySelectedEvent { get; set; }
     public async Task OnCityValueChange(int value)
     {
         await HandleCitySelectedEvent.InvokeAsync(value);
+        ChangeSelectedCity(GetCityNameByID(value));
     }
+
     [Parameter] public EventCallback<int> HandleTownSelectedEvent { get; set; }
     public void OnTownValueChange(int value)
     {
         EmployeeGroup2.TownId = value;
+        ChangeSelectedTown(GetTownNameByID(value));
     }
-    
+
+    // general dep, dep and section
     [Parameter] public EventCallback<int> HandleGeneralDepartmentSelectedEvent { get; set; }
     public void OnGeneralDepartmentValueChange(int value)
     {
         HandleGeneralDepartmentSelectedEvent.InvokeAsync(value);
+        ChangeSelectedGeneralDepartment(GetGeneralDepartmentNameByID(value));
     }
+
     [Parameter] public EventCallback<int> HandleDepartmentSelectedEvent { get; set; }
     public async Task OnDepartmentValueChange(int value)
     {
         await HandleDepartmentSelectedEvent.InvokeAsync(value);
+        ChangeSelectedDepartment(GetDepartmentNameByID(value));
     }
+
     [Parameter] public EventCallback<int> HandleSectionSelectedEvent { get; set; }
     public void OnSectionValueChange(int value)
     {
         EmployeeGroup2.SectionId = value;
+        ChangeSelectedSection(GetSectionNameByID(value));
     }
 
-    public void ChangeSelectedGeneralDepartment(string selected) =>
-        selectedGeneralDepartment = selected;
+    // Helper methods for country, city, town, department, and section
 
-    private string GetGeneralDepartmentNameByID(int id) => 
+    public void ChangeSelectedCountry(string selected) => selectedCountry = selected;
+
+    public void ChangeSelectedCity(string selected) => selectedCity = selected;
+
+    public void ChangeSelectedTown(string selected) => selectedTown = selected;
+
+    public void ChangeSelectedDepartment(string selected) => selectedDepartment = selected;
+
+    public void ChangeSelectedSection(string selected) => selectedSection = selected;
+
+    public void ChangeSelectedGeneralDepartment(string selected) => selectedGeneralDepartment = selected;
+
+    public string GetCountryNameByID(int id) =>
+        Countries.FirstOrDefault(x => x.Id == id)?.Name!;
+
+    public string GetCityNameByID(int id) =>
+        Cities.FirstOrDefault(x => x.Id == id)?.Name!;
+
+    public string GetTownNameByID(int id) =>
+        Towns.FirstOrDefault(x => x.Id == id)?.Name!;
+
+    public string GetDepartmentNameByID(int id) =>
+        Departments.FirstOrDefault(x => x.Id == id)?.Name!;
+
+    public string GetSectionNameByID(int id) =>
+        Sections.FirstOrDefault(x => x.Id == id)?.Name!;
+
+    public string GetGeneralDepartmentNameByID(int id) =>
         GeneralDepartments.FirstOrDefault(x => x.Id == id)?.Name!;
 }
