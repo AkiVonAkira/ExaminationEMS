@@ -16,7 +16,12 @@
                               Pagination="true" PageSize="10">
                         <DataGridColumns>
                             <DataGridColumn TItem="Employee" Caption="Employee Image">
-                                <Image Source="@Employee!.Photo" Text="@Employee.Name" Class="object-cover w-16 h-16"></Image>
+                                <DisplayTemplate Context="employee">
+                                    @if (!string.IsNullOrEmpty(employee.Photo))
+                                    {
+                                        <Image Source="@employee.Photo" Text="@employee.Name" Class="object-cover w-16 h-16" />
+                                    }
+                                </DisplayTemplate>
                             </DataGridColumn>
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.SocialSecurityNumber)" Caption="SSN" />
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.FileNumber)" Caption="File Number" />
@@ -26,9 +31,10 @@
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.Town.Name)" Caption="Town" />
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.Section.Name)" Caption="Section" />
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.Description)" Caption="Description" />
-                            <DataGridColumn TItem="Employee" Caption="Menu">
-                                <i class"fa fa-caretdown text-primary" onclick="()=>ShowMenuPopUp(Employee!)">
-                                </i>    
+                            <DataGridColumn TItem="Employee" Field="" Caption="Menu">
+                                <DisplayTemplate Context="employee">
+                                    <i class="fa fa-caret-down text-primary" @onclick="() => ShowMenuPopup(employee)"></i>
+                                </DisplayTemplate> 
                             </DataGridColumn>
                         </DataGridColumns>
                     </DataGrid>
@@ -60,9 +66,9 @@
     HandleSaveEmployeeClickedEvent="HandleSaveEmployeeClickedEvent" />
 
 <ContextMenu @ref="contextMenu"
-    HandleViewClicked="HandleViewClicked"
-    HandleEditClicked="HandleViewClicked"
-    HandleDeleteClicked="HandleDeleteClicked" />
+    HandleViewClicked="ViewClicked"
+    HandleEditClicked="EditClicked"
+    HandleDeleteClicked="DeleteClicked" />
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
@@ -129,7 +135,7 @@
     public async Task LoadEmployees() => 
     Employees = await employeeService.GetAll(ClientConstants.EmployeeBaseUrl);
 
-    // Add or Update
+    // Add
     private async Task HandleSaveEmployeeClickedEvent(Employee employee)
     {
         bool successCheck = false;
@@ -158,6 +164,62 @@
         contextMenu!.OpenContextMenu();
     }
 
+    void EditClicked()
+    {
+        //Group 1
+        employeeForm!.Employee.Id = SelectedEmployee.Id;
+        employeeForm!.Employee.Name = SelectedEmployee.Name;
+        employeeForm!.Employee.PhoneNumber = SelectedEmployee.PhoneNumber;
+        employeeForm!.Employee.FileNumber = SelectedEmployee.FileNumber;
+        employeeForm!.Employee.Address = SelectedEmployee.Address;
+        employeeForm!.Employee.Photo = SelectedEmployee.Photo;
+        employeeForm!.Employee.SocialSecurityNumber = SelectedEmployee.SocialSecurityNumber;
+
+        // Group 2
+        employeeForm!.EmployeeGroup2.JobTitle = SelectedEmployee.JobTitle!;
+        employeeForm!.EmployeeGroup2.Description = SelectedEmployee.Description;
+
+        // gen dep, dep, section
+        employeeForm!.selectedGeneralDepartment = SelectedEmployee.Section!.Department!.GeneralDepartment!.Name!;
+        employeeForm!.selectedDepartment = SelectedEmployee.Section!.Department!.Name!;
+        employeeForm!.selectedSection = SelectedEmployee.Section!.Name!;
+
+        // country, city, town
+        employeeForm!.selectedCountry = SelectedEmployee.Town!.City!.Country!.Name!;
+        employeeForm!.selectedCity = SelectedEmployee.Town!.City!.Name!;
+        employeeForm!.selectedTown = SelectedEmployee.Town!.Name!;
+
+        employeeForm.ChangeTitle("Update");
+        SelectedEmployee = new();
+        contextMenu!.CloseContextMenu();
+        ShowForm();
+    }
+
+    // Delete
+    private async Task DeleteClicked()
+    {
+        contextMenu!.CloseContextMenu();
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {SelectedEmployee.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await departmentService.DeleteById(SelectedEmployee.Id, ClientConstants.DepartmentBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+        {
+            SelectedEmployee = new();
+            await LoadEmployees();
+        }
+    }
+
+    // View Clicked
+    public bool ShowDetailsPage { get; set; } = false;
+    private void ViewClicked()
+    {
+        Employee = SelectedEmployee;
+        contextMenu!.CloseContextMenu();
+        ShowDetailsPage = true;
+        ShowForm();
+    }
+
     // Notify parent when form closes
     private async Task NotifyParentFormClosed()
     {
@@ -177,7 +239,7 @@
     void AddClicked()
     {
         ShowForm();
-        employeeForm.ChangeTitle("Add");
+        employeeForm!.ChangeTitle("Add");
     }
 
     private async Task<bool> DisplayMessage(bool flag, string message)

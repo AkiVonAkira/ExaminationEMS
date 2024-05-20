@@ -353,13 +353,13 @@
     bool SecondLayer { get; set; } = false;
 
     [Parameter] public string Title { get; set; } = "Add";
-    string selectedCountry { get; set; } = "";
-    string selectedCity { get; set; } = "";
-    string selectedTown { get; set; } = "";
+    public string selectedCountry { get; set; } = "";
+    public string selectedCity { get; set; } = "";
+    public string selectedTown { get; set; } = "";
 
-    string selectedGeneralDepartment { get; set; } = "";
-    string selectedDepartment { get; set; } = "";
-    string selectedSection { get; set; } = "";
+    public string selectedGeneralDepartment { get; set; } = "";
+    public string selectedDepartment { get; set; } = "";
+    public string selectedSection { get; set; } = "";
 
 
     public void ChangeTitle(string title)
