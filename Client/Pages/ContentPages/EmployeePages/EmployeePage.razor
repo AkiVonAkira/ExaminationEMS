@@ -12,11 +12,11 @@
             </CardHeader>
             <CardBody>
                 <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
-                    <DataGrid TItem="Employee" Data="Employees" AutoGenerateColumns="false" 
+                    <DataGrid TItem="Employee" Data="Employees" AutoGenerateColumns="false"
                               Pagination="true" PageSize="10">
                         <DataGridColumns>
-                            <DataGridColumn Caption="Employee Image">
-                                    <Image Source="@Employee!.Photo" alt="@Employee.Name" Class="w-8 h-8"></Image>
+                            <DataGridColumn TItem="Employee" Caption="Employee Image">
+                                <Image Source="@Employee!.Photo" Text="@Employee.Name" Class="object-cover w-16 h-16"></Image>
                             </DataGridColumn>
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.SocialSecurityNumber)" Caption="SSN" />
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.FileNumber)" Caption="File Number" />
@@ -26,6 +26,10 @@
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.Town.Name)" Caption="Town" />
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.Section.Name)" Caption="Section" />
                             <DataGridColumn TItem="Employee" Field="@nameof(Employee.Description)" Caption="Description" />
+                            <DataGridColumn TItem="Employee" Caption="Menu">
+                                <i class"fa fa-caretdown text-primary" onclick="()=>ShowMenuPopUp(Employee!)">
+                                </i>    
+                            </DataGridColumn>
                         </DataGridColumns>
                     </DataGrid>
                 </Div>
@@ -53,9 +57,12 @@
     HandleCitySelectedEvent="HandleCitySelectedEvent"
     HandleGeneralDepartmentSelectedEvent="HandleGeneralDepartmentSelectedEvent"
     HandleDepartmentSelectedEvent="HandleDepartmentSelectedEvent"
-    HandleSaveEmployeeClickedEvent="HandleSaveEmployeeClickedEvent"
-    >
-</EmployeeFormPage>
+    HandleSaveEmployeeClickedEvent="HandleSaveEmployeeClickedEvent" />
+
+<ContextMenu @ref="contextMenu"
+    HandleViewClicked="HandleViewClicked"
+    HandleEditClicked="HandleViewClicked"
+    HandleDeleteClicked="HandleDeleteClicked" />
 
 @code {
     [Inject] IToastService? ToastService { get; set; }
@@ -122,7 +129,6 @@
     public async Task LoadEmployees() => 
     Employees = await employeeService.GetAll(ClientConstants.EmployeeBaseUrl);
 
-
     // Add or Update
     private async Task HandleSaveEmployeeClickedEvent(Employee employee)
     {
@@ -141,6 +147,15 @@
         {
             //employeeForm?.ClearContent();
         }
+    }
+
+    // Menu Popup
+    ContextMenu? contextMenu;
+    public Employee SelectedEmployee { get; set; } = new();
+    void ShowMenuPopup(Employee employee)
+    {
+        SelectedEmployee = employee;
+        contextMenu!.OpenContextMenu();
     }
 
     // Notify parent when form closes

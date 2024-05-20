@@ -109,11 +109,19 @@
                                     </Validation>
                                     <Validation>
                                         <Field Vertical>
-                                            <FieldLabel ColumnSize="ColumnSize.Is2">Photo</FieldLabel>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2" Class="@(ImageUploadMessage == ""?"":"text-danger")">
+                                                @(ImageUploadMessage == "" ? "Upload Image" : ImageUploadMessage)
+                                            </FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10">
-                                                <TextEdit @bind-Text="@EmployeeGroup1.Photo">
-                                                </TextEdit>
+                                                <InputFile OnChange="UploadImage" class="border-1 border-primary-300 rounded-lg"></InputFile>
                                             </FieldBody>
+                                            <ValidationMessage For="()=>EmployeeGroup1.Photo" class="text-danger"></ValidationMessage>
+                                            @if (!string.IsNullOrEmpty(EmployeeGroup1.Photo))
+                                            {
+                                                <Column Class="justify-center m-4">
+                                                    <Image Source="@EmployeeGroup1.Photo" Text="@EmployeeGroup1.Name" Class="object-cover w-32 h-32"/>
+                                                </Column>
+                                            }
                                         </Field>
                                     </Validation>
                                 </CardBody>
@@ -372,6 +380,52 @@
     {
         ShowEmployeeForm = false;
         await NotifyParentFormClosed.InvokeAsync();
+    }
+
+    // File Uplaod - Taken from QuizApp but adapted to Blazorise
+    string ImageUploadMessage = "";
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        var file = e.File!;
+        if (file == null)
+        {
+            ImageUploadMessage = "No file selected.";
+            return;
+        }
+
+        // Check file size
+        int maxMb = 10;
+        long megaByte = 1024 * 1024;
+        long maxAllowedSizeInBytes = maxMb * megaByte;
+        long fileSize = file.Size;
+
+        if (fileSize > maxAllowedSizeInBytes)
+        {
+            // Format the file size with one decimal place
+            double fileSizeInMb = (double)fileSize / megaByte;
+            string fileSizeFormatted = fileSizeInMb.ToString("0.0");
+            ImageUploadMessage = $"Supplied file with size {fileSizeFormatted} MB exceeds the maximum of {maxMb} megabytes.";
+            return;
+        }
+
+        // Check file type
+        string[] permittedFileTypes = { ".jpg", ".jpeg", ".png", ".gif" };
+        var extension = Path.GetExtension(file.Name)?.ToLowerInvariant();
+        if (string.IsNullOrEmpty(extension) || !permittedFileTypes.Contains(extension))
+        {
+            ImageUploadMessage = $"Invalid file type. Permitted files are:\n{string.Join("\n", permittedFileTypes)}";
+            return;
+        }
+
+        // Read the file into a buffer
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+        var imageData = $"data:image/{extension.Substring(1)};base64,{Convert.ToBase64String(buffer)}";
+        EmployeeGroup1.Photo = imageData;
+        ImageUploadMessage = string.Empty;
+
+        // Update the UI
+        StateHasChanged();
     }
 
     // Form Validation
