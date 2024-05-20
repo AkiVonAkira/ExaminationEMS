@@ -68,9 +68,10 @@ namespace ServerLibrary.Repositories.Implementations
             findUser.PhoneNumber = item.PhoneNumber;
             findUser.SectionId = item.SectionId;
             findUser.TownId = item.TownId;
-            findUser.SocialSecurityNumberId = item.SocialSecurityNumberId;
+            findUser.SocialSecurityNumber = item.SocialSecurityNumber;
             findUser.JobTitle = item.JobTitle;
             findUser.Photo = item.Photo;
+            findUser.FileNumber = item.FileNumber;
 
             applicationDbContext.Employees.Update(item);
             await applicationDbContext.SaveChangesAsync();

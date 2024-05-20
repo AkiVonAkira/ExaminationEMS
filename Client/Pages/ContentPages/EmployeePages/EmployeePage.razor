@@ -1,0 +1,269 @@
+﻿@implements IDisposable
+
+@if (allState.ShowEmployee)
+{
+    @if (ShowMainPage)
+    {
+        <Card Border="Border.Primary" Background="Background.Dark" TextColor="TextColor.White">
+            <CardHeader TextColor="TextColor.White">
+                <i class="fa fa-users text-primary"></i>
+                Employees
+                <CloseButton Class="float-end" onclick="@EmployeeClicked"></CloseButton>
+            </CardHeader>
+            <CardBody>
+                <Div Style="min-height: fit-content; max-height: 900px; overflow-y: auto;">
+                    <DataGrid TItem="Employee" Data="Employees" AutoGenerateColumns="false"
+                              Pagination="true" PageSize="10">
+                        <DataGridColumns>
+                            <DataGridColumn TItem="Employee" Caption="Employee Image">
+                                <DisplayTemplate Context="employee">
+                                    @if (!string.IsNullOrEmpty(employee.Photo))
+                                    {
+                                        <Image Source="@employee.Photo" Text="@employee.Name" Class="object-cover w-16 h-16" />
+                                    }
+                                </DisplayTemplate>
+                            </DataGridColumn>
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.SocialSecurityNumber)" Caption="SSN" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.FileNumber)" Caption="File Number" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.Name)" Caption="Name" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.PhoneNumber)" Caption="Phone Number" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.JobTitle)" Caption="Job Title" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.Town.Name)" Caption="Town" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.Section.Name)" Caption="Section" />
+                            <DataGridColumn TItem="Employee" Field="@nameof(Employee.Description)" Caption="Description" />
+                            <DataGridColumn TItem="Employee" Field="" Caption="Menu">
+                                <DisplayTemplate Context="employee">
+                                    <i class="fa fa-caret-down text-primary" @onclick="() => ShowMenuPopup(employee)"></i>
+                                </DisplayTemplate> 
+                            </DataGridColumn>
+                        </DataGridColumns>
+                    </DataGrid>
+                </Div>
+            </CardBody>
+            <CardFooter>
+                <Form>
+                    <Button Color="Color.Primary" @onclick="@AddClicked">Add Employee</Button>
+                </Form>
+            </CardFooter>
+        </Card>
+    }
+}
+
+<EmployeeFormPage @ref="employeeForm"
+    Employee="Employee"
+    ShowEmployeeForm="ShowEmployeeForm"
+    NotifyParentFormClosed="NotifyParentFormClosed"
+    Countries="DefaultCountries"
+    Cities="SelectedCities"
+    Towns="SelectedTowns"
+    GeneralDepartments="DefaultGeneralDepartments"
+    Departments="SelectedDepartments"
+    Sections="SelectedSections"
+    HandleCountrySelectedEvent="HandleCountrySelectedEvent"
+    HandleCitySelectedEvent="HandleCitySelectedEvent"
+    HandleGeneralDepartmentSelectedEvent="HandleGeneralDepartmentSelectedEvent"
+    HandleDepartmentSelectedEvent="HandleDepartmentSelectedEvent"
+    HandleSaveEmployeeClickedEvent="HandleSaveEmployeeClickedEvent" />
+
+<ContextMenu @ref="contextMenu"
+    HandleViewClicked="ViewClicked"
+    HandleEditClicked="EditClicked"
+    HandleDeleteClicked="DeleteClicked" />
+
+@code {
+    [Inject] IToastService? ToastService { get; set; }
+    [Inject] IMessageService? MessageService { get; set; }
+
+    public List<Employee> Employees { get; set; } = [];
+    public Employee Employee { get; set; } = new();
+    EmployeeFormPage? employeeForm;
+
+    // Default Lists
+    // Country, City, Town
+    [Parameter] public List<Country> DefaultCountries { get; set; } = new();
+    [Parameter] public List<City> DefaultCities { get; set; } = new();
+    [Parameter] public List<Town> DefaultTowns { get; set; } = new();
+
+    // Gen Dep, Department, Section
+    [Parameter] public List<GeneralDepartment> DefaultGeneralDepartments { get; set; } = new();
+    [Parameter] public List<Department> DefaultDepartments { get; set; } = new();
+    [Parameter] public List<Section> DefaultSections { get; set; } = new();
+
+    // Selected Lists
+    [Parameter] public List<City> SelectedCities { get; set; } = new();
+    [Parameter] public List<Town> SelectedTowns { get; set; } = new();
+    [Parameter] public List<Department> SelectedDepartments { get; set; } = new();
+    [Parameter] public List<Section> SelectedSections { get; set; } = new();
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        allState.Action += StateHasChanged;
+        await LoadEmployees();
+        await LoadDefaults();
+    }
+
+    // Get all default lists
+    public async Task LoadDefaults()
+    {
+        DefaultCountries = await countryService.GetAll(ClientConstants.CountryBaseUrl);
+        DefaultCities = await cityService.GetAll(ClientConstants.CityBaseUrl);
+        DefaultTowns = await townService.GetAll(ClientConstants.TownBaseUrl);
+
+        DefaultGeneralDepartments = await generalDepartmentService.GetAll(ClientConstants.GeneralDepartmentBaseUrl);
+        DefaultDepartments = await departmentService.GetAll(ClientConstants.DepartmentBaseUrl);
+        DefaultSections = await sectionService.GetAll(ClientConstants.SectionBaseUrl);
+    }
+
+    // Get Cities from Selected Country
+    private void HandleCountrySelectedEvent(int countryId) => 
+    SelectedCities = DefaultCities.Where(c => c.CountryId == countryId).ToList();
+
+    // Get Towns from Selected City
+    private void HandleCitySelectedEvent(int cityId) => 
+    SelectedTowns = DefaultTowns.Where(c => c.CityId == cityId).ToList();
+
+    // Get Department from Selected General Department
+    private void HandleGeneralDepartmentSelectedEvent(int generalDepartmentId) => 
+    SelectedDepartments = DefaultDepartments.Where(d => d.GeneralDepartmentId == generalDepartmentId).ToList();
+
+    // Get Section from Selected Department
+    private void HandleDepartmentSelectedEvent(int departmentId) => 
+    SelectedSections = DefaultSections.Where(d => d.DepartmentId == departmentId).ToList();
+
+    // Load Employees
+    public async Task LoadEmployees() => 
+    Employees = await employeeService.GetAll(ClientConstants.EmployeeBaseUrl);
+
+    // Add
+    private async Task HandleSaveEmployeeClickedEvent(Employee employee)
+    {
+        bool successCheck = false;
+        if (employee.Id > 0)
+        {
+            var result = await employeeService.Update(employee, ClientConstants.EmployeeBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        }
+        else
+        {
+            var response = await employeeService.Insert(employee, ClientConstants.EmployeeBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
+        if (successCheck)
+        {
+            //employeeForm?.ClearContent();
+        }
+    }
+
+    // Menu Popup
+    ContextMenu? contextMenu;
+    public Employee SelectedEmployee { get; set; } = new();
+    void ShowMenuPopup(Employee employee)
+    {
+        SelectedEmployee = employee;
+        contextMenu!.OpenContextMenu();
+    }
+
+    void EditClicked()
+    {
+        //Group 1
+        employeeForm!.Employee.Id = SelectedEmployee.Id;
+        employeeForm!.Employee.Name = SelectedEmployee.Name;
+        employeeForm!.Employee.PhoneNumber = SelectedEmployee.PhoneNumber;
+        employeeForm!.Employee.FileNumber = SelectedEmployee.FileNumber;
+        employeeForm!.Employee.Address = SelectedEmployee.Address;
+        employeeForm!.Employee.Photo = SelectedEmployee.Photo;
+        employeeForm!.Employee.SocialSecurityNumber = SelectedEmployee.SocialSecurityNumber;
+
+        // Group 2
+        employeeForm!.EmployeeGroup2.JobTitle = SelectedEmployee.JobTitle!;
+        employeeForm!.EmployeeGroup2.Description = SelectedEmployee.Description;
+
+        // gen dep, dep, section
+        employeeForm!.selectedGeneralDepartment = SelectedEmployee.Section!.Department!.GeneralDepartment!.Name!;
+        employeeForm!.selectedDepartment = SelectedEmployee.Section!.Department!.Name!;
+        employeeForm!.selectedSection = SelectedEmployee.Section!.Name!;
+
+        // country, city, town
+        employeeForm!.selectedCountry = SelectedEmployee.Town!.City!.Country!.Name!;
+        employeeForm!.selectedCity = SelectedEmployee.Town!.City!.Name!;
+        employeeForm!.selectedTown = SelectedEmployee.Town!.Name!;
+
+        employeeForm.ChangeTitle("Update");
+        SelectedEmployee = new();
+        contextMenu!.CloseContextMenu();
+        ShowForm();
+    }
+
+    // Delete
+    private async Task DeleteClicked()
+    {
+        contextMenu!.CloseContextMenu();
+        bool confirm = await MessageService!.Confirm($"Are you sure you want to delete {SelectedEmployee.Name}?", "Delete Confirmation");
+        if (!confirm) return;
+
+        var response = await departmentService.DeleteById(SelectedEmployee.Id, ClientConstants.DepartmentBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+        {
+            SelectedEmployee = new();
+            await LoadEmployees();
+        }
+    }
+
+    // View Clicked
+    public bool ShowDetailsPage { get; set; } = false;
+    private void ViewClicked()
+    {
+        Employee = SelectedEmployee;
+        contextMenu!.CloseContextMenu();
+        ShowDetailsPage = true;
+        ShowForm();
+    }
+
+    // Notify parent when form closes
+    private async Task NotifyParentFormClosed()
+    {
+        ShowForm();
+        await LoadEmployees();
+    }
+
+    public bool ShowMainPage { get; set; } = true;
+    public bool ShowEmployeeForm { get; set; } = false;
+
+    public void ShowForm()
+    {
+        ShowMainPage = !ShowMainPage;
+        ShowEmployeeForm = !ShowEmployeeForm;
+    }
+
+    void AddClicked()
+    {
+        ShowForm();
+        employeeForm!.ChangeTitle("Add");
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            //await ToastService!.Success(message, "Success");
+            return true;
+        }
+        else
+        {
+            await ToastService!.Error(message, "Error");
+            return false;
+        }
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+    }
+
+    // Close Button
+    private void EmployeeClicked()
+    {
+        allState.EmployeeClicked(false);
+    }
+}

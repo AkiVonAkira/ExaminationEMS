@@ -1,0 +1,51 @@
+﻿<Modal @ref="contextMenu" @bind-Visible="IsVisible">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Employee Menu</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <div class="gap-2 mb-2" onclick="@ViewClicked">
+                <i class="fa fa-eye text-info"></i>
+                <Span Class="text-primary"> View </Span>
+            </div>
+            <div class="gap-2 mb-2" onclick="@EditClicked">
+                <i class="fa fa-pen text-info"></i>
+                <Span Class="text-accent"> Edit </Span>
+            </div>
+            <div class="gap-2 mb-2" onclick="@DeleteClicked">
+                <i class="fa fa-trash text-danger"></i>
+                <Span Class="text-danger"> Delete </Span>
+            </div>
+        </ModalBody>
+        @* // this is where we would add buttons for vacations, overtime etc *@
+    </ModalContent>
+</Modal>
+
+@code {
+    // reference to the modal component
+    private Modal? contextMenu;
+
+    public bool IsVisible { get; set; } = false;
+
+    [Parameter] public EventCallback HandleViewClicked { get; set; }
+    private async Task ViewClicked() => await HandleViewClicked.InvokeAsync();
+
+    [Parameter] public EventCallback HandleEditClicked { get; set; }
+    private async Task EditClicked() => await HandleEditClicked.InvokeAsync();
+
+    [Parameter] public EventCallback HandleDeleteClicked { get; set; }
+    private async Task DeleteClicked() => await HandleDeleteClicked.InvokeAsync();
+
+    public void OpenContextMenu()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    public void CloseContextMenu()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+}

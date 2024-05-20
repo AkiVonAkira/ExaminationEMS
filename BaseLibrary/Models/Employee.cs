@@ -5,10 +5,10 @@ namespace BaseLibrary.Models
     public class Employee : BaseModel
     {
         [Required]
-        public string? SocialSecurityNumberId { get; set; } = string.Empty;
+        public string? SocialSecurityNumber { get; set; } = string.Empty;
 
         [Required]
-        public string? Fullname { get; set; } = string.Empty;
+        public string? FileNumber { get; set; } = string.Empty;
 
         [Required]
         public string? JobTitle { get; set; } = string.Empty;

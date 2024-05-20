@@ -79,7 +79,7 @@
         }
 
         // Employee
-        public bool ShowEmployee { get; set; }
+        public bool ShowEmployee { get; set; } = true;
 
         public void EmployeeClicked(bool enabled)
         {

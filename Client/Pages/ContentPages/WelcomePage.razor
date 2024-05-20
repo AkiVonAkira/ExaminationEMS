@@ -2,13 +2,31 @@
 @layout MainLayout
 @using Client.Pages.ComponentPages
 
-<Container Class="my-4">
-    <Card>
+<div class="container mx-auto w-64 sm:w-96 flex flex-col justify-center mt-4">
+    <Card Class="shadow-xl rounded-lg">
         <CardHeader>
             Welcome!
         </CardHeader>
+        <CardBody>
+            <Column Class="flex flex-col gap-4">
+                <p class="text-white break-words">
+                    The Employee Management System (EMS) is a solid platform designed to enhance the efficiency and effectiveness of managing employee data. Leveraging a modern tech stack that includes .NET 8, Blazor WebAssembly for the front end, and Web API with MSSQL for the backend
+                </p>
+                <p class="text-white break-words">
+                    EMS provides a seamless and interactive user experience. Our system is built with a robust database schema and incorporates JWT authentication to ensure secure login and user management.
+                </p>
+                <p class="text-white break-words">
+                    EMS offers comprehensive features such as CRUD operations and organizational structure management. The platform is designed with a user-friendly interface, combining Blazorise components and Tailwind CSS to deliver a sleek and responsive design.
+                </p>
+                <p class="text-white break-words">
+                    With the ability to define and manage complex organizational structures—from general departments to sections, cities, and towns—EMS facilitates effective employee management across various locations.
+                </p>
+
+                <a class="text-decoration-none" href="https://github.com/AkiVonAkira/ExaminationEMS"><h2><i class="fa-brands fa-github"></i> Visit the GitHub!</h2></a>
+            </Column>
+        </CardBody>
     </Card>
-</Container>
+</div>
 
 @code {
     [CascadingParameter] public Task<AuthenticationState>? authenticationStateTask { get; set; }
