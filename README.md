@@ -4,17 +4,13 @@
   <img src="https://github.com/AkiVonAkira/ExaminationEMS/assets/114033186/3bee2b59-2929-455a-b439-c21cf54876a2.png" alt="Koala Image" width="700" height="500">
 </div>
 
-
-
-
-
- ## 📚 Intro
+## 📚 Intro
 
 The Employee Management System (EMS) is a solid platform designed to enhance the efficiency and effectiveness of managing employee data. Leveraging a modern tech stack that includes .NET 8, Blazor WebAssembly for the front end, and Web API with MSSQL for the backend
 
 EMS provides a seamless and interactive user experience. Our system is built with a robust database schema and incorporates JWT authentication to ensure secure login and user management.
 
-EMS offers comprehensive features such as CRUD operations and organizational structure management. The platform is designed with a user-friendly interface, combining Blazorise components and Tailwind CSS to deliver a sleek and responsive design. 
+EMS offers comprehensive features such as CRUD operations and organizational structure management. The platform is designed with a user-friendly interface, combining Blazorise components and Tailwind CSS to deliver a sleek and responsive design.
 
 With the ability to define and manage complex organizational structures—from general departments to sections, cities, and towns—EMS facilitates effective employee management across various locations.
 
@@ -41,11 +37,11 @@ To install and run the application, follow the steps below:
 
 ## 👽 Features
 
-   -  CRUD Operations: Comprehensive Create, Read, Update, and Delete functionalities for managing employee records, ensuring data accuracy and ease of maintenance.
-   -  Blazor Implementation: Utilizing Blazor technology enables a rich and interactive experience directly in the web browser, enhancing user engagement and productivity.
-   -  Blazorise and Tailwind CSS: Combining Blazorise components with Tailwind CSS provides a sleek and customizable design, ensuring a visually appealing and consistent user experience.
-   -  JWT Authentication: Secure your application with JSON Web Token (JWT) authentication, providing reliable and efficient access control for users.
-   -  Organizational Structure Management: Define and manage complex organizational structures ranging from general departments to sections, cities, and towns, facilitating effective employee management across various locations.
+- CRUD Operations: Comprehensive Create, Read, Update, and Delete functionalities for managing employee records, ensuring data accuracy and ease of maintenance.
+- Blazor Implementation: Utilizing Blazor technology enables a rich and interactive experience directly in the web browser, enhancing user engagement and productivity.
+- Blazorise and Tailwind CSS: Combining Blazorise components with Tailwind CSS provides a sleek and customizable design, ensuring a visually appealing and consistent user experience.
+- JWT Authentication: Secure your application with JSON Web Token (JWT) authentication, providing reliable and efficient access control for users.
+- Organizational Structure Management: Define and manage complex organizational structures ranging from general departments to sections, cities, and towns, facilitating effective employee management across various locations.
 
 ## 💾 Technologies Used
 
@@ -73,88 +69,84 @@ To install and run the application, follow the steps below:
 - Tailwind CSS
 - HTML5
 
-
 ## 📁 Project Structure
 
 ### BaseLibrary - Contains shared components such as DTOs, Models, and Responses used across different layers of the application.
 
-| Folder/File        | Description                                                                                       |
-| ------------------ | ------------------------------------------------------------------------------------------------- |
-| DTO                | Data Transfer Objects (DTOs) used for transferring data between layers.                 |
-| Models             | Model classes for database entities or other domain-specific models.                     |
-| Responses          | Response classes used for API responses.                                                 |
+| Folder/File | Description                                                             |
+| ----------- | ----------------------------------------------------------------------- |
+| DTO         | Data Transfer Objects (DTOs) used for transferring data between layers. |
+| Models      | Model classes for database entities or other domain-specific models.    |
+| Responses   | Response classes used for API responses.                                |
 
 ### Client - Contains client-specific components, including pages, layouts, and application state management.
 
-| Folder/File        | Description                                                                                       |
-| ------------------ | ------------------------------------------------------------------------------------------------- |
-| Pages              | Razor pages for server-side rendering in ASP.NET Core.                                          |
-| Layout             | Layout components used across different pages.                                            |
-| Properties         | Client-specific configuration files and settings.                                         |
-| ApplicationState   | Global state management utilities for the client application.                             |
-| Program.cs         | Entry point for the client application.                                                            |
+| Folder/File      | Description                                                   |
+| ---------------- | ------------------------------------------------------------- |
+| Pages            | Razor pages for server-side rendering in ASP.NET Core.        |
+| Layout           | Layout components used across different pages.                |
+| Properties       | Client-specific configuration files and settings.             |
+| ApplicationState | Global state management utilities for the client application. |
+| Program.cs       | Entry point for the client application.                       |
 
 ### ClientLibrary - Contains client-side helpers, services, and their implementations.
 
-| Folder/File        | Description                                                                                       |
-| ------------------ | ------------------------------------------------------------------------------------------------- |
-| Helpers            | Utility classes or functions providing common functionalities for the client application. |
-| Services           | Services responsible for client-server communication, API calls, etc.                    |
-| Contracts          | Interfaces defining the contracts for services.                                           |
-| Implementations    | Implementations of services defined in the Contracts folder.                              |
+| Folder/File     | Description                                                                               |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| Helpers         | Utility classes or functions providing common functionalities for the client application. |
+| Services        | Services responsible for client-server communication, API calls, etc.                     |
+| Contracts       | Interfaces defining the contracts for services.                                           |
+| Implementations | Implementations of services defined in the Contracts folder.                              |
 
 ### Server - Contains server-side logic, including controllers and server-specific properties.
 
-| Folder/File        | Description                                                                                       |
-| ------------------ | ------------------------------------------------------------------------------------------------- |
-| Controllers        | Server-side logic for handling API requests and generating responses.                     |
-| Properties         | Server-specific configuration files and settings.                                         |
-| .gitignore         | Specifies which files and folders to ignore in version control.                                   |
-| appsettings.json   | Configuration file for the application.                                                           |
-| Program.cs         | Entry point for the server application.                                                            |
+| Folder/File      | Description                                                           |
+| ---------------- | --------------------------------------------------------------------- |
+| Controllers      | Server-side logic for handling API requests and generating responses. |
+| Properties       | Server-specific configuration files and settings.                     |
+| .gitignore       | Specifies which files and folders to ignore in version control.       |
+| appsettings.json | Configuration file for the application.                               |
+| Program.cs       | Entry point for the server application.                               |
 
 ### ServerLibrary - Contains server-side data access logic (repository), database context, migrations, and server-side helpers.
 
-| Folder/File        | Description                                                                                       |
-| ------------------ | ------------------------------------------------------------------------------------------------- |
-| Data               | The database context and migrations for Entity Framework Core.                             |
-| Helpers            | Utility classes or functions providing common functionalities for the server application.  |
-| Migrations         | Database migration files generated by Entity Framework Core.                              |
-| Repository         | Repository classes for data access logic.                                                 |
+| Folder/File | Description                                                                               |
+| ----------- | ----------------------------------------------------------------------------------------- |
+| Data        | The database context and migrations for Entity Framework Core.                            |
+| Helpers     | Utility classes or functions providing common functionalities for the server application. |
+| Migrations  | Database migration files generated by Entity Framework Core.                              |
+| Repository  | Repository classes for data access logic.                                                 |
 
-### Other files 
+### Other files
 
-| Folder/File        | Description                                                                                       |
-| ------------------ | ------------------------------------------------------------------------------------------------- |
-| .gitignore         | Specifies which files and folders to ignore in version control.                                   |
-| ExaminationEMS.sln | Visual Studio project file for the C# project.                                                    |
-
+| Folder/File        | Description                                                     |
+| ------------------ | --------------------------------------------------------------- |
+| .gitignore         | Specifies which files and folders to ignore in version control. |
+| ExaminationEMS.sln | Visual Studio project file for the C# project.                  |
 
 ## 🖥️ API Documentation
 
 ### These API endpoints handle user authentication and management within the Employee Management System.
 
-   -  The "register" endpoint registers a new user with the provided user details. If successful, it returns Ok; otherwise, it returns a BadRequest if the model is empty.
+- The "register" endpoint registers a new user with the provided user details. If successful, it returns Ok; otherwise, it returns a BadRequest if the model is empty.
 
-   -  The "login" endpoint signs in a user with the provided credentials. If successful, it returns Ok with user information and a JWT token; otherwise, it returns BadRequest if the model is empty.
+- The "login" endpoint signs in a user with the provided credentials. If successful, it returns Ok with user information and a JWT token; otherwise, it returns BadRequest if the model is empty.
 
-   -  The "refresh-token" endpoint refreshes a user's authentication token. If successful, it returns Ok with a new JWT token; otherwise, it returns BadRequest if the model is empty.
+- The "refresh-token" endpoint refreshes a user's authentication token. If successful, it returns Ok with a new JWT token; otherwise, it returns BadRequest if the model is empty.
 
-   -   The "users" endpoint retrieves all users. If successful, it returns Ok with a list of users; otherwise, it returns NotFound if no users are found.
+- The "users" endpoint retrieves all users. If successful, it returns Ok with a list of users; otherwise, it returns NotFound if no users are found.
 
-   -   The "update-user" endpoint updates a user's information based on the provided user details. If successful, it returns Ok; otherwise, it returns BadRequest if the model is empty.
+- The "update-user" endpoint updates a user's information based on the provided user details. If successful, it returns Ok; otherwise, it returns BadRequest if the model is empty.
 
-   -  The "roles" endpoint retrieves all roles. If successful, it returns Ok with a list of roles; otherwise, it returns NotFound if no roles are found.
+- The "roles" endpoint retrieves all roles. If successful, it returns Ok with a list of roles; otherwise, it returns NotFound if no roles are found.
 
-   - The "roles" endpoint retrieves all roles. If successful, it returns Ok with a list of roles; otherwise, it returns NotFound if no roles are found.
+- The "roles" endpoint retrieves all roles. If successful, it returns Ok with a list of roles; otherwise, it returns NotFound if no roles are found.
 
-   - The "delete-user/{id}" endpoint deletes a user by ID. If successful, it returns Ok; otherwise, it returns NotFound if the user with the specified ID does not exist.
-
-
+- The "delete-user/{id}" endpoint deletes a user by ID. If successful, it returns Ok; otherwise, it returns NotFound if the user with the specified ID does not exist.
 
 ### Here's a short & clear description:
 
-``` bash
+```bash
    - register: Registers a new user with the provided user details.
     Returns Ok if registration is successful, BadRequest if the model is empty.
 
@@ -254,20 +246,20 @@ public class AuthenticationController : ControllerBase
 
 ### This generic controller provides CRUD operations for any entity.
 
-   -  GenericController<T> Class: This generic controller provides endpoints for CRUD operations on any entity type T.
+- GenericController<T> Class: This generic controller provides endpoints for CRUD operations on any entity type T.
 
-   -  Getall Endpoint: Retrieves all entities of type T from the repository.
+- Getall Endpoint: Retrieves all entities of type T from the repository.
 
-   -  Delete/{id} Endpoint: Deletes the entity of type T with the specified ID from the repository.
+- Delete/{id} Endpoint: Deletes the entity of type T with the specified ID from the repository.
 
-   -  Singleget/{id} Endpoint: Retrieves the entity of type T with the specified ID from the repository.
+- Singleget/{id} Endpoint: Retrieves the entity of type T with the specified ID from the repository.
 
-   -  Add Endpoint: Adds a new entity of type T to the repository.
+- Add Endpoint: Adds a new entity of type T to the repository.
 
-   -  Update Endpoint: Updates an existing entity of type T in the repository.
+- Update Endpoint: Updates an existing entity of type T in the repository.
 
 ### Here's a short & clear description:
-   
+
 ```bash
    - getall: Retrieves all entities of type T from the repository.
 
@@ -338,46 +330,39 @@ public class AuthenticationController : ControllerBase
 
 ```
 
-
-
 ## 📑 API Endpoints and Data
+
 ### Employee Management System (EMS) API provides the following endpoints and returns the associated data:
 
 ### This controller facilitates user authentication and management operations within the Employee Management System (EMS) API.
 
 **AuthenticationController:**
 
-| API Endpoint                  | Description                                             | Returned Data | Status Codes                                                                                                                        |
-| ----------------------------- | ------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| POST /api/authentication/register      | Registers a new user with the provided user details.    | No returned data. | 200 OK: Successful registration.<br>400 Bad Request: Model is empty.<br>500 Internal Server Error: Error occurred during registration. |
-| POST /api/authentication/login | Signs in a user with the provided credentials.           | User information and JWT token. | 200 OK: Successful login.<br>400 Bad Request: Model is empty.<br>401 Unauthorized: Invalid credentials.<br>500 Internal Server Error: Error occurred during login. |
-| POST /api/authentication/refresh-token | Refreshes a user's authentication token.                | New JWT token. | 200 OK: Successful token refresh.<br>400 Bad Request: Model is empty.<br>401 Unauthorized: Invalid token.<br>500 Internal Server Error: Error occurred during token refresh. |
-| GET /api/authentication/users | Retrieves all users.                                    | List of users. | 200 OK: Successful retrieval.<br>404 Not Found: No users found.<br>500 Internal Server Error: Error occurred while retrieving users. |
-| PUT /api/authentication/update-user | Updates a user's information based on the provided user details. | No returned data. | 200 OK: Successful update.<br>400 Bad Request: Model is empty.<br>500 Internal Server Error: Error occurred during user update. |
-| GET /api/authentication/roles | Retrieves all roles.                                    | List of roles. | 200 OK: Successful retrieval.<br>404 Not Found: No roles found.<br>500 Internal Server Error: Error occurred while retrieving roles. |
-| DELETE /api/authentication/delete-user/{id} | Deletes a user by ID.                               | No returned data. | 200 OK: Successful deletion.<br>404 Not Found: User with specified ID not found.<br>500 Internal Server Error: Error occurred during user deletion. |
-
+| API Endpoint                                | Description                                                      | Returned Data                   | Status Codes                                                                                                                                                                 |
+| ------------------------------------------- | ---------------------------------------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST /api/authentication/register           | Registers a new user with the provided user details.             | No returned data.               | 200 OK: Successful registration.<br>400 Bad Request: Model is empty.<br>500 Internal Server Error: Error occurred during registration.                                       |
+| POST /api/authentication/login              | Signs in a user with the provided credentials.                   | User information and JWT token. | 200 OK: Successful login.<br>400 Bad Request: Model is empty.<br>401 Unauthorized: Invalid credentials.<br>500 Internal Server Error: Error occurred during login.           |
+| POST /api/authentication/refresh-token      | Refreshes a user's authentication token.                         | New JWT token.                  | 200 OK: Successful token refresh.<br>400 Bad Request: Model is empty.<br>401 Unauthorized: Invalid token.<br>500 Internal Server Error: Error occurred during token refresh. |
+| GET /api/authentication/users               | Retrieves all users.                                             | List of users.                  | 200 OK: Successful retrieval.<br>404 Not Found: No users found.<br>500 Internal Server Error: Error occurred while retrieving users.                                         |
+| PUT /api/authentication/update-user         | Updates a user's information based on the provided user details. | No returned data.               | 200 OK: Successful update.<br>400 Bad Request: Model is empty.<br>500 Internal Server Error: Error occurred during user update.                                              |
+| GET /api/authentication/roles               | Retrieves all roles.                                             | List of roles.                  | 200 OK: Successful retrieval.<br>404 Not Found: No roles found.<br>500 Internal Server Error: Error occurred while retrieving roles.                                         |
+| DELETE /api/authentication/delete-user/{id} | Deletes a user by ID.                                            | No returned data.               | 200 OK: Successful deletion.<br>404 Not Found: User with specified ID not found.<br>500 Internal Server Error: Error occurred during user deletion.                          |
 
 ### This controller facilitates CRUD operations on entities of any type T within the Employee Management System (EMS) API.
 
 **GenericController\<T>:**
 
-| API Endpoint            | Description                                             | Returned Data     | Status Codes                                                                                                                        |
-| ----------------------- | ------------------------------------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| GET /api/getall | Retrieves all entities of type T.                       | List of entities. | 200 OK: Successful retrieval.<br>500 Internal Server Error: Error occurred while retrieving entities.                                 |
-| DELETE /api/delete/{id} | Deletes an entity of type T by ID.                      | No returned data. | 200 OK: Successful deletion.<br>400 Bad Request: Invalid ID.<br>500 Internal Server Error: Error occurred while deleting entity.     |
-| GET /api/singleget/{id} | Retrieves an entity of type T by ID.                    | Entity of type T. | 200 OK: Successful retrieval.<br>400 Bad Request: Invalid ID.<br>500 Internal Server Error: Error occurred while retrieving entity. |
-| POST /api/add | Adds a new entity of type T.                             | Added entity.     | 200 OK: Successful addition.<br>400 Bad Request: Invalid request.<br>500 Internal Server Error: Error occurred while adding entity.  |
-| PUT /api/update | Updates an entity of type T.                             | Updated entity.   | 200 OK: Successful update.<br>400 Bad Request: Invalid request.<br>500 Internal Server Error: Error occurred while updating entity.  |
-
-
-
+| API Endpoint            | Description                          | Returned Data     | Status Codes                                                                                                                        |
+| ----------------------- | ------------------------------------ | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| GET /api/getall         | Retrieves all entities of type T.    | List of entities. | 200 OK: Successful retrieval.<br>500 Internal Server Error: Error occurred while retrieving entities.                               |
+| DELETE /api/delete/{id} | Deletes an entity of type T by ID.   | No returned data. | 200 OK: Successful deletion.<br>400 Bad Request: Invalid ID.<br>500 Internal Server Error: Error occurred while deleting entity.    |
+| GET /api/singleget/{id} | Retrieves an entity of type T by ID. | Entity of type T. | 200 OK: Successful retrieval.<br>400 Bad Request: Invalid ID.<br>500 Internal Server Error: Error occurred while retrieving entity. |
+| POST /api/add           | Adds a new entity of type T.         | Added entity.     | 200 OK: Successful addition.<br>400 Bad Request: Invalid request.<br>500 Internal Server Error: Error occurred while adding entity. |
+| PUT /api/update         | Updates an entity of type T.         | Updated entity.   | 200 OK: Successful update.<br>400 Bad Request: Invalid request.<br>500 Internal Server Error: Error occurred while updating entity. |
 
 ## Database Schema Diagram
 
 <img width="1123" alt="Skärmavbild 2024-05-18 kl  14 02 44" src="https://github.com/AkiVonAkira/ExaminationEMS/assets/114033186/538588f2-35bc-4951-ae18-ad1eae777098">
-
-
 
 <h2 id="database-configuration">🖳 Database Configuration</h2>
 
@@ -389,13 +374,14 @@ Make sure to update the connection string to match your SQL Server database conf
 
 ### 🔍 Homepage:
 
+![homepage - Employee Data Grid](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
 
+### 🕹️ Other Systems:
 
-
-### 🕹️ In-Management system:
-
-
-
+![alt text](image-3.png)
+![alt text](image-4.png)
 
 ## 👨‍💻 Developer Team
 
