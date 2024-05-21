@@ -27,7 +27,7 @@
                         ChangeSelectedSection(GetDepartmentNameByID(Section.DepartmentId));
                         <DropdownList TItem="Department" TValue="int"
                                       Data="@Departments"
-                                      TextField="@((item)=>item.Name)"
+                                      TextField="@((item)=>$"({item.GeneralDepartment!.Name}) {item.Name}")"
                                       ValueField="@((item)=>item.Id)"
                                       Color="Color.Primary"
                                       MaxMenuHeight="200px"

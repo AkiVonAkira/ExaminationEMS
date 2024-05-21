@@ -97,17 +97,18 @@
         Departments = await departmentService.GetAll(ClientConstants.DepartmentBaseUrl);
     }
 
-    void OpenDialog()
+    async Task OpenDialog()
     {
+        await GetDepartments();
         sectionsDialog?.OpenDialog();
     }
 
-    void AddClicked()
+    async Task AddClicked()
     {
         sectionsDialog?.ChangeTitle("Add");
         sectionsDialog?.ChangeSelectedSection("");
         Section = new();
-        OpenDialog();
+        await OpenDialog();
     }
 
     // Add or Update
@@ -133,11 +134,11 @@
     }
 
     // Edit
-    private void EditClicked(Section section)
+    async Task EditClicked(Section section)
     {
         sectionsDialog?.ChangeTitle("Update");
         Section = section;
-        OpenDialog();
+        await OpenDialog();
     }
 
     // Delete
